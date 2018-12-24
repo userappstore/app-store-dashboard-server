@@ -1,0 +1,40 @@
+{
+  "name": "userappstore.com",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "engines": {
+    "node": "8.12.0",
+    "npm": "6.4.1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@userappstore/dashboard": "git+https://github.com/userappstore/dashboard",
+    "@userappstore/organizations": "git+https://github.com/userappstore/organizations",
+    "@userappstore/stripe-connect": "git+https://github.com/userappstore/stripe-connect",
+    "@userappstore/stripe-subscriptions": "git+https://github.com/userappstore/stripe-subscriptions"
+  },
+  "dashboard": {
+    "title": "UserAppStore",
+    "modules": [
+      "@userappstore/stripe-subscriptions",
+      "@userappstore/stripe-connect",
+      "@userappstore/organizations"
+    ],
+    "content": [
+      "/src/content/installed-apps-navigation.js",
+      "/src/content/opened-app-navigation.js",
+      "/src/content/app-administration-links.js"
+    ],
+    "server": [
+      "/src/server/connect-appid-in-url.js",
+      "/src/server/bind-customer.js",
+      "/src/server/create-card-without-lock.js",
+      "/src/server/create-subscription-without-lock.js"
+    ]
+  }
+}
