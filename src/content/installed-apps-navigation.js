@@ -20,7 +20,6 @@ module.exports = {
     const usageIndex = {}
     for (const install of installs) {
       appIndex[install.installid] = install
-      usageIndex[install.installid] = 0
     }
     for (const collection of collections) {
       if (!collection.items || !collection.items.length) {
@@ -29,7 +28,7 @@ module.exports = {
       const apps = []
       for (const installid of collection.items) {
         apps.push(appIndex[installid])
-        usageIndex[installid]++
+        usageIndex[installid] = true
       }
       if (apps.length) {
         dashboard.HTML.renderList(templateDoc, apps, 'install-link', `installs-list-${collection.collectionid}`)
@@ -44,6 +43,8 @@ module.exports = {
     }
     if (unused.length) {
       dashboard.HTML.renderList(templateDoc, unused, 'install-link', `ungrouped-menu`)
+    } else {
+      dashboard.HTML.renderTemplate(templateDoc, null, 'install-link', `ungrouped-menu`)
     }
   }
 }
