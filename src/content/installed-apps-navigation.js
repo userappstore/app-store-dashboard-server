@@ -43,8 +43,11 @@ module.exports = {
     }
     if (unused.length) {
       dashboard.HTML.renderList(templateDoc, unused, 'install-link', `ungrouped-menu`)
+      const noInstalls = doc.getElementById('no-installs')
+      noInstalls.parentNode.removeChild(noInstalls)
     } else {
-      dashboard.HTML.renderTemplate(templateDoc, null, 'install-link', `ungrouped-menu`)
+      const ungroupedMenu = doc.getElementById('ungrouped-menu')
+      ungroupedMenu.parentNode.removeChild(ungroupedMenu)
     }
   }
 }
