@@ -8,8 +8,12 @@ module.exports = {
     }
     const installs = await applicationServer.get(`/api/user/userappstore/installs?accountid=${req.account.accountid}`, req.account.accountid, req.session.sessionid)
     if (!installs || !installs.length) {
+      const ungroupedMenu = templateDoc.getElementById('ungrouped-menu')
+      ungroupedMenu.parentNode.removeChild(ungroupedMenu)
       return
     }
+    const noInstalls = templateDoc.getElementById('no-installs')
+    noInstalls.parentNode.removeChild(noInstalls)
     const collections = await applicationServer.get(`/api/user/userappstore/collections?accountid=${req.account.accountid}`, req.account.accountid, req.session.sessionid)
     if (!collections || !collections.length) {
       dashboard.HTML.renderList(templateDoc, installs, 'install-link', 'ungrouped-menu')
@@ -43,8 +47,6 @@ module.exports = {
     }
     if (unused.length) {
       dashboard.HTML.renderList(templateDoc, unused, 'install-link', `ungrouped-menu`)
-      const noInstalls = doc.getElementById('no-installs')
-      noInstalls.parentNode.removeChild(noInstalls)
     } else {
       const ungroupedMenu = templateDoc.getElementById('ungrouped-menu')
       ungroupedMenu.parentNode.removeChild(ungroupedMenu)
