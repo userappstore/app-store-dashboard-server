@@ -46,7 +46,7 @@ module.exports = {
       const noInstalls = doc.getElementById('no-installs')
       noInstalls.parentNode.removeChild(noInstalls)
     } else {
-      const ungroupedMenu = doc.getElementById('ungrouped-menu')
+      const ungroupedMenu = templateDoc.getElementById('ungrouped-menu')
       ungroupedMenu.parentNode.removeChild(ungroupedMenu)
     }
   }
