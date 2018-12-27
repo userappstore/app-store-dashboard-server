@@ -12,7 +12,6 @@ async function afterAuthentication (req) {
   let customerid = customerids && customerids.length ? customerids[0] : null
   const queryWas = req.query
   if (customerid) {
-    console.log('got customerid', customerid)
     req.query = { customerid }
     req.customer = await global.api.user.subscriptions.Customer.get(req)
     req.query = queryWas
