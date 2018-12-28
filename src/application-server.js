@@ -34,15 +34,15 @@ const proxy = util.promisify((method, path, data, accountid, sessionid, callback
     host = baseURLParts[1]
   }
   const salt = bcrypt.genSaltSync(1)
-  const token = bcrypt.hashSync(`${process.env.APPLICATION_SERVER_TOKEN}:${accountid}:${sessionid}`, salt)
+  const token = bcrypt.hashSync(`${process.env.APPLICATION_SERVER_TOKEN}/${accountid}/${sessionid}`, salt)
   const requestOptions = {
     host,
     path,
     port,
     method,
     headers: {
-      'x-dashboard': process.env.DASHBOARD_SERVER,
-      'x-token': token,
+      'x-dashboard-server': process.env.DASHBOARD_SERVER,
+      'x-dashboard-token': token,
       'x-accountid': accountid,
       'x-sessionid': sessionid
     }

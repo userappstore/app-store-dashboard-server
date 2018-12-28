@@ -1,5 +1,5 @@
-@userappstore/dashboard 2018.11.20-4
-http://localhost:8000 (dashboard)
+@userappstore/dashboard 1.0.0
+https://userappstore.server7373.synology.me (dashboard)
 http://localhost:8001 (application)
 
 Administrator menu:
@@ -21,10 +21,10 @@ Special HTML files:
 @userappstore/dashboard/src/redirect.html
 
 Dashboard modules:
+@userappstore/maxmind-geoip
 @userappstore/stripe-subscriptions
 @userappstore/stripe-connect
 @userappstore/organizations
-@userappstore/maxmind-geoip
 
 Content handlers:
 @userappstore/dashboard/src/content/session-impersonation-header.js
@@ -35,18 +35,17 @@ Content handlers:
 /src/content/app-administration-links.js
 
 Server handlers:
-@userappstore/stripe-subscriptions/src/server/bind-appid.js
-@userappstore/stripe-subscriptions/src/server/bind-stripekey.js
 @userappstore/maxmind-geoip/src/server/bind-country.js
+@userappstore/stripe-subscriptions/src/server/bind-stripekey.js
+userappstore/src/www/server/bind-stripekey.js
 @userappstore/stripe-connect/src/server/stripe-file-upload.js
 /src/server/connect-appid-in-url.js
 /src/server/bind-customer.js
 /src/server/create-card-without-lock.js
 /src/server/create-subscription-without-lock.js
-/src/server/access-any-stripe-account.js
 
 URL ----------------------------------------------------------- AUTH ---- LOCK --- TEMPLATE ----- HTTP REQUESTS - NODEJS ------------------------------- HTML ---------------------------------
-/account                                                                                          GET                                                    @userappstore/dashboard               
+/account                                                                                          GET             @userappstore/dashboard                @userappstore/dashboard               
 /account/authorize                                                                 FULLSCREEN     GET POST        @userappstore/dashboard                @userappstore/dashboard               
 /account/change-password                                                                          GET POST        @userappstore/dashboard                @userappstore/dashboard               
 /account/change-username                                                                          GET POST        @userappstore/dashboard                @userappstore/dashboard               
@@ -117,6 +116,7 @@ URL ----------------------------------------------------------- AUTH ---- LOCK -
 /account/subscriptions/cancel-subscription                                                        GET POST        @userappstore/stripe-subscriptions     @userappstore/stripe-subscriptions    
 /account/subscriptions/change-plan                                                                GET POST        @userappstore/stripe-subscriptions     @userappstore/stripe-subscriptions    
 /account/subscriptions/create-billing-profile                                      FULLSCREEN     GET POST        @userappstore/stripe-subscriptions     @userappstore/stripe-subscriptions    
+/account/subscriptions/delete-billing-profile                                                     GET POST        @userappstore/stripe-subscriptions     @userappstore/stripe-subscriptions    
 /account/subscriptions/delete-card                                                                GET POST        @userappstore/stripe-subscriptions     @userappstore/stripe-subscriptions    
 /account/subscriptions/edit-payment-information                                                   GET POST        @userappstore/stripe-subscriptions     @userappstore/stripe-subscriptions    
 /account/subscriptions/invoice                                                                    GET             @userappstore/stripe-subscriptions     @userappstore/stripe-subscriptions    
@@ -125,6 +125,7 @@ URL ----------------------------------------------------------- AUTH ---- LOCK -
 /account/subscriptions/plan                                                                       GET             @userappstore/stripe-subscriptions     @userappstore/stripe-subscriptions    
 /account/subscriptions/plans                                                                      GET             @userappstore/stripe-subscriptions     @userappstore/stripe-subscriptions    
 /account/subscriptions/refund-invoice                                                             GET POST        @userappstore/stripe-subscriptions     @userappstore/stripe-subscriptions    
+/account/subscriptions/request-refund                                                             GET POST        @userappstore/stripe-subscriptions     @userappstore/stripe-subscriptions    
 /account/subscriptions/start-subscription                                                         GET POST        @userappstore/stripe-subscriptions     @userappstore/stripe-subscriptions    
 /account/subscriptions/subscription                                                               GET             @userappstore/stripe-subscriptions     @userappstore/stripe-subscriptions    
 /account/subscriptions/subscriptions                                                              GET             @userappstore/stripe-subscriptions     @userappstore/stripe-subscriptions    
@@ -180,6 +181,7 @@ URL ----------------------------------------------------------- AUTH ---- LOCK -
 /administrator/subscriptions/delete-plan                                                          GET POST        @userappstore/stripe-subscriptions     @userappstore/stripe-subscriptions    
 /administrator/subscriptions/delete-product                                                       GET POST        @userappstore/stripe-subscriptions     @userappstore/stripe-subscriptions    
 /administrator/subscriptions/delete-subscription                                                  GET POST        @userappstore/stripe-subscriptions     @userappstore/stripe-subscriptions    
+/administrator/subscriptions/deny-refund                                                          GET POST        @userappstore/stripe-subscriptions     @userappstore/stripe-subscriptions    
 /administrator/subscriptions/edit-plan                                                            GET POST        @userappstore/stripe-subscriptions     @userappstore/stripe-subscriptions    
 /administrator/subscriptions/edit-product                                                         GET POST        @userappstore/stripe-subscriptions     @userappstore/stripe-subscriptions    
 /administrator/subscriptions/flag-charge                                                          GET POST        @userappstore/stripe-subscriptions     @userappstore/stripe-subscriptions    
@@ -197,6 +199,7 @@ URL ----------------------------------------------------------- AUTH ---- LOCK -
 /administrator/subscriptions/publish-product                                                      GET POST        @userappstore/stripe-subscriptions     @userappstore/stripe-subscriptions    
 /administrator/subscriptions/refund                                                               GET             @userappstore/stripe-subscriptions     @userappstore/stripe-subscriptions    
 /administrator/subscriptions/refund-charge                                                        GET POST        @userappstore/stripe-subscriptions     @userappstore/stripe-subscriptions    
+/administrator/subscriptions/refund-requests                                                      GET             @userappstore/stripe-subscriptions     @userappstore/stripe-subscriptions    
 /administrator/subscriptions/refunds                                                              GET             @userappstore/stripe-subscriptions     @userappstore/stripe-subscriptions    
 /administrator/subscriptions/subscription                                                         GET             @userappstore/stripe-subscriptions     @userappstore/stripe-subscriptions    
 /administrator/subscriptions/subscriptions                                                        GET             @userappstore/stripe-subscriptions     @userappstore/stripe-subscriptions    
@@ -253,7 +256,7 @@ URL ----------------------------------------------------------- AUTH ---- LOCK -
 /api/administrator/profile                                                                        GET             @userappstore/dashboard                                                      
 /api/administrator/profiles                                                                       GET             @userappstore/dashboard                                                      
 /api/administrator/profiles-count                                                                 GET             @userappstore/dashboard                                                      
-/api/administrator/reset-account-administrator                            LOCK                    DELETE          @userappstore/dashboard                                                      
+/api/administrator/reset-account-administrator                            LOCK                    PATCH           @userappstore/dashboard                                                      
 /api/administrator/reset-code                                                                     GET             @userappstore/dashboard                                                      
 /api/administrator/reset-codes                                                                    GET             @userappstore/dashboard                                                      
 /api/administrator/reset-codes-count                                                              GET             @userappstore/dashboard                                                      
@@ -271,8 +274,15 @@ URL ----------------------------------------------------------- AUTH ---- LOCK -
 /api/administrator/subscriptions/card-charges-count                                               GET             @userappstore/stripe-subscriptions                                           
 /api/administrator/subscriptions/card-invoices                                                    GET             @userappstore/stripe-subscriptions                                           
 /api/administrator/subscriptions/card-invoices-count                                              GET             @userappstore/stripe-subscriptions                                           
+/api/administrator/subscriptions/card-plans                                                       GET             @userappstore/stripe-subscriptions                                           
+/api/administrator/subscriptions/card-plans-count                                                 GET             @userappstore/stripe-subscriptions                                           
+/api/administrator/subscriptions/card-products                                                    GET             @userappstore/stripe-subscriptions                                           
+/api/administrator/subscriptions/card-products-count                                              GET             @userappstore/stripe-subscriptions                                           
 /api/administrator/subscriptions/card-refunds                                                     GET             @userappstore/stripe-subscriptions                                           
 /api/administrator/subscriptions/card-refunds-count                                               GET             @userappstore/stripe-subscriptions                                           
+/api/administrator/subscriptions/card-subscriptions                                               GET             @userappstore/stripe-subscriptions                                           
+/api/administrator/subscriptions/card-subscriptions-count                                         GET             @userappstore/stripe-subscriptions                                           
+/api/administrator/subscriptions/cards                                                            GET             @userappstore/stripe-subscriptions                                           
 /api/administrator/subscriptions/charge                                                           GET             @userappstore/stripe-subscriptions                                           
 /api/administrator/subscriptions/charges                                                          GET             @userappstore/stripe-subscriptions                                           
 /api/administrator/subscriptions/charges-count                                                    GET             @userappstore/stripe-subscriptions                                           
@@ -343,6 +353,8 @@ URL ----------------------------------------------------------- AUTH ---- LOCK -
 /api/administrator/subscriptions/published-products                                               GET             @userappstore/stripe-subscriptions                                           
 /api/administrator/subscriptions/published-products-count                                         GET             @userappstore/stripe-subscriptions                                           
 /api/administrator/subscriptions/refund                                                           GET             @userappstore/stripe-subscriptions                                           
+/api/administrator/subscriptions/refund-requests                                                  GET             @userappstore/stripe-subscriptions                                           
+/api/administrator/subscriptions/refund-requests-count                                            GET             @userappstore/stripe-subscriptions                                           
 /api/administrator/subscriptions/refunds                                                          GET             @userappstore/stripe-subscriptions                                           
 /api/administrator/subscriptions/refunds-count                                                    GET             @userappstore/stripe-subscriptions                                           
 /api/administrator/subscriptions/reset-customer-coupon                    LOCK                    DELETE          @userappstore/stripe-subscriptions                                           
@@ -356,6 +368,7 @@ URL ----------------------------------------------------------- AUTH ---- LOCK -
 /api/administrator/subscriptions/set-plan-unpublished                     LOCK                    PATCH           @userappstore/stripe-subscriptions                                           
 /api/administrator/subscriptions/set-product-published                    LOCK                    PATCH           @userappstore/stripe-subscriptions                                           
 /api/administrator/subscriptions/set-product-unpublished                  LOCK                    PATCH           @userappstore/stripe-subscriptions                                           
+/api/administrator/subscriptions/set-refund-request-denied                LOCK                    PATCH           @userappstore/stripe-subscriptions                                           
 /api/administrator/subscriptions/set-subscription-coupon                  LOCK                    PATCH           @userappstore/stripe-subscriptions                                           
 /api/administrator/subscriptions/subscription                                                     GET             @userappstore/stripe-subscriptions                                           
 /api/administrator/subscriptions/subscription-charges                                             GET             @userappstore/stripe-subscriptions                                           
@@ -374,7 +387,8 @@ URL ----------------------------------------------------------- AUTH ---- LOCK -
 /api/administrator/subscriptions/unpublished-products-count                                       GET             @userappstore/stripe-subscriptions                                           
 /api/administrator/subscriptions/update-plan                              LOCK                    PATCH           @userappstore/stripe-subscriptions                                           
 /api/administrator/subscriptions/update-product                           LOCK                    PATCH           @userappstore/stripe-subscriptions                                           
-/api/user/account                                               GUEST                             GET             @userappstore/dashboard                                                      
+/api/application-server/publisher                                                                 GET             /src/www                                                                     
+/api/user/account                                                                                 GET             @userappstore/dashboard                                                      
 /api/user/connect/additional-owner                                                                GET             @userappstore/stripe-connect                                                 
 /api/user/connect/additional-owners                                                               GET             @userappstore/stripe-connect                                                 
 /api/user/connect/additional-owners-count                                                         GET             @userappstore/stripe-connect                                                 
@@ -422,9 +436,11 @@ URL ----------------------------------------------------------- AUTH ---- LOCK -
 /api/user/organizations/memberships                                                               GET             @userappstore/organizations                                                  
 /api/user/organizations/memberships-count                                                         GET             @userappstore/organizations                                                  
 /api/user/organizations/open-invitation                                                           GET             @userappstore/organizations                                                  
+/api/user/organizations/open-invitation-organization                                              GET             @userappstore/organizations                                                  
 /api/user/organizations/organization                                                              GET             @userappstore/organizations                                                  
 /api/user/organizations/organization-invitations                                                  GET             @userappstore/organizations                                                  
 /api/user/organizations/organization-invitations-count                                            GET             @userappstore/organizations                                                  
+/api/user/organizations/organization-membership                                                   GET             @userappstore/organizations                                                  
 /api/user/organizations/organization-memberships                                                  GET             @userappstore/organizations                                                  
 /api/user/organizations/organization-memberships-count                                            GET             @userappstore/organizations                                                  
 /api/user/organizations/organizations                                                             GET             @userappstore/organizations                                                  
@@ -469,6 +485,7 @@ URL ----------------------------------------------------------- AUTH ---- LOCK -
 /api/user/subscriptions/create-customer                                   LOCK                    POST            @userappstore/stripe-subscriptions                                           
 /api/user/subscriptions/create-customer-with-card                         LOCK                    POST            @userappstore/stripe-subscriptions                                           
 /api/user/subscriptions/create-refund                                     LOCK                    POST            @userappstore/stripe-subscriptions                                           
+/api/user/subscriptions/create-refund-request                             LOCK                    POST            @userappstore/stripe-subscriptions                                           
 /api/user/subscriptions/create-subscription                               LOCK                    POST            @userappstore/stripe-subscriptions                                           
 /api/user/subscriptions/customer                                                                  GET             @userappstore/stripe-subscriptions                                           
 /api/user/subscriptions/customer-charges                                                          GET             @userappstore/stripe-subscriptions                                           
@@ -505,14 +522,15 @@ URL ----------------------------------------------------------- AUTH ---- LOCK -
 /api/user/subscriptions/product-invoices-count                                                    GET             @userappstore/stripe-subscriptions                                           
 /api/user/subscriptions/product-subscriptions                                                     GET             @userappstore/stripe-subscriptions                                           
 /api/user/subscriptions/product-subscriptions-count                                               GET             @userappstore/stripe-subscriptions                                           
+/api/user/subscriptions/published-coupon                                                          GET             @userappstore/stripe-subscriptions                                           
 /api/user/subscriptions/published-plan                          GUEST                             GET             @userappstore/stripe-subscriptions                                           
 /api/user/subscriptions/published-plans                         GUEST                             GET             @userappstore/stripe-subscriptions                                           
 /api/user/subscriptions/published-plans-count                                                     GET             @userappstore/stripe-subscriptions                                           
 /api/user/subscriptions/published-product                       GUEST                             GET             @userappstore/stripe-subscriptions                                           
-/api/user/subscriptions/published-products                                                        GET             @userappstore/stripe-subscriptions                                           
+/api/user/subscriptions/published-products                      GUEST                             GET             @userappstore/stripe-subscriptions                                           
 /api/user/subscriptions/published-products-count                                                  GET             @userappstore/stripe-subscriptions                                           
 /api/user/subscriptions/refund                                                                    GET             @userappstore/stripe-subscriptions                                           
-/api/user/subscriptions/refunds                                 GUEST                             GET             @userappstore/stripe-subscriptions                                           
+/api/user/subscriptions/refunds                                                                   GET             @userappstore/stripe-subscriptions                                           
 /api/user/subscriptions/refunds-count                                                             GET             @userappstore/stripe-subscriptions                                           
 /api/user/subscriptions/set-customer-coupon                               LOCK                    PATCH           @userappstore/stripe-subscriptions                                           
 /api/user/subscriptions/set-invoice-paid                                  LOCK                    PATCH           @userappstore/stripe-subscriptions                                           

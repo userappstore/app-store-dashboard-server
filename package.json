@@ -13,14 +13,17 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@userappstore/dashboard": "git+https://github.com/userappstore/dashboard",
-    "@userappstore/organizations": "git+https://github.com/userappstore/organizations",
-    "@userappstore/stripe-connect": "git+https://github.com/userappstore/stripe-connect",
-    "@userappstore/stripe-subscriptions": "git+https://github.com/userappstore/stripe-subscriptions"
+    "@userappstore/dashboard": "git+https://github.com/userappstore/dashboard.git",
+    "@userappstore/maxmind-geoip": "git+https://github.com/userappstore/maxmind-geoip.git",
+    "@userappstore/organizations": "git+https://github.com/userappstore/organizations.git",
+    "@userappstore/stripe-connect": "git+https://github.com/userappstore/stripe-connect.git",
+    "@userappstore/stripe-subscriptions": "git+https://github.com/userappstore/stripe-subscriptions.git",
+    "@userappstore/storage-s3": "git+https://github.com/userappstore/storage-s3.git"
   },
   "dashboard": {
     "title": "UserAppStore",
     "modules": [
+      "@userappstore/maxmind-geoip",
       "@userappstore/stripe-subscriptions",
       "@userappstore/stripe-connect",
       "@userappstore/organizations"
