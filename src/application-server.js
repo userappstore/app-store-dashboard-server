@@ -47,6 +47,7 @@ const proxy = util.promisify((method, path, data, accountid, sessionid, callback
       'x-sessionid': sessionid
     }
   }
+  console.log(requestOptions)
   const protocol = baseURLParts[0] === 'https' ? https : http
   const proxyRequest = protocol.request(requestOptions, (proxyResponse) => {
     let body = ''
