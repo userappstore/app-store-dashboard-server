@@ -16,9 +16,9 @@
     "@userappstore/dashboard": "git+https://github.com/userappstore/dashboard.git",
     "@userappstore/maxmind-geoip": "git+https://github.com/userappstore/maxmind-geoip.git",
     "@userappstore/organizations": "git+https://github.com/userappstore/organizations.git",
+    "@userappstore/storage-s3": "git+https://github.com/userappstore/storage-s3.git",
     "@userappstore/stripe-connect": "git+https://github.com/userappstore/stripe-connect.git",
-    "@userappstore/stripe-subscriptions": "git+https://github.com/userappstore/stripe-subscriptions.git",
-    "@userappstore/storage-s3": "git+https://github.com/userappstore/storage-s3.git"
+    "@userappstore/stripe-subscriptions": "git+https://github.com/userappstore/stripe-subscriptions.git"
   },
   "dashboard": {
     "title": "UserAppStore",
@@ -29,13 +29,14 @@
       "@userappstore/organizations"
     ],
     "content": [
-      "/src/content/installed-apps-navigation.js",
-      "/src/content/opened-app-navigation.js",
+      "/src/content/installs-navbar.js",
+      "/src/content/install-account-links.js",
+      "/src/content/opened-install-navbar.js",
       "/src/content/app-administration-links.js"
     ],
     "server": [
-      "/src/server/connect-appid-in-url.js",
-      "/src/server/bind-customer.js",
+      "/src/server/appid-in-url.js",
+      "/src/server/installid-in-url.js",
       "/src/server/create-card-without-lock.js",
       "/src/server/create-subscription-without-lock.js"
     ]

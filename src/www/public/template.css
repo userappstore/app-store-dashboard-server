@@ -3,16 +3,16 @@ body { font-family: Roboto, Helvetica, Arial, sans-serif }
 .dashboard { background-color: #036; color: rgba(255, 255, 255, 0.75); fill: rgba(255, 255, 255, 0.75) }
 
 .header { display: flex; height: 3rem }
-.header svg { fill: inherit; display: inline-block; width: 1.5rem; height: 1.5rem }
+.header svg { fill: inherit; display: block; float: left; width: 1.5rem; height: 1.5rem; margin: 0.75rem 0 0 0.75rem }
 .header svg,
 .header div span { opacity: 0.7 }
 .header a,
 .header a:hover { color: inherit }
-.header svg { margin: 0.75rem 0 0 0.75rem }
-.header .menus { height: 3rem; line-height: 3rem; min-width: 10rem; margin-right: 0 }
+.header span.heading { float: left; display: block }
+.header .menus { position: absolute; right: 1rem; height: 3rem; line-height: 3rem; min-width: 10rem; text-align: right }
 .header .menus .menu { min-height: 3rem }
 .header .menus menu { min-height: 3rem; top: 2.75rem; right: -0.75rem; background-color: #FFF }
-.header div:hover svg { opacity: 1 }
+
 .header .heading,
 .header .heading a { height: 3rem; line-height: 3rem; opacity: 0.8; font-size: 1rem }
 
@@ -27,6 +27,8 @@ body { font-family: Roboto, Helvetica, Arial, sans-serif }
 .navigation img { width: 3rem; height: 3rem }
 
 .application-navigation { background-color: rgba(0, 0, 0, 0.25); color: inherit; height: 2.4rem; line-height: 2.4rem }
+.application-navigation menu { margin: 0; padding: 0 }
+.application-navigation li { display: inline-block }
 .application-navigation svg { min-width: 1rem; min-height: 0.8rem; max-width: 1rem; max-height: 0.8rem; fill: inherit; display: inline-block; margin-top: 1rem }
 .application-navigation a { cursor: pointer; opacity: 0.7 }
 .application-navigation span:first-of-type { opacity: 1.0 }
@@ -40,9 +42,8 @@ body { font-family: Roboto, Helvetica, Arial, sans-serif }
 .drop-down ol { right: -1rem }
 .account svg { margin-right: 0.75rem }
 
-.apps { margin-left: 0; display: flex; height: 3rem; line-height: 3rem; cursor: pointer; filter: drop-shadow(0 0 1rem rgba(33, 66, 99, 0.75)) }
+.apps { width: 100%; margin-left: 0; display: flex; height: 3rem; line-height: 3rem; filter: drop-shadow(0 0 1rem rgba(33, 66, 99, 0.75)) }
 .apps .hidden { display: none; position: absolute; top: 3rem; z-index: 1; width: 100% }
-.apps:hover .hidden { display: block}
 .apps .heading,
 .apps .heading a { height: 3rem; line-height: 3rem; opacity: 0.7; font-size: 0.9rem }
 .apps .heading { padding-left: 0.5rem }
@@ -59,6 +60,17 @@ body { font-family: Roboto, Helvetica, Arial, sans-serif }
 .apps menu a { opacity: 0.7; font-size: 0.9rem; color: inherit; padding: 0.75rem; text-decoration: none; line-height: 1.5rem }
 .apps menu a:hover,
 .apps menu a:focus { opacity: 1 }
-.apps:hover menu menu,
-.apps menu menu { position: initial; width: auto; background-color: inherit; color: inherit }
-.apps menu menu { display: inline-block }
+
+.app-account,
+.app-account a { background-color: #EEE !important }
+.app-account-title { margin-right: 1rem; margin-top: 0.5rem; color: 333; font-weight: bold }
+.app-account a { color: #333 !important }
+.app-account a:hover { color: #666 !important }
+
+.trigger { display: flex }
+.trigger:hover .hidden { display: block}
+.trigger:hover menu menu,
+.trigger menu menu { position: initial; width: auto; background-color: inherit; color: inherit }
+.trigger menu menu { display: inline-block }
+.trigger:hover svg,
+.trigger:hover div span { opacity: 1 }

@@ -1,9 +1,8 @@
 const dashboard = require('@userappstore/dashboard')
-const defaultAppID = global.appid || 'app'
 
 module.exports = {
   after: async (req, res) => {
-    if (!req.applicationServer || !req.account || req.appid === defaultAppID) {
+    if (!req.applicationServer || !req.account || req.appid === global.appid) {
       return
     }
     if (req.urlPath !== `/api/user/subscriptions/create-subscription`) {

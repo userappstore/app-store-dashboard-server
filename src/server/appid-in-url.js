@@ -6,9 +6,7 @@ module.exports = {
       return
     }
     if (!req.urlPath.startsWith('/administrator/') &&
-        !req.urlPath.startsWith('/account/') &&
-        !req.urlPath.startsWith('/api/administrator/') &&
-        !req.urlPath.startsWith('/api/user/')) {
+        !req.urlPath.startsWith('/api/administrator/')) {
       return
     }
     const urlParts = req.urlPath.split('/')
@@ -27,9 +25,6 @@ module.exports = {
       destination = urlParts[3]
     }
     if (destination !== 'subscriptions' && destination !== 'organizations') {
-      return
-    }
-    if (appid.split('-').length !== 3) {
       return
     }
     const app = await applicationServer.get(`/api/user/userappstore/app?appid=${appid}`, req.account.accountid, req.session.sessionid)

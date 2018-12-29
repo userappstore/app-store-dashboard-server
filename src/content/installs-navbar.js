@@ -1,12 +1,12 @@
-const dashboard = require('@userappstore/dashboard')
 const applicationServer = require('../application-server.js')
+const dashboard = require('@userappstore/dashboard')
 
 module.exports = {
   template: async (req, res, templateDoc) => {
     if (!req.account) {
       return
     }
-    const installs = await applicationServer.get(`/api/user/userappstore/installs?accountid=${req.account.accountid}`, req.account.accountid, req.session.sessionid)
+    const installs = await applicationServer.get(`/api/user/userappstore/installs?accountid=${req.account.accountid}&all=true`, req.account.accountid, req.session.sessionid)
     if (!installs || !installs.length) {
       const ungroupedMenu = templateDoc.getElementById('ungrouped-menu')
       ungroupedMenu.parentNode.removeChild(ungroupedMenu)
@@ -14,7 +14,7 @@ module.exports = {
     }
     const noInstalls = templateDoc.getElementById('no-installs')
     noInstalls.parentNode.removeChild(noInstalls)
-    const collections = await applicationServer.get(`/api/user/userappstore/collections?accountid=${req.account.accountid}`, req.account.accountid, req.session.sessionid)
+    const collections = await applicationServer.get(`/api/user/userappstore/collections?accountid=${req.account.accountid}&all=true`, req.account.accountid, req.session.sessionid)
     if (!collections || !collections.length) {
       dashboard.HTML.renderList(templateDoc, installs, 'install-link', 'ungrouped-menu')
       return

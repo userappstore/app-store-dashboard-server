@@ -30,8 +30,9 @@ Content handlers:
 @userappstore/dashboard/src/content/session-impersonation-header.js
 @userappstore/dashboard/src/content/session-unlocked-header.js
 @userappstore/stripe-subscriptions/src/content/content-security-policy.js
-/src/content/installed-apps-navigation.js
-/src/content/opened-app-navigation.js
+/src/content/installs-navbar.js
+/src/content/install-account-links.js
+/src/content/opened-install-navbar.js
 /src/content/app-administration-links.js
 
 Server handlers:
@@ -39,8 +40,8 @@ Server handlers:
 @userappstore/stripe-subscriptions/src/server/bind-stripekey.js
 userappstore/src/www/server/bind-stripekey.js
 @userappstore/stripe-connect/src/server/stripe-file-upload.js
-/src/server/connect-appid-in-url.js
-/src/server/bind-customer.js
+/src/server/appid-in-url.js
+/src/server/installid-in-url.js
 /src/server/create-card-without-lock.js
 /src/server/create-subscription-without-lock.js
 
