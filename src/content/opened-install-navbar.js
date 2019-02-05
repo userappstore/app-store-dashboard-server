@@ -1,29 +1,40 @@
 module.exports = {
-  page: (req, res, doc) => {
-    if (req.urlPath.indexOf('/install/') !== 0 && req.urlPath.indexOf('/project/') !== 0) {
+  page: (req, _, doc) => {
+    if (!req.install || !req.urlPath.startsWith('/install/')) {
       return
     }
+    // extract the app navigation from the page
     const appNavigation = doc.getElementById('app-navbar')
     req.data = { appNavigation }
   },
-  template: async (req, res, templateDoc) => {
-    if (req.appid === global.appid) {
-      return
-    }
-    // remove the navigation bar when not needed
+  template: async (req, _, templateDoc) => {
     const applicationNavigation = templateDoc.getElementById('application-navigation')
-    if (req.urlPath.indexOf('/install/') !== 0 && req.urlPath.indexOf('/project/') !== 0) {
-      applicationNavigation.parentNode.removeChild(applicationNavigation)
-      return
+    if (!req.install || 
+        !req.data || 
+        !req.data.appNavigation || 
+        !req.data.appNavigation.child || 
+        !req.data.appNavigation.child.length || 
+        !req.urlPath.startsWith('/install/')) {
+      return applicationNavigation.setAttribute('style', 'display: none')
     }
-    // reduced iframe sandbox for installs and projects
-    const iframe = templateDoc.getElementById('application-iframe')
-    iframe.attr.sandbox = 'allow-top-navigation allow-scripts allow-forms'
-    // apply the install or project's navigation or remove it 
-    if (!req.data || !req.data.appNavigation) {
-      applicationNavigation.parentNode.removeChild(applicationNavigation)
-      return
+    // add relative links and text-only spans
+    applicationNavigation.setAttribute('style', '')
+    applicationNavigation.child[0].child = []
+    const contents = req.data.appNavigation.child
+    for (const item of contents) {
+      if (item.tag !== 'a' && item.tag !== 'span') {
+        continue
+      }
+      if (item.tag === 'span' && (item.child.length > 1 || item.child[0].node !== 'text')) {
+        continue
+      }
+      if (item.tag === 'a' && (!item.attr.href || !item.attr.href.startsWith('/'))) {
+        continue
+      }
+      if (item.tag === 'a' && (item.child.length > 1 || item.child[0].node !== 'text')) {
+        continue
+      }
+      applicationNavigation.child[0].child.push(item)
     }
-    applicationNavigation.child[0].child = req.data.appNavigation.child    
   }
 }

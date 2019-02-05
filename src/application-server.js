@@ -1,26 +1,28 @@
-const bcrypt = require('bcrypt-node')
+const bcrypt = require('@userappstore/dashboard/src/bcrypt.js')
 const http = require('http')
 const https = require('https')
 const querystring = require('querystring')
 const util = require('util')
 
 module.exports = {
-  get: async (path, accountid, sessionid) => {
-    return proxy('GET', path, null, accountid, sessionid)
+  get: async (path, accountid, sessionid, alternativeServer, alternativeToken) => {
+    return proxy('GET', path, null, accountid, sessionid, alternativeServer, alternativeToken)
   },
-  post: async (path, data, accountid, sessionid) => {
-    return proxy('POST', path, data, accountid, sessionid)
+  post: async (path, data, accountid, sessionid, alternativeServer, alternativeToken) => {
+    return proxy('POST', path, data, accountid, sessionid, alternativeServer, alternativeToken)
   },
-  patch: async (path, data, accountid, sessionid) => {
-    return proxy('PATCH', path, data, accountid, sessionid)
+  patch: async (path, data, accountid, sessionid, alternativeServer, alternativeToken) => {
+    return proxy('PATCH', path, data, accountid, sessionid, alternativeServer, alternativeToken)
   },
-  delete: async (path, data, accountid, sessionid) => {
-    return proxy('DELETE', path, data, accountid, sessionid)
+  delete: async (path, data, accountid, sessionid, alternativeServer, alternativeToken) => {
+    return proxy('DELETE', path, data, accountid, sessionid, alternativeServer, alternativeToken)
   }
 }
 
-const proxy = util.promisify((method, path, data, accountid, sessionid, callback) => {
-  const baseURLParts = process.env.APPLICATION_SERVER.split('://')
+const proxy = util.promisify((method, path, data, accountid, sessionid, alternativeServer, alternativeToken, callback) => {
+  const applicationServer = alternativeServer || process.env.APPLICATION_SERVER
+  const applicationServerToken = alternativeToken || process.env.APPLICATION_SERVER_TOKEN
+  const baseURLParts = applicationServer.split('://')
   let host, port
   const colon = baseURLParts[1].indexOf(':')
   if (colon > -1) {
@@ -33,12 +35,12 @@ const proxy = util.promisify((method, path, data, accountid, sessionid, callback
     port = 80
     host = baseURLParts[1]
   }
-  const salt = bcrypt.genSaltSync(1)
+  const salt = bcrypt.genSaltSync(4)
   let token
   if (accountid) {
-    token = bcrypt.hashSync(`${process.env.APPLICATION_SERVER_TOKEN}/${accountid}/${sessionid}`, salt)
+    token = bcrypt.hashSync(`${applicationServerToken}/${accountid}/${sessionid}`, salt)
   } else {
-    token = bcrypt.hashSync(process.env.APPLICATION_SERVER_TOKEN, salt)
+    token = bcrypt.hashSync(applicationServerToken, salt)
   }
   const requestOptions = {
     host,
@@ -69,6 +71,9 @@ const proxy = util.promisify((method, path, data, accountid, sessionid, callback
           body = JSON.parse(body)
         }
         return callback(null, body)
+      }
+      if (process.env.DEBUG_ERRORS) {
+        console.log('application-server', proxyResponse.statusCode, body.toString())
       }
       throw new Error('application-error')
     })

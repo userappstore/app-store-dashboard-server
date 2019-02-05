@@ -7,7 +7,7 @@ module.exports = {
       return
     }
     const installs = await applicationServer.get(`/api/user/userappstore/installs?accountid=${req.account.accountid}&all=true`, req.account.accountid, req.session.sessionid)
-    if (!installs || !installs.length) {
+      if (!installs || !installs.length) {
       const ungroupedMenu = templateDoc.getElementById('ungrouped-menu')
       ungroupedMenu.parentNode.removeChild(ungroupedMenu)
       return
@@ -26,7 +26,9 @@ module.exports = {
       appIndex[install.installid] = install
     }
     for (const collection of collections) {
+      const collectionContainer = templateDoc.getElementById(collection.collectionid)
       if (!collection.items || !collection.items.length) {
+        collectionContainer.setAttribute('style', 'display: none')
         continue
       }
       const apps = []
@@ -36,6 +38,8 @@ module.exports = {
       }
       if (apps.length) {
         dashboard.HTML.renderList(templateDoc, apps, 'install-link', `installs-list-${collection.collectionid}`)
+      } else {
+        collectionContainer.setAttribute('style', 'display: none')
       }
     }
     const unused = []

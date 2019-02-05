@@ -50,6 +50,11 @@ body { font-family: Roboto, Helvetica, Arial, sans-serif }
 .apps menu,
 .apps menu li,
 .apps menu li a { display: inline }
+.apps menu.grouped { display: block }
+.apps menu.grouped { display: block }
+.apps menu.grouped,
+.apps menu.grouped li,
+.apps menu.grouped a { height: 3rem; line-height: 3rem }
 .apps menu.ungrouped { display: block }
 .apps menu.ungrouped,
 .apps menu.ungrouped li,

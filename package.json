@@ -29,16 +29,27 @@
       "@userappstore/organizations"
     ],
     "content": [
-      "/src/content/installs-navbar.js",
-      "/src/content/install-account-links.js",
+      "/src/content/installs-and-collections-menu.js",
+      "/src/content/remap-install-links.js",
+      "/src/content/remap-project-links.js",
+      "/src/content/remap-administrator-links.js",
       "/src/content/opened-install-navbar.js",
-      "/src/content/app-administration-links.js"
+      "/src/content/previewed-project-navbar.js",
+      "/src/content/install-account-menu.js",
+      "/src/content/server-administrator-menu.js",
+      "/src/content/reduced-iframe-sandbox.js"
     ],
     "server": [
-      "/src/server/appid-in-url.js",
+      "/src/server/skip-urls-from-within-templates.js",
+      "/src/server/api-as-alternative-server.js",
+      "/src/server/uploading-app-store-assets.js",
+      "/src/server/serverid-in-url.js",
       "/src/server/installid-in-url.js",
-      "/src/server/create-card-without-lock.js",
-      "/src/server/create-subscription-without-lock.js"
+      "/src/server/projectid-in-url.js"
     ]
+  },
+  "devDependencies": {
+    "puppeteer": "^1.11.0",
+    "puppeteer-core": "^1.11.0"
   }
 }

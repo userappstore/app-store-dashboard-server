@@ -20,7 +20,7 @@
                 <div id="collections-menu"></div>
                 <menu id="ungrouped-menu" class="ungrouped"></menu>
                 <menu id="no-installs" class="ungrouped">
-                  <p>When you install apps a shortcut is added to this menu. You can customize your menus with collections.</p>
+                  <p>Shortcuts to the apps and projects you install and URLs you import are added here. You can customize this menu with color-coded collections.</p>
                 </menu>
               </div>
             </section>
@@ -58,18 +58,20 @@
           <menu></menu>
         </section>
       </div>
-      <iframe id="application-iframe" class="application" sandbox="allow-top-navigation allow-scripts allow-forms allow-same-origin allow-popups" />
+      <iframe id="application-iframe" name="application-iframe" class="application" sandbox="allow-top-navigation allow-scripts allow-forms allow-same-origin allow-popups"></iframe>
     </div>
     </header>
   </body>
-  <template id="administrator-menu-container">
-    <menu id="administrator-menu"></menu>
-  </template>
   <template id="heading-link">
     <a href="/home">UserAppStore</a>
   </template>
   <template id="menu-link">
     <li><a href="${link.href}">${link.text}</a></li>
+  </template>
+  <template id="administrating-application-server">
+    <a href="/application-servers">Application servers</a>
+    <span>/</span>
+    <a href="/application-server?serverid=${server.serverid}">${server.serverid}</a>
   </template>
   <template id="navigation-link">
     <a href="${url}">${text}</a>
@@ -77,22 +79,25 @@
   <template id="collection-group">
     <div id="${collection.collectionid}" style="background-color: ${collection.background}; color: ${collection.text}" class="collection">
       <span class="heading">${collection.name}</span>
-      <menu id="installs-list-${collection.collectionid}"></menu>
+      <menu id="installs-list-${collection.collectionid}" class="grouped"></menu>
     </div>
   </template>
   <template id="install-link">
     <a href="/install/${install.installid}/home">${install.text}</a>
   </template>
-  <template id="app-administrator-menu">
-    <li id="administrator-${app.appid}" class="app-account">
-      <span>Administrate ${app.appid}</span>
-      <a href="/administrator/${app.appid}/organizations">Manage organizations</a>
-      <a href="/administrator/${app.appid}/subscriptions">Subscriptions &amp; billing</a>
+  <template id="server-administrator-menu">
+    <li id="administrator-${server.serverid}">
+      <span class="app-account-title">Server administrator</span>
+      <div class="app-account">
+        <a href="/administrator/${server.serverid}">Dashboard administration</a>
+        <a href="/administrator/${server.serverid}/organizations">Manage organizations</a>
+        <a href="/administrator/${server.serverid}/subscriptions">Subscriptions &amp; billing</a>
+      </div>
     </li>
   </template>
   <template id="install-account-menu">
     <li id="account-${install.installid}">
-      <span class="app-account-title">Install account settings</span>
+      <span class="app-account-title">${install.installid} settings</span>
       <div class="app-account">
         <a href="/account/${install.installid}/organizations">Manage organizations</a>
         <a href="/account/${install.installid}/subscriptions">Subscriptions &amp; billing</a>

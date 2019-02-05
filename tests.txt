@@ -1,0 +1,353 @@
+
+
+  tests/adding-subscription-for-organization-member
+server.receive /
+api... / undefined
+server.authenticate guest
+server.receive /public/pure-min.css
+server.receive /public/custom.css
+server.receive /favicon.ico
+server.receive /account/register
+api... /account/register undefined
+server.authenticate guest
+server.receive /public/content.css
+server.receive /home
+api... /home undefined
+server.authenticate (administrator) account_c533e8b0928b818ecfcd3c6e64cc05bd session_d8a2a83f0c91776c757efb4a23af68de
+server.receive /public/dashboard.css
+server.receive /public/template.css
+server.receive /administrator
+api... /administrator undefined
+server.authenticate (administrator) account_c533e8b0928b818ecfcd3c6e64cc05bd session_d8a2a83f0c91776c757efb4a23af68de
+server.receive /administrator/accounts
+api... /administrator/accounts undefined
+server.authenticate (administrator) account_c533e8b0928b818ecfcd3c6e64cc05bd session_d8a2a83f0c91776c757efb4a23af68de
+server.receive /
+api... / undefined
+server.authenticate guest
+server.receive /public/pure-min.css
+server.receive /public/custom.css
+server.receive /favicon.ico
+server.receive /account/register
+api... /account/register undefined
+server.authenticate guest
+server.receive /public/content.css
+server.receive /administrator/accounts
+api... /administrator/accounts undefined
+server.authenticate (administrator) account_c533e8b0928b818ecfcd3c6e64cc05bd session_d8a2a83f0c91776c757efb4a23af68de
+server.receive /home
+api... /home undefined
+server.authenticate (user) account_90eaf8f2a9a59df59ec0a07290cce66a session_1caab92b3ef123a3101a597504765f5b
+server.receive /public/dashboard.css
+server.receive /public/template.css
+server.receive /projects
+api... /projects undefined
+server.authenticate (user) account_90eaf8f2a9a59df59ec0a07290cce66a session_1caab92b3ef123a3101a597504765f5b
+server.receive /create-project
+api... /create-project undefined
+server.authenticate (user) account_90eaf8f2a9a59df59ec0a07290cce66a session_1caab92b3ef123a3101a597504765f5b
+server.receive /create-project
+api... /create-project undefined
+server.authenticate (user) account_90eaf8f2a9a59df59ec0a07290cce66a session_1caab92b3ef123a3101a597504765f5b
+server.receive /project?projectid=broken-bush-1118
+api... /project?projectid=broken-bush-1118 undefined
+server.authenticate (user) account_90eaf8f2a9a59df59ec0a07290cce66a session_1caab92b3ef123a3101a597504765f5b
+server.receive /public/icons/js-file.png
+server.receive /public/icons/css-file.png
+server.receive /public/icons/html-file.png
+server.receive /share-project?projectid=broken-bush-1118
+api... /share-project?projectid=broken-bush-1118 undefined
+server.authenticate (user) account_90eaf8f2a9a59df59ec0a07290cce66a session_1caab92b3ef123a3101a597504765f5b
+server.receive /api/user/organizations/organizations?accountid=account_90eaf8f2a9a59df59ec0a07290cce66a
+api... /api/user/organizations/organizations?accountid=account_90eaf8f2a9a59df59ec0a07290cce66a http://localhost:8001
+server.receive /share-project?projectid=broken-bush-1118
+api... /share-project?projectid=broken-bush-1118 undefined
+server.authenticate (user) account_90eaf8f2a9a59df59ec0a07290cce66a session_1caab92b3ef123a3101a597504765f5b
+server.receive /api/user/organizations/organizations?accountid=account_90eaf8f2a9a59df59ec0a07290cce66a
+api... /api/user/organizations/organizations?accountid=account_90eaf8f2a9a59df59ec0a07290cce66a http://localhost:8001
+server.receive /project?projectid=broken-bush-1118
+api... /project?projectid=broken-bush-1118 undefined
+server.authenticate (user) account_90eaf8f2a9a59df59ec0a07290cce66a session_1caab92b3ef123a3101a597504765f5b
+server.receive /public/icons/js-file.png
+server.receive /public/icons/css-file.png
+server.receive /public/icons/html-file.png
+server.receive /project-ide?projectid=broken-bush-1118&filename=home.html
+api... /project-ide?projectid=broken-bush-1118&filename=home.html undefined
+server.authenticate (user) account_90eaf8f2a9a59df59ec0a07290cce66a session_1caab92b3ef123a3101a597504765f5b
+server.receive /public/ide.js
+server.receive /public/request.js
+server.receive /public/ace/ace.js
+server.receive /public/ace/mode-html.js
+server.receive /public/ace/mode-json.js
+server.receive /public/ace/mode-css.js
+server.receive /public/ace/mode-javascript.js
+server.receive /public/ace/theme-twilight.js
+server.receive /public/ace/worker-html.js
+server.receive /project-ide?projectid=broken-bush-1118
+api... /project-ide?projectid=broken-bush-1118 undefined
+server.authenticate (user) account_90eaf8f2a9a59df59ec0a07290cce66a session_1caab92b3ef123a3101a597504765f5b
+server.receive /public/ace/worker-javascript.js
+server.receive /public/ace/worker-css.js
+server.receive /project-ide?projectid=broken-bush-1118
+api... /project-ide?projectid=broken-bush-1118 undefined
+server.authenticate (user) account_90eaf8f2a9a59df59ec0a07290cce66a session_1caab92b3ef123a3101a597504765f5b
+server.receive /project-ide?projectid=broken-bush-1118
+api... /project-ide?projectid=broken-bush-1118 undefined
+server.authenticate (user) account_90eaf8f2a9a59df59ec0a07290cce66a session_1caab92b3ef123a3101a597504765f5b
+server.receive /account/connect
+api... /account/connect undefined
+server.authenticate (user) account_90eaf8f2a9a59df59ec0a07290cce66a session_1caab92b3ef123a3101a597504765f5b
+server.receive /account/connect/create-registration
+api... /account/connect/create-registration undefined
+server.authenticate (user) account_90eaf8f2a9a59df59ec0a07290cce66a session_1caab92b3ef123a3101a597504765f5b
+server.receive /account/connect/create-registration
+api... /account/connect/create-registration undefined
+server.authenticate (user) account_90eaf8f2a9a59df59ec0a07290cce66a session_1caab92b3ef123a3101a597504765f5b
+server.receive /account/authorize
+api... /account/authorize undefined
+server.authenticate (user) account_90eaf8f2a9a59df59ec0a07290cce66a session_1caab92b3ef123a3101a597504765f5b
+server.receive /account/authorize
+api... /account/authorize undefined
+server.authenticate (user) account_90eaf8f2a9a59df59ec0a07290cce66a session_1caab92b3ef123a3101a597504765f5b
+server.receive /account/connect/create-registration
+api... /account/connect/create-registration undefined
+server.authenticate (user) account_90eaf8f2a9a59df59ec0a07290cce66a session_1caab92b3ef123a3101a597504765f5b
+server.receive /account/connect/stripe-account?stripeid=acct_1DxhPULcbdfBdp35
+api... /account/connect/stripe-account?stripeid=acct_1DxhPULcbdfBdp35 undefined
+server.authenticate (user) account_90eaf8f2a9a59df59ec0a07290cce66a session_1caab92b3ef123a3101a597504765f5b
+server.receive /account/connect/edit-individual-registration?stripeid=acct_1DxhPULcbdfBdp35&returnURL=/account/connect/stripe-account%3Fstripeid=acct_1DxhPULcbdfBdp35
+api... /account/connect/edit-individual-registration?stripeid=acct_1DxhPULcbdfBdp35&returnURL=/account/connect/stripe-account%3Fstripeid=acct_1DxhPULcbdfBdp35 undefined
+server.authenticate (user) account_90eaf8f2a9a59df59ec0a07290cce66a session_1caab92b3ef123a3101a597504765f5b
+server.receive /public/connect.css
+server.receive /account/connect/edit-individual-registration?stripeid=acct_1DxhPULcbdfBdp35&returnURL=/account/connect/stripe-account%3Fstripeid=acct_1DxhPULcbdfBdp35
+api... /account/connect/edit-individual-registration?stripeid=acct_1DxhPULcbdfBdp35&returnURL=/account/connect/stripe-account%3Fstripeid=acct_1DxhPULcbdfBdp35 undefined
+server.authenticate (user) account_90eaf8f2a9a59df59ec0a07290cce66a session_1caab92b3ef123a3101a597504765f5b
+server.receive /account/connect/stripe-account?stripeid=acct_1DxhPULcbdfBdp35
+api... /account/connect/stripe-account?stripeid=acct_1DxhPULcbdfBdp35 undefined
+server.authenticate (user) account_90eaf8f2a9a59df59ec0a07290cce66a session_1caab92b3ef123a3101a597504765f5b
+server.receive /account/connect/edit-payment-information?stripeid=acct_1DxhPULcbdfBdp35
+api... /account/connect/edit-payment-information?stripeid=acct_1DxhPULcbdfBdp35 undefined
+server.authenticate (user) account_90eaf8f2a9a59df59ec0a07290cce66a session_1caab92b3ef123a3101a597504765f5b
+server.receive /account/connect/edit-payment-information?stripeid=acct_1DxhPULcbdfBdp35
+api... /account/connect/edit-payment-information?stripeid=acct_1DxhPULcbdfBdp35 undefined
+server.authenticate (user) account_90eaf8f2a9a59df59ec0a07290cce66a session_1caab92b3ef123a3101a597504765f5b
+server.receive /account/connect/submit-individual-registration?stripeid=acct_1DxhPULcbdfBdp35
+api... /account/connect/submit-individual-registration?stripeid=acct_1DxhPULcbdfBdp35 undefined
+server.authenticate (user) account_90eaf8f2a9a59df59ec0a07290cce66a session_1caab92b3ef123a3101a597504765f5b
+server.receive /account/connect/submit-individual-registration?stripeid=acct_1DxhPULcbdfBdp35
+api... /account/connect/submit-individual-registration?stripeid=acct_1DxhPULcbdfBdp35 undefined
+server.authenticate (user) account_90eaf8f2a9a59df59ec0a07290cce66a session_1caab92b3ef123a3101a597504765f5b
+server.receive /account/connect/stripe-account?stripeid=acct_1DxhPULcbdfBdp35
+api... /account/connect/stripe-account?stripeid=acct_1DxhPULcbdfBdp35 undefined
+server.authenticate (user) account_90eaf8f2a9a59df59ec0a07290cce66a session_1caab92b3ef123a3101a597504765f5b
+server.receive /home
+api... /home undefined
+server.authenticate (user) account_90eaf8f2a9a59df59ec0a07290cce66a session_1caab92b3ef123a3101a597504765f5b
+server.receive /apps
+api... /apps undefined
+server.authenticate (user) account_90eaf8f2a9a59df59ec0a07290cce66a session_1caab92b3ef123a3101a597504765f5b
+server.receive /create-app
+api... /create-app undefined
+server.authenticate (user) account_90eaf8f2a9a59df59ec0a07290cce66a session_1caab92b3ef123a3101a597504765f5b
+server.receive /api/user/connect/stripe-accounts?accountid=account_90eaf8f2a9a59df59ec0a07290cce66a&all=true
+api... /api/user/connect/stripe-accounts?accountid=account_90eaf8f2a9a59df59ec0a07290cce66a&all=true http://localhost:8001
+server.receive /create-app
+api... /create-app undefined
+server.authenticate (user) account_90eaf8f2a9a59df59ec0a07290cce66a session_1caab92b3ef123a3101a597504765f5b
+server.receive /api/user/connect/stripe-accounts?accountid=account_90eaf8f2a9a59df59ec0a07290cce66a&all=true
+api... /api/user/connect/stripe-accounts?accountid=account_90eaf8f2a9a59df59ec0a07290cce66a&all=true http://localhost:8001
+server.receive /api/user/connect/stripe-account?stripeid=acct_1DxhPULcbdfBdp35
+api... /api/user/connect/stripe-account?stripeid=acct_1DxhPULcbdfBdp35 http://localhost:8001
+server.receive /app?appid=test-app-1548709919
+api... /app?appid=test-app-1548709919 undefined
+server.authenticate (user) account_90eaf8f2a9a59df59ec0a07290cce66a session_1caab92b3ef123a3101a597504765f5b
+server.receive /administrator/server_AscPBOoXmLyLJHk6/subscriptions
+api... /administrator/server_AscPBOoXmLyLJHk6/subscriptions undefined
+server.authenticate (user) account_90eaf8f2a9a59df59ec0a07290cce66a session_1caab92b3ef123a3101a597504765f5b
+server.receive /application-server-owner-setup?serverid=server_AscPBOoXmLyLJHk6
+api... /application-server-owner-setup?serverid=server_AscPBOoXmLyLJHk6 undefined
+server.authenticate (user) account_90eaf8f2a9a59df59ec0a07290cce66a session_1caab92b3ef123a3101a597504765f5b
+server.receive /api/user/account?accountid=account_90eaf8f2a9a59df59ec0a07290cce66a
+api... /api/user/account?accountid=account_90eaf8f2a9a59df59ec0a07290cce66a http://localhost:8001
+server.receive /api/user/profiles?accountid=account_90eaf8f2a9a59df59ec0a07290cce66a
+api... /api/user/profiles?accountid=account_90eaf8f2a9a59df59ec0a07290cce66a http://localhost:8001
+server.receive /application-server-owner-setup?serverid=server_AscPBOoXmLyLJHk6
+api... /application-server-owner-setup?serverid=server_AscPBOoXmLyLJHk6 undefined
+server.authenticate (user) account_90eaf8f2a9a59df59ec0a07290cce66a session_1caab92b3ef123a3101a597504765f5b
+server.receive /api/user/account?accountid=account_90eaf8f2a9a59df59ec0a07290cce66a
+api... /api/user/account?accountid=account_90eaf8f2a9a59df59ec0a07290cce66a http://localhost:8001
+server.receive /api/user/profiles?accountid=account_90eaf8f2a9a59df59ec0a07290cce66a
+api... /api/user/profiles?accountid=account_90eaf8f2a9a59df59ec0a07290cce66a http://localhost:8001
+server.receive /api/application-server/update-default-profile?accountid=account_90eaf8f2a9a59df59ec0a07290cce66a
+api... /api/application-server/update-default-profile?accountid=account_90eaf8f2a9a59df59ec0a07290cce66a http://localhost:8001
+server.receive /api/application-server/create-owner?serverid=server_AscPBOoXmLyLJHk6
+api... /api/application-server/create-owner?serverid=server_AscPBOoXmLyLJHk6 http://localhost:8001
+server.receive /administrator/server_AscPBOoXmLyLJHk6
+api... /administrator/server_AscPBOoXmLyLJHk6 undefined
+server.authenticate (user) account_90eaf8f2a9a59df59ec0a07290cce66a session_1caab92b3ef123a3101a597504765f5b
+server.receive /administrator/server_AscPBOoXmLyLJHk6/subscriptions
+api... /administrator/server_AscPBOoXmLyLJHk6/subscriptions undefined
+server.authenticate (user) account_90eaf8f2a9a59df59ec0a07290cce66a session_1caab92b3ef123a3101a597504765f5b
+server.receive /administrator/server_AscPBOoXmLyLJHk6/subscriptions/create-product
+api... /administrator/server_AscPBOoXmLyLJHk6/subscriptions/create-product undefined
+server.authenticate (user) account_90eaf8f2a9a59df59ec0a07290cce66a session_1caab92b3ef123a3101a597504765f5b
+server.receive /administrator/server_AscPBOoXmLyLJHk6/subscriptions/create-product
+api... /administrator/server_AscPBOoXmLyLJHk6/subscriptions/create-product undefined
+server.authenticate (user) account_90eaf8f2a9a59df59ec0a07290cce66a session_1caab92b3ef123a3101a597504765f5b
+server.receive /administrator/server_AscPBOoXmLyLJHk6/subscriptions/product?productid=prod_EQYXwstX1NG5vq
+api... /administrator/server_AscPBOoXmLyLJHk6/subscriptions/product?productid=prod_EQYXwstX1NG5vq undefined
+server.authenticate (user) account_90eaf8f2a9a59df59ec0a07290cce66a session_1caab92b3ef123a3101a597504765f5b
+server.receive /administrator/server_AscPBOoXmLyLJHk6/subscriptions/publish-product?productid=prod_EQYXwstX1NG5vq
+api... /administrator/server_AscPBOoXmLyLJHk6/subscriptions/publish-product?productid=prod_EQYXwstX1NG5vq undefined
+server.authenticate (user) account_90eaf8f2a9a59df59ec0a07290cce66a session_1caab92b3ef123a3101a597504765f5b
+server.receive /administrator/server_AscPBOoXmLyLJHk6/subscriptions/publish-product?productid=prod_EQYXwstX1NG5vq
+api... /administrator/server_AscPBOoXmLyLJHk6/subscriptions/publish-product?productid=prod_EQYXwstX1NG5vq undefined
+server.authenticate (user) account_90eaf8f2a9a59df59ec0a07290cce66a session_1caab92b3ef123a3101a597504765f5b
+server.receive /administrator/server_AscPBOoXmLyLJHk6/subscriptions/product?productid=prod_EQYXwstX1NG5vq
+api... /administrator/server_AscPBOoXmLyLJHk6/subscriptions/product?productid=prod_EQYXwstX1NG5vq undefined
+server.authenticate (user) account_90eaf8f2a9a59df59ec0a07290cce66a session_1caab92b3ef123a3101a597504765f5b
+server.receive /administrator/server_AscPBOoXmLyLJHk6/subscriptions
+api... /administrator/server_AscPBOoXmLyLJHk6/subscriptions undefined
+server.authenticate (user) account_90eaf8f2a9a59df59ec0a07290cce66a session_1caab92b3ef123a3101a597504765f5b
+server.receive /administrator/server_AscPBOoXmLyLJHk6/subscriptions/create-plan
+api... /administrator/server_AscPBOoXmLyLJHk6/subscriptions/create-plan undefined
+server.authenticate (user) account_90eaf8f2a9a59df59ec0a07290cce66a session_1caab92b3ef123a3101a597504765f5b
+server.receive /administrator/server_AscPBOoXmLyLJHk6/subscriptions/create-plan
+api... /administrator/server_AscPBOoXmLyLJHk6/subscriptions/create-plan undefined
+server.authenticate (user) account_90eaf8f2a9a59df59ec0a07290cce66a session_1caab92b3ef123a3101a597504765f5b
+server.receive /administrator/server_AscPBOoXmLyLJHk6/subscriptions/plan?planid=gold
+api... /administrator/server_AscPBOoXmLyLJHk6/subscriptions/plan?planid=gold undefined
+server.authenticate (user) account_90eaf8f2a9a59df59ec0a07290cce66a session_1caab92b3ef123a3101a597504765f5b
+server.receive /administrator/server_AscPBOoXmLyLJHk6/subscriptions/publish-plan?planid=gold
+api... /administrator/server_AscPBOoXmLyLJHk6/subscriptions/publish-plan?planid=gold undefined
+server.authenticate (user) account_90eaf8f2a9a59df59ec0a07290cce66a session_1caab92b3ef123a3101a597504765f5b
+server.receive /administrator/server_AscPBOoXmLyLJHk6/subscriptions/publish-plan?planid=gold
+api... /administrator/server_AscPBOoXmLyLJHk6/subscriptions/publish-plan?planid=gold undefined
+server.authenticate (user) account_90eaf8f2a9a59df59ec0a07290cce66a session_1caab92b3ef123a3101a597504765f5b
+server.receive /administrator/server_AscPBOoXmLyLJHk6/subscriptions/plan?planid=gold
+api... /administrator/server_AscPBOoXmLyLJHk6/subscriptions/plan?planid=gold undefined
+server.authenticate (user) account_90eaf8f2a9a59df59ec0a07290cce66a session_1caab92b3ef123a3101a597504765f5b
+server.receive /administrator/server_AscPBOoXmLyLJHk6/subscriptions
+api... /administrator/server_AscPBOoXmLyLJHk6/subscriptions undefined
+server.authenticate (user) account_90eaf8f2a9a59df59ec0a07290cce66a session_1caab92b3ef123a3101a597504765f5b
+server.receive /home
+api... /home undefined
+server.authenticate (user) account_90eaf8f2a9a59df59ec0a07290cce66a session_1caab92b3ef123a3101a597504765f5b
+server.receive /apps
+api... /apps undefined
+server.authenticate (user) account_90eaf8f2a9a59df59ec0a07290cce66a session_1caab92b3ef123a3101a597504765f5b
+server.receive /app?appid=test-app-1548709919
+api... /app?appid=test-app-1548709919 undefined
+server.authenticate (user) account_90eaf8f2a9a59df59ec0a07290cce66a session_1caab92b3ef123a3101a597504765f5b
+server.receive /edit-store-page?appid=test-app-1548709919
+api... /edit-store-page?appid=test-app-1548709919 undefined
+server.authenticate (user) account_90eaf8f2a9a59df59ec0a07290cce66a session_1caab92b3ef123a3101a597504765f5b
+server.receive /api/user/connect/stripe-account?stripeid=acct_1DxhPULcbdfBdp35
+api... /api/user/connect/stripe-account?stripeid=acct_1DxhPULcbdfBdp35 http://localhost:8001
+server.receive /public/app-store-uploads.js
+server.receive /edit-store-page?appid=test-app-1548709919
+api... /edit-store-page?appid=test-app-1548709919 undefined
+server.authenticate (user) account_90eaf8f2a9a59df59ec0a07290cce66a session_1caab92b3ef123a3101a597504765f5b
+adding fields { name: 'JSON formatter',
+  tag1: 'JSON',
+  tag2: 'Converter',
+  tag3: 'Utility',
+  tag4: 'Tool',
+  description: 'JSON Formatter prettifies JSON or minimizes it.  Subscriptions include unlimited access to convert as much JSON as your browser can carry.' }
+server.receive /api/user/connect/stripe-account?stripeid=acct_1DxhPULcbdfBdp35
+api... /api/user/connect/stripe-account?stripeid=acct_1DxhPULcbdfBdp35 http://localhost:8001
+server.receive /public/app-store-uploads.js
+server.receive /publish-app?appid=test-app-1548709919
+api... /publish-app?appid=test-app-1548709919 undefined
+server.authenticate (user) account_90eaf8f2a9a59df59ec0a07290cce66a session_1caab92b3ef123a3101a597504765f5b
+server.receive /publish-app?appid=test-app-1548709919
+api... /publish-app?appid=test-app-1548709919 undefined
+server.authenticate (user) account_90eaf8f2a9a59df59ec0a07290cce66a session_1caab92b3ef123a3101a597504765f5b
+server.receive /
+api... / undefined
+server.authenticate guest
+server.receive /public/pure-min.css
+server.receive /public/custom.css
+server.receive /favicon.ico
+server.receive /account/register
+api... /account/register undefined
+server.authenticate guest
+server.receive /public/content.css
+server.receive /administrator/accounts
+api... /administrator/accounts undefined
+server.authenticate (administrator) account_c533e8b0928b818ecfcd3c6e64cc05bd session_d8a2a83f0c91776c757efb4a23af68de
+server.receive /home
+api... /home undefined
+server.authenticate (user) account_c3fe498f7a488ed7f888ad3321ea7f4e session_336760848b22a7e5256bdd66dc81b7ce
+server.receive /api/user/subscriptions/subscriptions?accountid=account_c3fe498f7a488ed7f888ad3321ea7f4e&all=true
+api... /api/user/subscriptions/subscriptions?accountid=account_c3fe498f7a488ed7f888ad3321ea7f4e&all=true http://localhost:8001
+server.receive /public/dashboard.css
+server.receive /public/template.css
+server.receive /app/icon.png?appid=test-app-1548709919
+api... /app/icon.png?appid=test-app-1548709919 undefined
+server.authenticate (user) account_c3fe498f7a488ed7f888ad3321ea7f4e session_336760848b22a7e5256bdd66dc81b7ce
+server.receive /account/organizations
+api... /account/organizations undefined
+server.authenticate (user) account_c3fe498f7a488ed7f888ad3321ea7f4e session_336760848b22a7e5256bdd66dc81b7ce
+server.receive /account/organizations/create-organization
+api... /account/organizations/create-organization undefined
+server.authenticate (user) account_c3fe498f7a488ed7f888ad3321ea7f4e session_336760848b22a7e5256bdd66dc81b7ce
+server.receive /account/organizations/create-organization
+api... /account/organizations/create-organization undefined
+server.authenticate (user) account_c3fe498f7a488ed7f888ad3321ea7f4e session_336760848b22a7e5256bdd66dc81b7ce
+server.receive /account/authorize
+api... /account/authorize undefined
+server.authenticate (user) account_c3fe498f7a488ed7f888ad3321ea7f4e session_336760848b22a7e5256bdd66dc81b7ce
+server.receive /account/authorize
+api... /account/authorize undefined
+server.authenticate (user) account_c3fe498f7a488ed7f888ad3321ea7f4e session_336760848b22a7e5256bdd66dc81b7ce
+server.receive /account/organizations/create-organization
+api... /account/organizations/create-organization undefined
+server.authenticate (user) account_c3fe498f7a488ed7f888ad3321ea7f4e session_336760848b22a7e5256bdd66dc81b7ce
+server.receive /account/organizations/organization?organizationid=organization_93cdb2f4c37cefb0d9be11f9d8cb2179
+api... /account/organizations/organization?organizationid=organization_93cdb2f4c37cefb0d9be11f9d8cb2179 undefined
+server.authenticate (user) account_c3fe498f7a488ed7f888ad3321ea7f4e session_336760848b22a7e5256bdd66dc81b7ce
+server.receive /account/organizations/organization-invitations?organizationid=organization_93cdb2f4c37cefb0d9be11f9d8cb2179
+api... /account/organizations/organization-invitations?organizationid=organization_93cdb2f4c37cefb0d9be11f9d8cb2179 undefined
+server.authenticate (user) account_c3fe498f7a488ed7f888ad3321ea7f4e session_336760848b22a7e5256bdd66dc81b7ce
+server.receive /account/organizations/create-invitation?organizationid=organization_93cdb2f4c37cefb0d9be11f9d8cb2179
+api... /account/organizations/create-invitation?organizationid=organization_93cdb2f4c37cefb0d9be11f9d8cb2179 undefined
+server.authenticate (user) account_c3fe498f7a488ed7f888ad3321ea7f4e session_336760848b22a7e5256bdd66dc81b7ce
+server.receive /account/organizations/create-invitation?organizationid=organization_93cdb2f4c37cefb0d9be11f9d8cb2179
+api... /account/organizations/create-invitation?organizationid=organization_93cdb2f4c37cefb0d9be11f9d8cb2179 undefined
+server.authenticate (user) account_c3fe498f7a488ed7f888ad3321ea7f4e session_336760848b22a7e5256bdd66dc81b7ce
+server.receive /account/organizations/organization-memberships?organizationid=organization_93cdb2f4c37cefb0d9be11f9d8cb2179
+api... /account/organizations/organization-memberships?organizationid=organization_93cdb2f4c37cefb0d9be11f9d8cb2179 undefined
+server.authenticate (user) account_c3fe498f7a488ed7f888ad3321ea7f4e session_336760848b22a7e5256bdd66dc81b7ce
+server.receive /
+api... / undefined
+server.authenticate guest
+server.receive /public/pure-min.css
+server.receive /public/custom.css
+server.receive /favicon.ico
+server.receive /account/register
+api... /account/register undefined
+server.authenticate guest
+server.receive /administrator/accounts
+api... /administrator/accounts undefined
+server.authenticate (administrator) account_c533e8b0928b818ecfcd3c6e64cc05bd session_d8a2a83f0c91776c757efb4a23af68de
+    1) should work via UI browsing
+
+
+  0 passing (4m)
+  1 failing
+
+  1) tests/adding-subscription-for-organization-member
+       should work via UI browsing:
+     Error: Protocol error (Runtime.callFunctionOn): Target closed.
+      at Promise (node_modules/puppeteer/lib/Connection.js:186:56)
+      at new Promise (<anonymous>)
+      at CDPSession.send (node_modules/puppeteer/lib/Connection.js:185:12)
+      at ExecutionContext.evaluateHandle (node_modules/puppeteer/lib/ExecutionContext.js:115:75)
+      at ExecutionContext.<anonymous> (node_modules/puppeteer/lib/helper.js:145:23)
+      at WaitTask.rerun (node_modules/puppeteer/lib/FrameManager.js:1012:62)
+      at <anonymous>
+      at process._tickCallback (internal/process/next_tick.js:189:7)
+
+
+
