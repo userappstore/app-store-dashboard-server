@@ -415,8 +415,6 @@ describe(`tests/adding-subscription-for-organization-member`, () => {
       email: testUserData[3].email
     })
     await customer2Tab.waitForSelector('#application-iframe')
-    console.log(Object.keys(global.ui).length + ' unique pages')
-    console.log(Object.keys(global.api).length + ' unique api routes')
     const applicationFrame = await customer2Tab.frames().find(f => f.name() === 'application-iframe')
     const projectElement = await applicationFrame.$('#json')
     assert.notStrictEqual(projectElement, undefined)
