@@ -22,10 +22,13 @@ module.exports = {
         }
       }
       const html = global.sitemap[url].htmlFilePath || ''
-      const nodejs = global.sitemap[url].jsFilePath || ''
+      let nodejs = global.sitemap[url].jsFilePath || ''
+      if (nodejs === 'static-page') {
+        nodejs = ''
+      }
       let test
       if (nodejs) {
-        const testPath = nodejs.substring(nodejs.length - 3) + '.test.js'
+        const testPath = nodejs.substring(0, nodejs.length - 3) + '.test.js'
         if (fs.existsSync(`${global.applicationPath}${testPath}`)) {
           test = testPath
         }
