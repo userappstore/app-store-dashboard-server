@@ -11,6 +11,14 @@ module.exports = {
     if (tagClose < tagOpen) {
       return
     }
+    const tagOpen2 = req.url.indexOf('${') // ${
+    if (tagOpen2 === -1) {
+      return
+    }
+    const tagClose2 = req.url.indexOf('}') // }
+    if (tagClose2 < tagOpen2) {
+      return
+    }
     res.ended = true
     return res.end()
   }
