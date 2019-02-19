@@ -1,3 +1,5 @@
+const fs = require('fs')
+
 module.exports = {
   auth: false,
   get: async (req) => {
