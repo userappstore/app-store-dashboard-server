@@ -19,7 +19,16 @@ module.exports = {
           origin = moduleName.substring(0, moduleName.indexOf('/'))
         }
       }
-      sitemapCopy[url] = origin
+      const html = global.sitemap[url].htmlFilePath || ''
+      const nodejs = global.sitemap[url].jsFilePath || ''
+      let test
+      if (nodejs) {
+        const testPath = nodejs.substring(nodejs.length - 3) + '.test.js'
+        if (fs.existsSync(`${global.applicationPath}${testPath}`)) {
+          test = testPath
+        }
+      }
+      sitemapCopy[url] = { origin, html, nodejs, test }
     }
     return sitemapCopy
   }
