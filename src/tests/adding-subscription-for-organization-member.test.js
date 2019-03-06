@@ -50,11 +50,13 @@ async function completeForm(page, body) {
   await active.waitFor(800)
   await active.focus('#submit-button')
   await active.waitFor(800)
-  await active.click('#submit-button', { waitLoad: true, waitNetworkIdle: true })
-  await active.waitFor(800)
+  await active.click('#submit-button')
+  await active.waitFor(800, { waitLoad: true, waitNetworkIdle: true })
 }
 
 async function clickPageLink(page, text) {
+  console.log('click', text)
+  await page.waitFor(800)
   const links = await page.$x(`//a[contains(text(), '${text}')]`)
   const link = links[0]
   await page.waitFor(800)
@@ -65,6 +67,7 @@ async function clickPageLink(page, text) {
 }
 
 async function clickFrameLink(page, text) {
+  await page.waitFor(800)
   const frame = await page.frames().find(f => f.name() === 'application-iframe')
   const links = await frame.$x(`//a[contains(text(), '${text}')]`)
   const link = links[0]
@@ -123,6 +126,8 @@ describe(`tests/adding-subscription-for-organization-member`, () => {
     await developerTab.waitForSelector('#application-iframe', { waitLoad: true, waitNetworkIdle: true })
     await completeForm(developerTab, {})
     await developerTab.waitForSelector('#application-iframe', { waitLoad: true, waitNetworkIdle: true })
+    // const finishedProjectFrame = await developerTab.frames().find(f => f.name() === 'application-iframe')
+    // finishedProjectFrame.waitForSelector()
     await clickPageLink(developerTab, 'Share')
     await developerTab.waitForSelector('#application-iframe', { waitLoad: true, waitNetworkIdle: true })
     await completeForm(developerTab, {})
@@ -154,8 +159,9 @@ describe(`tests/adding-subscription-for-organization-member`, () => {
     await developerTab.waitForSelector('#application-iframe', { waitLoad: true, waitNetworkIdle: true })
     await clickFrameLink(developerTab, 'Start individual registration')
     await developerTab.waitForSelector('#application-iframe', { waitLoad: true, waitNetworkIdle: true })
+    const createRegistrationFrame = await developerTab.frames().find(f => f.name() === 'application-iframe')
+    await createRegistrationFrame.evaluate(el => el.checked = true, await createRegistrationFrame.$('#individual'))
     await completeForm(developerTab, {
-      individual: '',
       country: 'United Kingdom'
     })
     await developerTab.waitForSelector('#submit-form')
@@ -169,6 +175,7 @@ describe(`tests/adding-subscription-for-organization-member`, () => {
     await clickFrameLink(developerTab, 'Start registration')
     await developerTab.waitForSelector('#application-iframe', { waitLoad: true, waitNetworkIdle: true })
     const registrationInformationFrame = await developerTab.frames().find(f => f.name() === 'application-iframe')
+    await registrationInformationFrame.waitForSelector('#id_scan', { waitLoad: true, waitNetworkIdle: true })
     const idScanUpload = await registrationInformationFrame.$('#id_scan')
     await idScanUpload.uploadFile(`${global.applicationPath}/test-documentid-success.png`)
     await completeForm(developerTab, {
@@ -186,6 +193,8 @@ describe(`tests/adding-subscription-for-organization-member`, () => {
     // payment information    
     await clickFrameLink(developerTab, 'Setup payment information')
     await developerTab.waitForSelector('#application-iframe', { waitLoad: true, waitNetworkIdle: true })
+    const paymentInformationFrame = await developerTab.frames().find(f => f.name() === 'application-iframe')
+    await paymentInformationFrame.waitForSelector('#submit-form', { waitLoad: true, waitNetworkIdle: true })
     await completeForm(developerTab, {
       account_holder_name: testUserData[1].firstName + ' ' + testUserData[1].lastName,
       currency: 'GBP',
@@ -216,6 +225,8 @@ describe(`tests/adding-subscription-for-organization-member`, () => {
     await developerTab.waitForSelector('#application-iframe', { waitLoad: true, waitNetworkIdle: true })
     await clickFrameLink(developerTab, 'Subscriptions')
     await developerTab.waitForSelector('#application-iframe', { waitLoad: true, waitNetworkIdle: true })
+    const createProfileFrame = await developerTab.frames().find(f => f.name() === 'application-iframe')
+    await createProfileFrame.waitForSelector('#submit-form', { waitLoad: true, waitNetworkIdle: true })
     // setup owner profile
     await completeForm(developerTab, {
       email: testUserData[1].email,
@@ -227,12 +238,15 @@ describe(`tests/adding-subscription-for-organization-member`, () => {
     await developerTab.waitForSelector('#application-iframe', { waitLoad: true, waitNetworkIdle: true })
     await clickFrameLink(developerTab, 'Create new product')
     await developerTab.waitForSelector('#application-iframe', { waitLoad: true, waitNetworkIdle: true })
+    console.log('creating product')
     await completeForm(developerTab, {
       name: 'Unlimited',
       unit_label: 'subscription',
       statement_descriptor: 'UNL JSON FORMAT'
     })
+    await developerTab.waitFor(800)
     await developerTab.waitForSelector('#application-iframe', { waitLoad: true, waitNetworkIdle: true })
+    console.log('publishing product')
     await clickPageLink(developerTab, 'Publish')
     await developerTab.waitForSelector('#application-iframe', { waitLoad: true, waitNetworkIdle: true })
     await completeForm(developerTab, {})
@@ -250,6 +264,7 @@ describe(`tests/adding-subscription-for-organization-member`, () => {
       interval: 'month',
       'currency-select': 'United States Dollar'
     })
+    await developerTab.waitFor(800)
     await developerTab.waitForSelector('#application-iframe', { waitLoad: true, waitNetworkIdle: true })
     await clickPageLink(developerTab, 'Publish')
     await developerTab.waitForSelector('#application-iframe', { waitLoad: true, waitNetworkIdle: true })
@@ -260,7 +275,7 @@ describe(`tests/adding-subscription-for-organization-member`, () => {
     // publish on app store
     await clickPageLink(developerTab, 'UserAppStore')
     await developerTab.waitForSelector('#application-iframe', { waitLoad: true, waitNetworkIdle: true })
-    await clickPageLink(developerTab, 'Apps')
+    await clickPageLink(developerTab, 'pps')
     await developerTab.waitForSelector('#application-iframe', { waitLoad: true, waitNetworkIdle: true })
     await clickFrameLink(developerTab, `test-app-${global.testNumber}`)
     await developerTab.waitForSelector('#application-iframe', { waitLoad: true, waitNetworkIdle: true })
@@ -380,12 +395,17 @@ describe(`tests/adding-subscription-for-organization-member`, () => {
     await clickFrameLink(customer1Tab, 'JSON formatter')
     await customer1Tab.waitForSelector('#application-iframe', { waitLoad: true, waitNetworkIdle: true })
     await clickFrameLink(customer1Tab, 'Install')
+    await customer1Tab.waitFor(800)
     await customer1Tab.waitForSelector('#submit-form', { waitLoad: true, waitNetworkIdle: true })
     await customer1Tab.evaluate(el => el.selectedIndex = 2, await customer1Tab.$('#organizations-list'))
     await completeForm(customer1Tab, {})
-    await customer1Tab.waitForSelector('#submit-form')
+    await customer1Tab.waitFor(800)
+    console.log('submitting install form')
+    await customer1Tab.waitForSelector('#submit-form', { waitLoad: true, waitNetworkIdle: true })
+    console.log('submitted install form')
     await customer1Tab.evaluate(_ => document.getElementsByTagName('input')[0].checked = true)
     await completeForm(customer1Tab, {})
+    await customer1Tab.waitFor(800)
     await customer1Tab.waitForSelector('#submit-form', { waitLoad: true, waitNetworkIdle: true })
     await clickPageLink(customer1Tab, 'Add new profile')
     await customer1Tab.waitForSelector('#submit-button', { waitLoad: true, waitNetworkIdle: true })
