@@ -49,7 +49,7 @@ module.exports = {
         stripe_account: req.server.stripeid
       }
     }
-    let sessionid = await dashboard.Storage.exists(`map/applicationSession/${sessionWas.sessionid}/${serverid}`)
+    let sessionid = await dashboard.Storage.read(`map/applicationSession/${sessionWas.sessionid}/${serverid}`)
     let session
     let bodyWas = req.body
     if (!sessionid) {
@@ -68,13 +68,13 @@ module.exports = {
         if (req.server.ownerid === req.account.accountid || req.server.project.accountid === req.account.accountid) {
           res.setHeader('location', `/application-server-owner-setup?serverid=${serverid}`)
         } else {
-          res.setHeader('location', `/application-server-administrator-setup?serverid=${serverid}`)
+          res.setHeader('location', `/application-server-administrator-setup?serverid=${serverid}&from=71`)
         }
         res.ended = true
         return res.end()
       }
       await dashboard.StorageObject.setProperty(`${req.appid}/${session.sessionid}`, 'expires', sessionWas.expires)
-      await dashboard.Storage.write(`map/session/applicationServer/${sessionWas.sessionid}`, serverid, session.sessionid)
+      await dashboard.Storage.write(`map/applicationSession/${sessionWas.sessionid}/${serverid}`, session.sessionid)
       sessionid = session.sessionid
     }    
     const query = req.query
@@ -82,7 +82,7 @@ module.exports = {
       req.session = session
     } else {
       req.query = { sessionid }
-      req.session = await global.api.administrator.Session._get(req)
+      session = req.session = await global.api.administrator.Session._get(req)
     }
     // if the userappstore session is unlocked so is the
     // application server session
@@ -100,7 +100,7 @@ module.exports = {
     req.administratorAccount = req.account
     req.administratorSession = req.session
     if (req.method === 'POST') {
-      res.on('finish', async (blob) => {
+      res.on('finish', async () => {
         // check for session locks that need to bubble up to
         // the UserAppStore session
         if (!req.session.lock) {

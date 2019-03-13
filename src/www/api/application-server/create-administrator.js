@@ -30,7 +30,18 @@ module.exports = {
       global.maximumProfileLastNameLength < req.body['last-name'].length) {
       throw new Error('invalid-profile-last-name-length')
     }
-    req.server = await applicationServer.get(`/api/dashboard-server/application-server?serverid=${req.query.serverid}`)
+    const server = await applicationServer.get(`/api/dashboard-server/application-server?serverid=${req.query.serverid}`)
+    req.query.organizationid = server.organizationid
+    let membership
+    try {
+        membership = await global.api.user.organizations.OrganizationMembership.get(req)
+      } catch (error) {
+    }
+    if (!membership) {
+      throw new Error('invalid-account')
+    }
+    req.server = server
+    req.appid = req.server.serverid
     if (req.server.ownerid === req.account.accountid) {
       throw new Error('invalid-account')
     }
@@ -40,24 +51,15 @@ module.exports = {
     if (!req.server.organizationid) {
       throw new Error('invalid-application-serverid')
     }
-    req.query.organizationid = req.server.organizationid
-    let membership
-    try {
-        membership = await global.api.user.organizations.OrganizationMembership.get(req)
-      } catch (error) {
-    }
-    if (!membership) {
-      throw new Error('invalid-account')
-    }
     req.body.username = `administrator-${req.server.serverid}-${membership.membershipid}`
     req.body.password = 'password'
     const account = await global.api.user.CreateAccount.post(req)
     if (account.owner) {
-      await dashboard.StorageObject.removeProperty(`${req.appid}:${account.accountid}`, 'owner')
+      await dashboard.StorageObject.removeProperty(`${req.appid}/account/${account.accountid}`, 'owner')
       delete (account.owner)
     }
     if (!account.administrator) {
-      await dashboard.StorageObject.setProperty(`${req.appid}/${account.accountid}`, 'administrator', dashboard.Timestamp.now)
+      await dashboard.StorageObject.setProperty(`${req.appid}/account/${account.accountid}`, 'administrator', dashboard.Timestamp.now)
       await dashboard.StorageList.add(`${req.appid}/administrator/accounts`, account.accountid)
       account.administrator = dashboard.Timestamp.now
     }
