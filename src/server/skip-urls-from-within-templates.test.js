@@ -5,17 +5,18 @@ const TestHelper = require('../../test-helper.js')
 
 describe('server/skip-urls-from-within-templates', () => {
   describe('SkipURLsFromWithinTemplates#before', () => {
-    it('should return an empty response', async () => {
+    it('should end response', async () => {
       const req = TestHelper.createRequest(`/install/test/${encodeURI('${account.accountid}')}`)
-      req.headers = {}
-      let result, errorMessage
-      try {
-        result = await req.get(req)
-      } catch (error) {
-        errorMessage = error.message
-      }
-      assert.strictEqual(result, undefined)
-      assert.strictEqual(errorMessage, undefined)
+      const res = { end: () => { } }
+      await Handler.before(req, res) 
+      assert.strictEqual(res.ended, true)
+    })    
+    
+    it('should ignore request', async () => {
+      const req = TestHelper.createRequest(`/install/test/`)
+      const res = { end: () => { } }
+      await Handler.before(req, res)
+      assert.strictEqual(res.ended, undefined)
     })
   })
 })
