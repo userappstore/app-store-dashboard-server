@@ -16,13 +16,14 @@ module.exports = {
       return
     }
     const sessionWas = req.session
+    const queryWas = req.query
+    const bodyWas = req.body
     const installid = req.urlPath.split('/')[2]
     const install = await applicationServer.get(`/api/user/userappstore/install?installid=${installid}`, req.account.accountid, req.session.sessionid)
     if (!install) {
       return
     }
     let sessionid = await dashboard.Storage.read(`map/applicationSession/${sessionWas.sessionid}/${install.serverid}`)
-    let bodyWas = req.body
     req.server = await applicationServer.get(`/api/user/userappstore/application-server?serverid=${install.serverid}`, req.account.accountid, req.session.sessionid)
     req.appid = install.serverid
     if (!sessionid) {
@@ -41,31 +42,29 @@ module.exports = {
         res.ended = true
         return res.end()
       }
-      req.body = bodyWas
       delete (req.success)
       await dashboard.StorageObject.setProperty(`${req.appid}/session/${session.sessionid}`, 'expires', sessionWas.expires)
       await dashboard.Storage.write(`map/session/applicationServer/${sessionWas.sessionid}/${install.serverid}`, session.sessionid)
       sessionid = session.sessionid
     }
-    const query = req.query
+    let session
     req.query = { sessionid }
-    req.session = await global.api.administrator.Session._get(req)
+    try {
+      session = await global.api.administrator.Session._get(req)
+    } catch (error) {
+    }
     req.install = install
-    // if the userappstore session is unlocked so is the
-    // application server session
+    // if the userappstore session is unlocked so is the application server session
     if (sessionWas.unlocked) {
       await dashboard.StorageObject.setProperty(`${req.appid}/session/${session.sessionid}`, 'unlocked', sessionWas.unlocked)
-      req.session.unlocked = sessionWas.unlocked
-    } else if (req.session.unlocked) {
+    } else if (session.unlocked) {
       await dashboard.StorageObject.removeProperties(`${req.appid}/session/${session.sessionid}`, ['lock', 'lockURL', 'lockData', 'unlocked'])
-      delete (req.session.unlocked)
+      delete (session.unlocked)
     }
-    req.query = req.query || {}
-    req.query.accountid = req.session.accountid
-    req.account = await global.api.administrator.Account._get(req)
-    req.query = query
+    req.query = queryWas
+    req.body = bodyWas
     if (req.method === 'POST') {
-      res.on('finish', async (blob) => {
+      res.on('finish', async () => {
         // check for session locks that need to bubble up to
         // the UserAppStore session
         if (!req.session.lock) {
