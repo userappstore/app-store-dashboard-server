@@ -34,11 +34,11 @@ module.exports = {
       throw new Error('invalid-application-serverid')
     }
     req.appid = req.query.serverid
-    req.body.username = `user-${req.query.serverid}-${req.query.accountid}`
+    req.body.username = `user-${req.query.serverid}-${req.account.accountid}`
     req.body.password = 'password'
     const account = await global.api.user.CreateAccount.post(req)
     if (account.owner) {
-      await dashboard.StorageObject.removeProperties(`${req.appid}:${account.accountid}`, [ 'owner', 'administrator' ])
+      await dashboard.StorageObject.removeProperties(`${req.appid}/account/${account.accountid}`, [ 'owner', 'administrator' ])
       await dashboard.StorageList.remove(`${req.appid}/administrator/accounts`)
       delete (account.owner)
       delete (account.administrator)
