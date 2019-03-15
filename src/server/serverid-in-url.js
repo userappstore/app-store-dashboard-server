@@ -21,7 +21,8 @@ module.exports = {
       return
     }
     let username
-    if (req.server.ownerid === req.account.accountid || req.server.project.accountid === req.account.accountid) {
+    if (req.server.ownerid === req.account.accountid || 
+      (req.server.project && req.server.project.accountid === req.account.accountid)) {
       username = `owner-${req.server.serverid}-${req.account.accountid}`
     } else {
       if (!req.server.organizationid) {
@@ -65,7 +66,8 @@ module.exports = {
       }
       if (!session) {
         res.statusCode = 302
-        if (req.server.ownerid === req.account.accountid || req.server.project.accountid === req.account.accountid) {
+        if (req.server.ownerid === req.account.accountid || 
+          (req.server.project && req.server.project.accountid === req.account.accountid)) {
           res.setHeader('location', `/application-server-owner-setup?serverid=${serverid}`)
         } else {
           res.setHeader('location', `/application-server-administrator-setup?serverid=${serverid}&from=71`)
