@@ -1,5 +1,4 @@
 const applicationServer = require('../application-server.js')
-const dashboard = require('@userappstore/dashboard')
 
 module.exports = {
   // This detects requests made by a user within an

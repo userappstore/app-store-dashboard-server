@@ -9,7 +9,7 @@ module.exports = {
   // repurposed before the request proceeds to the
   // UserAppStore backend to load the project or URL
   after: async (req, res) => {
-    if (!req.urlPath.startsWith('/install/')) {
+    if (!req.urlPath.startsWith('/install/') && !req.urlPath.startsWith('/account/')) {
       return
     }
     if (!req.account) {
@@ -19,13 +19,22 @@ module.exports = {
     const queryWas = req.query
     const bodyWas = req.body
     const installid = req.urlPath.split('/')[2]
-    const install = await applicationServer.get(`/api/user/userappstore/install?installid=${installid}`, req.account.accountid, req.session.sessionid)
+    let install
+    if (installid.indexOf('-') < installid.lastIndexOf('-')) {
+      install = await applicationServer.get(`/api/user/userappstore/install?installid=${installid}`, req.account.accountid, req.session.sessionid)
+    }
     if (!install) {
       return
     }
     let sessionid = await dashboard.Storage.read(`map/applicationSession/${sessionWas.sessionid}/${install.serverid}`)
     req.server = await applicationServer.get(`/api/user/userappstore/application-server?serverid=${install.serverid}`, req.account.accountid, req.session.sessionid)
     req.appid = install.serverid
+    if (req.server.stripeid) {
+      req.stripeKey = {
+        api_key: req.stripeKey.api_key,
+        stripe_account: req.server.stripeid
+      }
+    }
     if (!sessionid) {
       req.body = {
         username: `user-${install.serverid}-${req.account.accountid}`,
@@ -54,13 +63,28 @@ module.exports = {
     } catch (error) {
     }
     req.install = install
+    if (req.urlPath.startsWith('/account/')) {
+      req.urlPath = req.urlPath.split(`/${installid}`).join(``)
+      req.route = {}
+      for (const field in global.sitemap[req.urlPath]) {
+        req.route[field] = global.sitemap[req.urlPath][field]
+      }
+      req.route.html = req.route.html.split('navbar="/account/').join('navbar="/server-account/')
+    }
     // if the userappstore session is unlocked so is the application server session
     if (sessionWas.unlocked) {
       await dashboard.StorageObject.setProperty(`${req.appid}/session/${session.sessionid}`, 'unlocked', sessionWas.unlocked)
+      session.unlocked = sessionWas.unlocked
     } else if (session.unlocked) {
       await dashboard.StorageObject.removeProperties(`${req.appid}/session/${session.sessionid}`, ['lock', 'lockURL', 'lockData', 'unlocked'])
       delete (session.unlocked)
     }
+    if (req.urlPath.startsWith('/account/')) {
+      req.query = req.query || {}
+      req.query.accountid = req.session.accountid
+      req.account = await global.api.administrator.Account._get(req)
+      req.session = session
+    } 
     req.query = queryWas
     req.body = bodyWas
     if (req.method === 'POST') {

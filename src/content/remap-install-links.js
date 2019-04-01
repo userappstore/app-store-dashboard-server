@@ -19,7 +19,7 @@ module.exports = {
         if (!element || !element.attr || !element.attr[item.attribute]) {
           continue
         }
-        if (element.attr[item.attribute].startsWith('/')) {
+        if (element.attr[item.attribute].startsWith('/') && !element.attr[item.attribute].startsWith('/public/')) {
           element.attr[item.attribute] = '/install/' + req.install.installid + element.attr[item.attribute]
         }
       }

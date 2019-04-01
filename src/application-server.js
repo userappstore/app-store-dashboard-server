@@ -75,7 +75,7 @@ const proxy = util.promisify((method, path, data, accountid, sessionid, alternat
       if (process.env.DEBUG_ERRORS) {
         console.log('application-server', proxyResponse.statusCode, body.toString())
       }
-      throw new Error('application-error')
+      return callback(new Error('application-error'))
     })
   })
   proxyRequest.on('error', (error) => {

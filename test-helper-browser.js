@@ -5,6 +5,7 @@ module.exports = {
 }
 
 async function completeForm(page, body, submitButton) {
+  console.log('submit', body)
   await page.waitForSelector('body', { waitLoad: true, waitNetworkIdle: true })
   let frame
   if (page.frames) {
@@ -36,6 +37,7 @@ async function completeForm(page, body, submitButton) {
 }
 
 async function clickPageLink(page, text) {
+  console.log('page', text)
   await page.waitForSelector('body', { waitLoad: true, waitNetworkIdle: true })
   let links = await page.$x(`//a[contains(text(), '${text}')]`)
   while (!links || !links.length) {
@@ -56,6 +58,7 @@ async function clickPageLink(page, text) {
 }
 
 async function clickFrameLink(page, text) {
+  console.log('frame', text)
   await page.waitForSelector('iframe', { waitLoad: true, waitNetworkIdle: true })
   let frame = await page.frames().find(f => f.name() === 'application-iframe')
   if (!frame) {
