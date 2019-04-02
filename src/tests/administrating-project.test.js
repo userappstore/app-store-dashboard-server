@@ -54,7 +54,7 @@ describe(`tests/administrating-project`, () => {
     await TestHelperBrowser.clickFrameLink(developerTab, 'Create project')
     await developerTab.waitForSelector('#application-iframe', { waitLoad: true, waitNetworkIdle: true })
     await TestHelperBrowser.completeForm(developerTab, {
-      projectid: 'test-project'
+      projectid: `test-project-${global.testNumber}`
     })
     await developerTab.waitForSelector('#application-iframe', { waitLoad: true, waitNetworkIdle: true })
     await TestHelperBrowser.clickPageLink(developerTab, 'Share')

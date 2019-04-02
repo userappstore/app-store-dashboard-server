@@ -6,7 +6,7 @@ const testUserData = require('@userappstore/dashboard/test-data.json')
 const headless = process.env.SHOW_BROWSERS !== 'true'
 
 describe(`tests/cancelling-subscription-immediately`, () => {
-  it.only('should work via UI browsing', async () => {
+  it('should work via UI browsing', async () => {
     global.pageSize = 40
     // create owner account
     const browser1 = await puppeteer.launch({
@@ -54,7 +54,7 @@ describe(`tests/cancelling-subscription-immediately`, () => {
     await TestHelperBrowser.clickFrameLink(developerTab, 'Create project')
     await developerTab.waitForSelector('#application-iframe', { waitLoad: true, waitNetworkIdle: true })
     await TestHelperBrowser.completeForm(developerTab, {
-      projectid: 'test-project'
+      projectid: `test-project-${global.testNumber}`
     })
     await developerTab.waitForSelector('#application-iframe', { waitLoad: true, waitNetworkIdle: true })
     await TestHelperBrowser.clickPageLink(developerTab, 'Share')
