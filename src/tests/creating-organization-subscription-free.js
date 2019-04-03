@@ -234,7 +234,7 @@ describe(`tests/creating-subscription-for-organization-member`, () => {
     // publish on app store
     await TestHelperBrowser.clickPageLink(developerTab, 'UserAppStore')
     await developerTab.waitForSelector('#application-iframe', { waitLoad: true, waitNetworkIdle: true })
-    await TestHelperBrowser.clickPageLink(developerTab, 'pps')
+    await TestHelperBrowser.clickPageLink(developerTab, 'Apps')
     await developerTab.waitForSelector('#application-iframe', { waitLoad: true, waitNetworkIdle: true })
     await TestHelperBrowser.clickFrameLink(developerTab, `test-app-${global.testNumber}`)
     await developerTab.waitForSelector('#application-iframe', { waitLoad: true, waitNetworkIdle: true })

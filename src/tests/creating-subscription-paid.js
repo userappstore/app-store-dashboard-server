@@ -7,7 +7,7 @@ const testUserData = require('@userappstore/dashboard/test-data.json')
 const headless = process.env.SHOW_BROWSERS !== 'true'
 
 describe(`tests/creating-subscription-paid`, () => {
-  it.only('should work via UI browsing', async () => {
+  it('should work via UI browsing', async () => {
     global.pageSize = 40
     // create owner account
     const browser1 = await puppeteer.launch({
