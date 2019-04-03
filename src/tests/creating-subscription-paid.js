@@ -2,11 +2,12 @@
 const assert = require('assert')
 const puppeteer = require('puppeteer')
 const TestHelperBrowser = require('../../test-helper-browser.js')
+const TestHelper = require('@userappstore/stripe-subscriptions/test-helper.js')
 const testUserData = require('@userappstore/dashboard/test-data.json')
 const headless = process.env.SHOW_BROWSERS !== 'true'
 
 describe(`tests/creating-subscription-paid`, () => {
-  it('should work via UI browsing', async () => {
+  it.only('should work via UI browsing', async () => {
     global.pageSize = 40
     // create owner account
     const browser1 = await puppeteer.launch({
@@ -272,14 +273,21 @@ describe(`tests/creating-subscription-paid`, () => {
     await customer1Tab.evaluate(el => el.selectedIndex = 1, await customer1Tab.$('#customerid'))
     await TestHelperBrowser.completeForm(customer1Tab, {})
     await customer1Tab.waitForSelector('#application-iframe', { waitLoad: true, waitNetworkIdle: true })
+    await TestHelper.waitForWebhook('invoice.finalized', () => {
+      return true
+    })
     // customer has a subscription
     await TestHelperBrowser.clickPageLink(customer1Tab, 'UserAppStore')
     await customer1Tab.waitForSelector('#application-iframe')
     await TestHelperBrowser.clickPageLink(customer1Tab, 'Subscriptions')
+    await customer1Tab.waitForSelector('#application-iframe', { waitLoad: true, waitNetworkIdle: true })
+    const subscriptionFrame = await customer1Tab.frames().find(f => f.name() === 'application-iframe')
+    const subscriptionLink = await subscriptionFrame.$x(`//a[contains(text(), 'sub_')]`)
+    await subscriptionLink[0].click({ waitLoad: true, waitNetworkIdle: true })
     await customer1Tab.waitForSelector('#application-iframe')
     const installed1Frame = await customer1Tab.frames().find(f => f.name() === 'application-iframe')
-    const install1Link = await installed1Frame.$x(`//a[contains(text(), 'test-app-${global.testNumber}')]`)
-    assert.strictEqual(install1Link.length, 1)
+    const trialStatus = await installed1Frame.$x(`//td[contains(text(), '$9.99')]`)
+    assert.strictEqual(trialStatus.length, 1)
     browser1.close()
     browser2.close()
     browser3.close()

@@ -6,7 +6,7 @@ const testUserData = require('@userappstore/dashboard/test-data.json')
 const headless = process.env.SHOW_BROWSERS !== 'true'
 
 describe(`tests/creating-subscription-paid`, () => {
-  it.only('should work via UI browsing', async () => {
+  it('should work via UI browsing', async () => {
     global.pageSize = 40
     // create owner account
     const browser1 = await puppeteer.launch({
@@ -283,10 +283,10 @@ describe(`tests/creating-subscription-paid`, () => {
     await subscriptionLink[0].click({ waitLoad: true, waitNetworkIdle: true })
     await customer1Tab.waitForSelector('#application-iframe')
     const installed1Frame = await customer1Tab.frames().find(f => f.name() === 'application-iframe')
-    const install1Link = await installed1Frame.$x(`//a[contains(text(), 'test-app-${global.testNumber}')]`)
-    assert.strictEqual(install1Link.length, 1)
-    // browser1.close()
-    // browser2.close()
-    // browser3.close()
+    const trialStatus = await installed1Frame.$x(`//td[contains(text(), 'Active \(trial\)')]`)
+    assert.strictEqual(trialStatus.length, 1)
+    browser1.close()
+    browser2.close()
+    browser3.close()
   })
 })
