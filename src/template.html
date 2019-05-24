@@ -3,12 +3,18 @@
   <head>
     <title>UserAppStore</title>
     <meta charset="utf-8">
+    <script src="/public/jquery-1.11.1.min.js"></script>
+    <script src="/public/goldenlayout.min.js"></script>
+    <script src="/public/request.js"></script>
+    <script src="/public/spa.js?asdf"></script>
     <link href="/public/dashboard.css" rel="stylesheet" />
     <link href="/public/template.css" rel="stylesheet" />
+    <link href="/public/goldenlayout-base.css" rel="stylesheet" />
+    <link href="/public/goldenlayout-light-theme.css" rel="stylesheet" />
     <base target="_top">
   </head>
   <body>
-    <div class="container">
+    <div id="container" class="container">
       <div class="dashboard">
         <section id="notifications-container" class="notifications"></section>
         <header id="header" class="header">
@@ -54,14 +60,39 @@
             </div>
           </section>
         </header>
-        <section id="application-navigation" class="application-navigation">
-          <menu></menu>
-        </section>
       </div>
-      <iframe id="application-iframe" name="application-iframe" class="application" sandbox="allow-top-navigation allow-scripts allow-forms allow-same-origin allow-popups"></iframe>
+      <iframe id="application-iframe" name="application-iframe" class="application" sandbox="allow-top-navigation allow-scripts allow-forms allow-popups"></iframe>
+      <script>
+        var iframe = document.getElementById('application-iframe')
+        if (iframe.srcdoc) {
+          iframe.srcdocWas = iframe.srcdoc
+          iframe.srcdoc = ''
+        } else {
+          iframe.srcWas = iframe.src
+          iframe.src = ''
+        }
+      </script>
     </div>
     </header>
-  </body>
+  </body> 
+  <template id="settings-svg">
+    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0" y="0" viewBox="0 0 424 424" style="enable-background:new 0 0 424 424;" xml:space="preserve">
+      <g><path d="M35,89C15,89,0,74,0,54s15-36,35-36h353c20,0,36,16,36,36s-16,35-36,35H35z" /><path d="M388,176c20,0,36,16,36,36s-16,35-36,35H35c-20,0-35-15-35-35s15-36,35-36H388z" /><path d="M388,335c20,0,36,15,36,35s-16,36-36,36H35c-20,0-35-16-35-36s15-35,35-35H388z" /></g>
+    </svg>
+  </template>
+  <template id="opened-install-navbar">
+    <section>
+      <a href="/home" title="UserAppStore home">Home</a>
+      <a href="/installs" title="Apps, projects and URLs you have installed">Installs</a>
+      <a href="/subscriptions" title="Subscriptions from your installed apps">Subscriptions</a>
+      <a href="/projects" title="Projects you have created and imported">Projects</a>
+      <a href="/collections" title="Group installs into menu collections">Collections</a>
+      <a href="/apps" title="Apps you have created">Apps</a>
+      <a href="/application-servers" title="Application servers you have claimed">Servers</a>
+      <a href="/credits" title="Credit from subscrpition changes and cancellations">Credits</a>
+    </section>
+  </template>
+  </template>
   <template id="heading-link">
     <a href="/home">UserAppStore</a>
   </template>
@@ -77,13 +108,13 @@
     <a href="${url}">${text}</a>
   </template>
   <template id="collection-group">
-    <div id="${collection.collectionid}" style="background-color: ${collection.background}; color: ${collection.text}" class="collection">
-      <span class="heading">${collection.name}</span>
-      <menu id="installs-list-${collection.collectionid}" class="grouped"></menu>
-    </div>
+    <menu title="${collection.name}" id="installs-list-${collection.collectionid}" class="grouped" style="background-color: ${collection.background}; color: ${collection.text}"></menu>
   </template>
   <template id="install-link">
-    <a href="/install/${install.installid}/home">${install.text}</a>
+    <a href="/install/${install.installid}/home" 
+      data-installid="${install.installid}"
+      data-subscriptions="${install.subscriptionsEnabled}"
+      data-organizations="${install.organizationsEnabled}">${install.text}</a>
   </template>
   <template id="server-administrator-menu">
     <li id="administrator-${server.serverid}">
@@ -96,15 +127,14 @@
     </li>
   </template>
   <template id="install-account-menu">
-    <li id="account-${install.installid}">
-      <span class="app-account-title">${install.installid} settings</span>
-      <div class="app-account">
-        <a href="/account/${install.installid}/organizations">Manage organizations</a>
-        <a href="/account/${install.installid}/subscriptions">Subscriptions &amp; billing</a>
-        <a href="/edit-settings?installid=${install.installid}">Settings</a>
-        <a href="/uninstall?installid=${install.installid}">Uninstall</a>
-      </div>
-    </li>
+    <section id="account-${install.installid}">
+      <li><span class="app-account-title">${install.installid}</span></li>
+      <li><a id="close-link-${install.installid}">Close app</a></li>
+      <li id="organizations-link-${install.installid}"><a href="/account/${install.installid}/organizations">Manage organizations</a></li>
+      <li id="subscriptions-link-${install.installid}"><a href="/account/${install.installid}/subscriptions">Subscriptions &amp; billing</a></li>
+      <li><a href="/edit-install?installid=${install.installid}">Settings</a></li>
+      <li><a href="/delete-install?installid=${install.installid}">Uninstall</a></li>
+    </section>
   </template>
   <template id="session-impersonate">
     <div class="notification">

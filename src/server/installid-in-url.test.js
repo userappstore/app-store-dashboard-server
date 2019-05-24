@@ -2,7 +2,6 @@
 const assert = require('assert')
 const Handler = require('./installid-in-url.js')
 const TestHelper = require('../../test-helper.js')
-const dashboard = require('@userappstore/dashboard')
 
 describe('server/installid-in-url', () => {
   describe('InstallIDInURL#after', () => {

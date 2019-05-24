@@ -1,11 +1,23 @@
+/* eslint-env mocha */
+const fs = require('fs')
+
 module.exports = {
   completeForm,
   clickFrameLink,
   clickPageLink
 }
 
+afterEach(() => {
+  deleteLocalData(`/tmp/data1`)
+  deleteLocalData(`/tmp/data2`)
+  fs.mkdirSync(`/tmp/data1`)
+  fs.mkdirSync(`/tmp/data2`)
+})
+
 async function completeForm(page, body, submitButton) {
-  console.log('submit', body)
+  if (process.env.DEBUG_ERRORS) {
+    console.log('submit', body)
+  }
   await page.waitForSelector('body', { waitLoad: true, waitNetworkIdle: true })
   let frame
   if (page.frames) {
@@ -37,7 +49,9 @@ async function completeForm(page, body, submitButton) {
 }
 
 async function clickPageLink(page, text) {
-  console.log('page', text)
+  if (process.env.DEBUG_ERRORS) {
+    console.log('page', text)
+  }
   await page.waitForSelector('body', { waitLoad: true, waitNetworkIdle: true })
   let links = await page.$x(`//a[contains(text(), '${text}')]`)
   while (!links || !links.length) {
@@ -58,7 +72,9 @@ async function clickPageLink(page, text) {
 }
 
 async function clickFrameLink(page, text) {
-  console.log('frame', text)
+  if (process.env.DEBUG_ERRORS) {
+    console.log('frame', text)
+  }
   await page.waitForSelector('iframe', { waitLoad: true, waitNetworkIdle: true })
   let frame = await page.frames().find(f => f.name() === 'application-iframe')
   if (!frame) {
@@ -81,4 +97,21 @@ async function clickFrameLink(page, text) {
     await page.waitFor(1100)
     await page.waitForSelector('body', { waitLoad: true, waitNetworkIdle: true })
   }
+}
+
+function deleteLocalData(currentPath) {
+  if (!fs.existsSync(currentPath)) {
+    return
+  }
+  const contents = fs.readdirSync(currentPath)
+  for (const item of contents) {
+    var itemPath = `${currentPath}/${item}`
+    const stat = fs.lstatSync(itemPath)
+    if (stat.isDirectory()) {
+      deleteLocalData(itemPath)
+    } else {
+      fs.unlinkSync(itemPath)
+    }
+  }
+  fs.rmdirSync(currentPath)
 }

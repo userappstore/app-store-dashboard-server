@@ -11,6 +11,9 @@ module.exports = {
   post: async (path, data, accountid, sessionid, alternativeServer, alternativeToken) => {
     return proxy('POST', path, data, accountid, sessionid, alternativeServer, alternativeToken)
   },
+  put: async (path, data, accountid, sessionid, alternativeServer, alternativeToken) => {
+    return proxy('PUT', path, data, accountid, sessionid, alternativeServer, alternativeToken)
+  },
   patch: async (path, data, accountid, sessionid, alternativeServer, alternativeToken) => {
     return proxy('PATCH', path, data, accountid, sessionid, alternativeServer, alternativeToken)
   },

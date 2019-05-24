@@ -5,9 +5,8 @@ const TestHelperBrowser = require('../../test-helper-browser.js')
 const TestHelper = require('@userappstore/stripe-subscriptions/test-helper.js')
 const testUserData = require('@userappstore/dashboard/test-data.json')
 const headless = process.env.SHOW_BROWSERS !== 'true'
-const util = require('util')
 
-describe(`tests/cancelling-organization-subscription-pending`, () => {
+describe(`tests/cancelling-subscription-paid-pending`, () => {
   it('should work via UI browsing', async () => {
     global.pageSize = 40
     // create owner account
@@ -369,6 +368,8 @@ describe(`tests/cancelling-organization-subscription-pending`, () => {
     // customer 1 cancels subscription
     await TestHelperBrowser.clickFrameLink(customer1Tab, 'Cancel')
     await customer1Tab.waitForSelector('#application-iframe')
+    const cancelFrame = await customer1Tab.frames().find(f => f.name() === 'application-iframe')
+    await cancelFrame.evaluate(el => el.checked = true, await cancelFrame.$('#refund'))
     await TestHelperBrowser.completeForm(customer1Tab, {})
     await customer1Tab.waitForSelector('#application-iframe', { waitLoad: true, waitNetworkIdle: true })
     // customer 1 retains access until the end of billing period

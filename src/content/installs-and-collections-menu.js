@@ -12,6 +12,10 @@ module.exports = {
       ungroupedMenu.parentNode.removeChild(ungroupedMenu)
       return
     }
+    for (const install of installs) {
+      install.subscriptionsEnabled = install.stripeid !== undefined
+      install.organizationsEnabled = install.serverid !== undefined
+    }
     const noInstalls = templateDoc.getElementById('no-installs')
     noInstalls.parentNode.removeChild(noInstalls)
     const collections = await applicationServer.get(`/api/user/userappstore/collections?accountid=${req.account.accountid}&all=true`, req.account.accountid, req.session.sessionid)

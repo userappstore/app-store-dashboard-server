@@ -1,4 +1,4 @@
-const createCard = require('@userappstore/stripe-subscriptions/src/www/api/user/subscriptions/create-subscription.js')
+const createCard = require('@userappstore/stripe-subscriptions/src/www/api/user/subscriptions/create-card.js')
 createCard.lock = false
 
 module.exports = {

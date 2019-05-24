@@ -5,9 +5,8 @@ const TestHelperBrowser = require('../../test-helper-browser.js')
 const TestHelper = require('@userappstore/stripe-subscriptions/test-helper.js')
 const testUserData = require('@userappstore/dashboard/test-data.json')
 const headless = process.env.SHOW_BROWSERS !== 'true'
-const util = require('util')
 
-describe(`tests/cancelling-organization-subscription-pending`, () => {
+describe(`tests/cancelling-subscription-paid-credit`, () => {
   it('should work via UI browsing', async () => {
     global.pageSize = 40
     // create owner account
@@ -199,7 +198,7 @@ describe(`tests/cancelling-organization-subscription-pending`, () => {
     await developerTab.waitForSelector('#application-iframe', { waitLoad: true, waitNetworkIdle: true })
     // preset the icon, screenshot1, screenshot2, screenshot3, screenshot4
     const storePageFrame = await developerTab.frames().find(f => f.name() === 'application-iframe')
-    await storePageFrame.waitFor('#upload-icon')
+    await storePageFrame.waitForSelector('#upload-icon')
     const iconUpload = await storePageFrame.$('#upload-icon')
     await iconUpload.uploadFile(`${global.applicationPath}/test-icon.png`)
     const screenshot1Upload = await storePageFrame.$('#upload-screenshot1')
@@ -223,7 +222,7 @@ describe(`tests/cancelling-organization-subscription-pending`, () => {
     await developerTab.waitForSelector('#application-iframe', { waitLoad: true, waitNetworkIdle: true })
     await TestHelperBrowser.completeForm(developerTab, {})
     await developerTab.waitForSelector('#application-iframe', { waitLoad: true, waitNetworkIdle: true })
-    // create the first customer and customer1
+    // create the customer
     const browser3 = await puppeteer.launch({
       headless,
       args: ['--window-size=1440,900', '--window-position=558,1105', '--incognito'],
@@ -238,74 +237,8 @@ describe(`tests/cancelling-organization-subscription-pending`, () => {
       password: 'customer1-password',
       confirm: 'customer1-password'
     })
+    await customer1Tab.waitForSelector('#application-iframe', { waitLoad: true, waitNetworkIdle: true })
     await ownerTab.reload()
-    await customer1Tab.waitForSelector('#application-iframe', { waitLoad: true, waitNetworkIdle: true })
-    await customer1Tab.hover('#account-menu-container')
-    await customer1Tab.waitFor(400)
-    await TestHelperBrowser.clickPageLink(customer1Tab, 'Manage organizations')
-    await customer1Tab.waitForSelector('#application-iframe', { waitLoad: true, waitNetworkIdle: true })
-    await TestHelperBrowser.clickFrameLink(customer1Tab, 'Create organization')
-    await customer1Tab.waitForSelector('#application-iframe', { waitLoad: true, waitNetworkIdle: true })
-    await TestHelperBrowser.completeForm(customer1Tab, {
-      name: 'My organization',
-      email: testUserData[2].email
-    })
-    await customer1Tab.waitForSelector('#submit-form', { waitLoad: true, waitNetworkIdle: true })
-    await TestHelperBrowser.completeForm(customer1Tab, {
-      username: 'customer1-username',
-      password: 'customer1-password',
-      'remember-minutes': ''
-    })
-    await customer1Tab.waitForSelector('#application-iframe', { waitLoad: true, waitNetworkIdle: true })
-    await TestHelperBrowser.clickPageLink(customer1Tab, 'Invitations')
-    await customer1Tab.waitForSelector('#application-iframe', { waitLoad: true, waitNetworkIdle: true })
-    await TestHelperBrowser.clickFrameLink(customer1Tab, 'Create invitation')
-    await customer1Tab.waitForSelector('#application-iframe', { waitLoad: true, waitNetworkIdle: true })
-    await TestHelperBrowser.completeForm(customer1Tab, {
-      code: 'the-invitation-code'
-    })
-    await customer1Tab.waitForSelector('#application-iframe', { waitLoad: true, waitNetworkIdle: true })
-    const invitationLinkFrame = await customer1Tab.frames().find(f => f.name() === 'application-iframe')
-    const invitationid = await invitationLinkFrame.$eval('.link', e => e.value)
-    await TestHelperBrowser.clickPageLink(customer1Tab, 'Memberships')
-    await customer1Tab.waitForSelector('#application-iframe', { waitLoad: true, waitNetworkIdle: true })
-    // create the second customer with customer2ship    
-    const browser4 = await puppeteer.launch({
-      headless,
-      args: ['--window-size=1440,900', '--window-position=2098,1105', '--incognito'],
-      slowMo: 0
-    })
-    const browser4Pages = await browser4.pages()
-    const customer2Tab = browser4Pages[0]
-    await customer2Tab.setViewport({ width: 1440, height: 900 })
-    await customer2Tab.goto(global.dashboardServer, { waitLoad: true, waitNetworkIdle: true })
-    await TestHelperBrowser.completeForm(customer2Tab, {
-      username: 'customer2-username',
-      password: 'customer2-password',
-      confirm: 'customer2-password'
-    })
-    await ownerTab.reload()
-    await customer2Tab.waitForSelector('#application-iframe', { waitLoad: true, waitNetworkIdle: true })
-    await customer2Tab.hover('#account-menu-container')
-    await customer2Tab.waitFor(400)
-    await TestHelperBrowser.clickPageLink(customer2Tab, 'Manage organizations')
-    await customer2Tab.waitForSelector('#application-iframe', { waitLoad: true, waitNetworkIdle: true })
-    await TestHelperBrowser.clickPageLink(customer2Tab, 'Accept invitation')
-    await customer2Tab.waitForSelector('#application-iframe', { waitLoad: true, waitNetworkIdle: true })
-    await TestHelperBrowser.completeForm(customer2Tab, {
-      invitationid,
-      name: `${testUserData[3].firstName} ${testUserData[3].lastName}`,
-      email: testUserData[3].email,
-      code: 'the-invitation-code'
-    })
-    await customer2Tab.waitForSelector('#submit-form')
-    await TestHelperBrowser.completeForm(customer2Tab, {
-      username: 'customer2-username',
-      password: 'customer2-password',
-      'remember-minutes': ''
-    })
-    await customer2Tab.waitForSelector('#application-iframe', { waitLoad: true, waitNetworkIdle: true })
-    // customer 1 installs the app for the organization
     await TestHelperBrowser.clickPageLink(customer1Tab, 'Home')
     await customer1Tab.waitForSelector('#application-iframe', { waitLoad: true, waitNetworkIdle: true })
     await TestHelperBrowser.clickFrameLink(customer1Tab, 'JSON formatter')
@@ -313,11 +246,9 @@ describe(`tests/cancelling-organization-subscription-pending`, () => {
     await TestHelperBrowser.clickFrameLink(customer1Tab, 'Install')
     await customer1Tab.waitFor(400)
     await customer1Tab.waitForSelector('#submit-form', { waitLoad: true, waitNetworkIdle: true })
-    await customer1Tab.evaluate(el => el.selectedIndex = 2, await customer1Tab.$('#organizations-list'))
     await TestHelperBrowser.completeForm(customer1Tab, {})
     await customer1Tab.waitFor(400)
     await customer1Tab.waitForSelector('#submit-form', { waitLoad: true, waitNetworkIdle: true })
-    await customer1Tab.evaluate(_ => document.getElementsByTagName('input')[0].checked = true)
     await TestHelperBrowser.completeForm(customer1Tab, {})
     await customer1Tab.waitFor(400)
     await customer1Tab.waitForSelector('#submit-form', { waitLoad: true, waitNetworkIdle: true })
@@ -332,72 +263,55 @@ describe(`tests/cancelling-organization-subscription-pending`, () => {
       exp_year: (new Date().getFullYear() + 1).toString().substring(2),
       name: `${testUserData[2].firstName} ${testUserData[2].lastName}`
     })
+    await customer1Tab.waitForSelector('#submit-form', { waitLoad: true, waitNetworkIdle: true })
+    await TestHelperBrowser.completeForm(customer1Tab, {
+      username: 'customer1-username',
+      password: 'customer1-password',
+      'remember-minutes': ''
+    })
+    await customer1Tab.waitForSelector('#submit-form', { waitLoad: true, waitNetworkIdle: true })
     await customer1Tab.waitForSelector('#customerid', { waitLoad: true, waitNetworkIdle: true })
     await customer1Tab.evaluate(el => el.selectedIndex = 1, await customer1Tab.$('#customerid'))
-    global.webhooks = []
     await TestHelperBrowser.completeForm(customer1Tab, {})
     await customer1Tab.waitForSelector('#application-iframe', { waitLoad: true, waitNetworkIdle: true })
-    await TestHelper.waitForWebhook('invoice.updated', (stripeEvent) => {
-      if (stripeEvent.data.object.amount_paid) {
-        return true
-      }
-      return false
-    })
-    // customer2 configures install
-    await TestHelperBrowser.clickPageLink(customer2Tab, 'Home')
-    await customer2Tab.waitForSelector('#application-iframe', { waitLoad: true, waitNetworkIdle: true })
-    await TestHelperBrowser.clickFrameLink(customer2Tab, 'Install')
-    await customer2Tab.waitForSelector('#submit-form', { waitLoad: true, waitNetworkIdle: true })
-    await TestHelperBrowser.completeForm(customer2Tab, {})
-    await customer2Tab.waitForSelector('#application-iframe', { waitLoad: true, waitNetworkIdle: true })
-    await TestHelperBrowser.completeForm(customer2Tab, {
-      'first-name': testUserData[3].firstName,
-      'last-name': testUserData[3].lastName,
-      email: testUserData[3].email
-    })
-    await customer2Tab.waitForSelector('#application-iframe')
     // customer1 cancels the subscription
+    await TestHelper.waitForWebhook('invoice.updated', (stripeEvent) => {
+      return true
+    })
+    await TestHelper.waitForWebhook('charge.succeeded', (stripeEvent) => {
+      return true
+    })
     await TestHelperBrowser.clickPageLink(customer1Tab, 'UserAppStore')
     await customer1Tab.waitForSelector('#application-iframe', { waitLoad: true, waitNetworkIdle: true })
     await TestHelperBrowser.clickPageLink(customer1Tab, 'Subscriptions')
     await customer1Tab.waitForSelector('#application-iframe', { waitLoad: true, waitNetworkIdle: true })
-    // customer 2 opens subscription information
-    await TestHelperBrowser.clickPageLink(customer2Tab, 'UserAppStore')
-    await customer2Tab.waitForSelector('#application-iframe', { waitLoad: true, waitNetworkIdle: true })
-    await TestHelperBrowser.clickPageLink(customer2Tab, 'Subscriptions')
-    await customer2Tab.waitForSelector('#application-iframe', { waitLoad: true, waitNetworkIdle: true })
     // customer 1 cancels subscription
     await TestHelperBrowser.clickFrameLink(customer1Tab, 'Cancel')
     await customer1Tab.waitForSelector('#application-iframe')
+    const cancelFrame = await customer1Tab.frames().find(f => f.name() === 'application-iframe')
+    await cancelFrame.evaluate(el => el.checked = true, await cancelFrame.$('#credit'))
     await TestHelperBrowser.completeForm(customer1Tab, {})
     await customer1Tab.waitForSelector('#application-iframe', { waitLoad: true, waitNetworkIdle: true })
-    // customer 1 retains access until the end of billing period
+    // customer 1 has no installs and an uninstall for the app
     await TestHelperBrowser.clickPageLink(customer1Tab, 'UserAppStore')
     await customer1Tab.waitForSelector('#application-iframe')
     await TestHelperBrowser.clickPageLink(customer1Tab, 'Manage installs')
     await customer1Tab.waitForSelector('#application-iframe')
-    const installed1Frame = await customer1Tab.frames().find(f => f.name() === 'application-iframe')
-    const install1Link = await installed1Frame.$x(`//a[contains(text(), 'test-app-${global.testNumber}')]`)
-    assert.strictEqual(install1Link.length, 1)
     await TestHelperBrowser.clickPageLink(customer1Tab, 'Uninstalled')
+    await customer1Tab.waitForSelector('#application-iframe', { waitLoad: true, waitNetworkIdle: true })
     const uninstalled1Frame = await customer1Tab.frames().find(f => f.name() === 'application-iframe')
     const uninstall1Link = await uninstalled1Frame.$x(`//a[contains(text(), 'test-app-${global.testNumber}')]`)
-    assert.strictEqual(uninstall1Link.length, 0)
-    // customer 2 retains access until the end of billing period
-    await TestHelperBrowser.clickPageLink(customer2Tab, 'UserAppStore')
-    await customer2Tab.waitForSelector('#application-iframe')
-    await TestHelperBrowser.clickPageLink(customer2Tab, 'Manage installs')
-    await customer2Tab.waitForSelector('#application-iframe')
-    const installed2Frame = await customer2Tab.frames().find(f => f.name() === 'application-iframe')
-    const install2Link = await installed2Frame.$x(`//a[contains(text(), 'test-app-${global.testNumber}')]`)
-    assert.strictEqual(install2Link.length, 1)
-    await TestHelperBrowser.clickPageLink(customer2Tab, 'Uninstalled')
-    const uninstalled2Frame = await customer2Tab.frames().find(f => f.name() === 'application-iframe')
-    const uninstall2Link = await uninstalled2Frame.$x(`//a[contains(text(), 'test-app-${global.testNumber}')]`)
-    assert.strictEqual(uninstall2Link.length, 0)
+    assert.strictEqual(uninstall1Link.length, 1)
+    // customer 1 has a credit 
+    await TestHelperBrowser.clickPageLink(customer1Tab, 'UserAppStore')
+    await customer1Tab.waitForSelector('#application-iframe')
+    await TestHelperBrowser.clickPageLink(customer1Tab, 'Credits')
+    await customer1Tab.waitForSelector('#application-iframe')
+    const creditsFrame = await customer1Tab.frames().find(f => f.name() === 'application-iframe')
+    const creditCell = await creditsFrame.$x(`//td[contains(text(), 'cancellation')]`)
+    assert.strictEqual(creditCell.length, 1)
     browser1.close()
     browser2.close()
     browser3.close()
-    browser4.close()
   })
 })

@@ -33,25 +33,24 @@
       "/src/content/remap-install-links.js",
       "/src/content/remap-project-links.js",
       "/src/content/remap-administrator-links.js",
-      "/src/content/opened-install-navbar.js",
-      "/src/content/previewed-project-navbar.js",
       "/src/content/install-account-menu.js",
       "/src/content/server-administrator-menu.js",
       "/src/content/reduced-iframe-sandbox.js"
     ],
     "server": [
       "/src/server/clean-deleted-subscriptions.js",
+      "/src/server/remove-template-after-authorization.js",
       "/src/server/connected-subscription-webhooks.js",
       "/src/server/skip-urls-from-within-templates.js",
       "/src/server/api-as-alternative-server.js",
       "/src/server/uploading-app-store-assets.js",
       "/src/server/serverid-in-url.js",
       "/src/server/installid-in-url.js",
-      "/src/server/projectid-in-url.js"
+      "/src/server/connect-webhook-key.js"
     ]
   },
   "devDependencies": {
-    "puppeteer": "^1.14.0",
-    "puppeteer-core": "^1.14.0"
+    "puppeteer": "^1.15.0",
+    "puppeteer-core": "^1.15.0"
   }
 }

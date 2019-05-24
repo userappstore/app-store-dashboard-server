@@ -2,12 +2,10 @@
 const assert = require('assert')
 const puppeteer = require('puppeteer')
 const TestHelperBrowser = require('../../test-helper-browser.js')
-const TestHelper = require('@userappstore/stripe-subscriptions/test-helper.js')
 const testUserData = require('@userappstore/dashboard/test-data.json')
 const headless = process.env.SHOW_BROWSERS !== 'true'
-const util = require('util')
 
-describe(`tests/cancelling-organization-subscription-pending`, () => {
+describe(`tests/cancelling-organization-subscription-immediately`, () => {
   it('should work via UI browsing', async () => {
     global.pageSize = 40
     // create owner account
@@ -21,10 +19,10 @@ describe(`tests/cancelling-organization-subscription-pending`, () => {
     await ownerTab.setViewport({ width: 1440, height: 900 })
     await ownerTab.goto(global.dashboardServer, { waitLoad: true, waitNetworkIdle: true })
     await ownerTab.waitForSelector('body')
-    await TestHelperBrowser.completeForm(ownerTab, {
-      username: 'owner-username',
-      password: 'owner-password',
-      confirm: 'owner-password'
+    await TestHelperBrowser.completeForm(ownerTab, { 
+      username: 'owner-username', 
+      password: 'owner-password', 
+      confirm: 'owner-password' 
     })
     await ownerTab.waitForSelector('#application-iframe')
     await ownerTab.hover('#administrator-menu-container')
@@ -199,7 +197,6 @@ describe(`tests/cancelling-organization-subscription-pending`, () => {
     await developerTab.waitForSelector('#application-iframe', { waitLoad: true, waitNetworkIdle: true })
     // preset the icon, screenshot1, screenshot2, screenshot3, screenshot4
     const storePageFrame = await developerTab.frames().find(f => f.name() === 'application-iframe')
-    await storePageFrame.waitFor('#upload-icon')
     const iconUpload = await storePageFrame.$('#upload-icon')
     await iconUpload.uploadFile(`${global.applicationPath}/test-icon.png`)
     const screenshot1Upload = await storePageFrame.$('#upload-screenshot1')
@@ -238,6 +235,7 @@ describe(`tests/cancelling-organization-subscription-pending`, () => {
       password: 'customer1-password',
       confirm: 'customer1-password'
     })
+    await customer1Tab.waitForSelector('#application-iframe', { waitLoad: true, waitNetworkIdle: true })
     await ownerTab.reload()
     await customer1Tab.waitForSelector('#application-iframe', { waitLoad: true, waitNetworkIdle: true })
     await customer1Tab.hover('#account-menu-container')
@@ -273,7 +271,7 @@ describe(`tests/cancelling-organization-subscription-pending`, () => {
     const browser4 = await puppeteer.launch({
       headless,
       args: ['--window-size=1440,900', '--window-position=2098,1105', '--incognito'],
-      slowMo: 0
+        slowMo: 0
     })
     const browser4Pages = await browser4.pages()
     const customer2Tab = browser4Pages[0]
@@ -334,22 +332,15 @@ describe(`tests/cancelling-organization-subscription-pending`, () => {
     })
     await customer1Tab.waitForSelector('#customerid', { waitLoad: true, waitNetworkIdle: true })
     await customer1Tab.evaluate(el => el.selectedIndex = 1, await customer1Tab.$('#customerid'))
-    global.webhooks = []
     await TestHelperBrowser.completeForm(customer1Tab, {})
     await customer1Tab.waitForSelector('#application-iframe', { waitLoad: true, waitNetworkIdle: true })
-    await TestHelper.waitForWebhook('invoice.updated', (stripeEvent) => {
-      if (stripeEvent.data.object.amount_paid) {
-        return true
-      }
-      return false
-    })
     // customer2 configures install
     await TestHelperBrowser.clickPageLink(customer2Tab, 'Home')
     await customer2Tab.waitForSelector('#application-iframe', { waitLoad: true, waitNetworkIdle: true })
     await TestHelperBrowser.clickFrameLink(customer2Tab, 'Install')
     await customer2Tab.waitForSelector('#submit-form', { waitLoad: true, waitNetworkIdle: true })
     await TestHelperBrowser.completeForm(customer2Tab, {})
-    await customer2Tab.waitForSelector('#application-iframe', { waitLoad: true, waitNetworkIdle: true })
+    await customer2Tab.waitForSelector('#submit-form', { waitLoad: true, waitNetworkIdle: true })
     await TestHelperBrowser.completeForm(customer2Tab, {
       'first-name': testUserData[3].firstName,
       'last-name': testUserData[3].lastName,
@@ -371,30 +362,31 @@ describe(`tests/cancelling-organization-subscription-pending`, () => {
     await customer1Tab.waitForSelector('#application-iframe')
     await TestHelperBrowser.completeForm(customer1Tab, {})
     await customer1Tab.waitForSelector('#application-iframe', { waitLoad: true, waitNetworkIdle: true })
-    // customer 1 retains access until the end of billing period
+    // customer 1 has no installs and an uninstall for the app
     await TestHelperBrowser.clickPageLink(customer1Tab, 'UserAppStore')
     await customer1Tab.waitForSelector('#application-iframe')
     await TestHelperBrowser.clickPageLink(customer1Tab, 'Manage installs')
     await customer1Tab.waitForSelector('#application-iframe')
     const installed1Frame = await customer1Tab.frames().find(f => f.name() === 'application-iframe')
     const install1Link = await installed1Frame.$x(`//a[contains(text(), 'test-app-${global.testNumber}')]`)
-    assert.strictEqual(install1Link.length, 1)
+    assert.strictEqual(install1Link.length, 0)
     await TestHelperBrowser.clickPageLink(customer1Tab, 'Uninstalled')
     const uninstalled1Frame = await customer1Tab.frames().find(f => f.name() === 'application-iframe')
     const uninstall1Link = await uninstalled1Frame.$x(`//a[contains(text(), 'test-app-${global.testNumber}')]`)
-    assert.strictEqual(uninstall1Link.length, 0)
-    // customer 2 retains access until the end of billing period
+    assert.strictEqual(uninstall1Link.length, 1)
+    // customer 2 has no installs and an uninstall for the app
     await TestHelperBrowser.clickPageLink(customer2Tab, 'UserAppStore')
     await customer2Tab.waitForSelector('#application-iframe')
     await TestHelperBrowser.clickPageLink(customer2Tab, 'Manage installs')
     await customer2Tab.waitForSelector('#application-iframe')
     const installed2Frame = await customer2Tab.frames().find(f => f.name() === 'application-iframe')
     const install2Link = await installed2Frame.$x(`//a[contains(text(), 'test-app-${global.testNumber}')]`)
-    assert.strictEqual(install2Link.length, 1)
+    assert.strictEqual(install2Link.length, 0)
     await TestHelperBrowser.clickPageLink(customer2Tab, 'Uninstalled')
+    await customer2Tab.waitForSelector('#application-iframe')
     const uninstalled2Frame = await customer2Tab.frames().find(f => f.name() === 'application-iframe')
     const uninstall2Link = await uninstalled2Frame.$x(`//a[contains(text(), 'test-app-${global.testNumber}')]`)
-    assert.strictEqual(uninstall2Link.length, 0)
+    assert.strictEqual(uninstall2Link.length, 1)
     browser1.close()
     browser2.close()
     browser3.close()

@@ -20,10 +20,18 @@ module.exports = {
     const bodyWas = req.body
     const installid = req.urlPath.split('/')[2]
     let install
-    if (installid.indexOf('-') < installid.lastIndexOf('-')) {
+    try{
       install = await applicationServer.get(`/api/user/userappstore/install?installid=${installid}`, req.account.accountid, req.session.sessionid)
+    } catch (error) {
     }
     if (!install) {
+      return
+    }
+    console.log('install', install)
+    if (install.url && !install.serverid) {
+      console.log('iframe install')
+      req.query = { installid: install.installid }
+      req.route = global.sitemap['/install/home']
       return
     }
     let sessionid = await dashboard.Storage.read(`map/applicationSession/${sessionWas.sessionid}/${install.serverid}`)
@@ -53,7 +61,7 @@ module.exports = {
       }
       delete (req.success)
       await dashboard.StorageObject.setProperty(`${req.appid}/session/${session.sessionid}`, 'expires', sessionWas.expires)
-      await dashboard.Storage.write(`map/session/applicationServer/${sessionWas.sessionid}/${install.serverid}`, session.sessionid)
+      await dashboard.Storage.write(`map/applicationSession/${sessionWas.sessionid}/${install.serverid}`, session.sessionid)
       sessionid = session.sessionid
     }
     let session
@@ -62,6 +70,7 @@ module.exports = {
       session = await global.api.administrator.Session._get(req)
     } catch (error) {
     }
+
     req.install = install
     if (req.urlPath.startsWith('/account/')) {
       req.urlPath = req.urlPath.split(`/${installid}`).join(``)
@@ -79,48 +88,80 @@ module.exports = {
       await dashboard.StorageObject.removeProperties(`${req.appid}/session/${session.sessionid}`, ['lock', 'lockURL', 'lockData', 'unlocked'])
       delete (session.unlocked)
     }
+    req.session = session
     if (req.urlPath.startsWith('/account/')) {
       req.query = req.query || {}
       req.query.accountid = req.session.accountid
+      console.log('loading account2')
       req.account = await global.api.administrator.Account._get(req)
-      req.session = session
     } 
     req.query = queryWas
     req.body = bodyWas
-    if (req.method === 'POST') {
-      res.on('finish', async () => {
-        // check for session locks that need to bubble up to
-        // the UserAppStore session
-        if (!req.session.lock) {
-          return
-        }
-        await dashboard.StorageObject.setProperties(`${req.appid}/session/${req.session.sessionid}`, 'unlocked', 1)
-        await dashboard.StorageObject.setProperties(`${global.appid}/session/${sessionWas.sessionid}`, {
-          lock: req.session.lock,
-          lockURL: req.session.lockURL,
-          lockData: req.session.lockData
+    const parts = req.urlPath.split('/')
+    parts.splice(0, 3)
+    const newPath = `/install/${parts.join('/')}`
+    if (global.sitemap[newPath]) {
+      console.log('sitemapped asset')
+      req.urlPath = newPath
+      req.urlWas = req.url
+      req.url = `${req.urlPath}?installid=${installid}`
+      req.query = req.query || {}
+      req.query.installid = installid
+      req.route = global.sitemap[req.urlPath]
+      if (req.method === 'POST') {
+        res.on('finish', async () => {
+          // check for session locks that need to bubble up to
+          // the UserAppStore session
+          if (!req.session.lock) {
+            return
+          }
+          await dashboard.StorageObject.setProperties(`${req.appid}/session/${req.session.sessionid}`, 'unlocked', 1)
+          await dashboard.StorageObject.setProperties(`${global.appid}/session/${sessionWas.sessionid}`, {
+            lock: req.session.lock,
+            lockURL: req.session.lockURL,
+            lockData: req.session.lockData
+          })
         })
-      })
-    }
-    if (req.method === 'GET' || req.method === 'POST') {
-      res.endWas = res.end
-      res.end = (blob) => {
-        // check for redirects that need to be tagged with serverids
-        if (blob && blob.toString()) {
-          let str = blob.toString('utf-8')
-          if (str.indexOf('<meta http-equiv="refresh" content="1;url=') > -1) {
-            let url = str.split('<meta http-equiv="refresh" content="1;url=')[1]
-            url = url.substring(0, url.indexOf('"'))
-            if (url && url.startsWith('/install/')) {
-              const newURL = url.replace('/install/', `/install/${install.installid}/`)
-              str = str.split(url).join(newURL)
-              const buffer = Buffer.from(str)
-              return res.endWas(buffer)
+      }
+      if (req.method === 'GET' || req.method === 'POST') {
+        res.endWas = res.end
+        res.end = (blob) => {
+          // check for redirects that need to be tagged with serverids
+          if (blob && blob.toString) {
+            let str = blob.toString('utf-8')
+            if (str.indexOf('<meta http-equiv="refresh" content="1;url=') > -1) {
+              let url = str.split('<meta http-equiv="refresh" content="1;url=')[1]
+              url = url.substring(0, url.indexOf('"'))
+              if (url && url.startsWith('/install/')) {
+                const newURL = url.replace('/install/', `/install/${install.installid}/`)
+                str = str.split(url).join(newURL)
+                const buffer = Buffer.from(str)
+                return res.endWas(buffer)
+              }
             }
           }
+          return res.endWas(blob)
         }
-        return res.endWas(blob)
       }
+      return
+    }
+    // ok now we are proxying....
+    console.log('proxying', req.url)
+    req.url = req.url.substring(`/install/${installid}`.length)
+    let thing
+    try {
+      const method = req.method.toLowerCase()
+      if (method === 'get') {
+        thing = await applicationServer.get(req.url, req.account.accountid, req.session.sessionid, req.server.applicationServer, req.server.applicationServerToken)
+      } else {
+        thing = await applicationServer[method](req.url, req.body, req.account.accountid, req.session.sessionid, req.server.applicationServer, req.server.applicationServerToken)
+      }
+    } catch (error) {
+    }
+    console.log('got thing', thing)
+    if (thing) {
+      res.ended = true
+      return res.end(thing)
     }
   }
 }

@@ -10,6 +10,7 @@ module.exports = {
     if (!req.install) {
       return
     }
+    const isAccount = req.urlPath.startsWith('/account/')
     for (const item of remap) {
       const elements = doc.getElementsByTagName(item.tag)
       if (!elements || !elements.length) {
@@ -19,9 +20,29 @@ module.exports = {
         if (!element || !element.attr || !element.attr[item.attribute]) {
           continue
         }
-        if (element.attr[item.attribute].startsWith('/') && !element.attr[item.attribute].startsWith('/public/')) {
-          element.attr[item.attribute] = '/install/' + req.install.installid + element.attr[item.attribute]
+        if (isAccount && element.attr[item.attribute].startsWith('/public/')) {
+          continue
         }
+        if (element.attr[item.attribute].startsWith('/')) {
+          element.attr[item.attribute] = '/install/' + req.install.installid + element.attr[item.attribute]
+        } else if (element.attr[item.attribute].startsWith(`${global.dashboardServer}/`)) {
+          element.attr[item.attribute] = element.attr[item.attribute].replace(`${global.dashboardServer}/`, `${global.dashboardServer}/install/${req.install.installid}`)
+        }
+      }
+    }
+    // add installid to links in the app navigation
+    const application = doc.getElementById('app-navbar')
+    if (!application || !application.child || !application.child.length) {
+      return
+    }
+    for (const child of application.child) {
+      if (!child.attr || !child.attr.href) {
+        continue
+      }
+      if (child.attr.href.startsWith('/')) {
+        child.attr.href = `/install/${req.install.installid}${child.attr.href}`
+      } else if (child.attr.href.startsWith(`${global.dashboardServer}/`)) {
+        child.attr.href = child.attr.href.replace(`${global.dashboardServer}/`, `${global.dashboardServer}/install/${req.install.installid}`)
       }
     }
   },
@@ -48,20 +69,6 @@ module.exports = {
           }
         }
       }
-    }
-    // add installid to links in the app navigation
-    const application = templateDoc.getElementById('application-navigation')
-    if (!application.child || !application.child.length) {
-      return
-    }
-    if (application.attr.style && application.attr.style.join(' ') === 'display: none') {
-      return
-    }
-    for (const child of application.child) {
-      if (!child.attr || !child.attr.href) {
-        continue
-      }
-      child.attr.href = `/install/${req.install.installid}${child.attr.href}`
     }
   }
 }
