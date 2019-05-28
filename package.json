@@ -20,7 +20,6 @@
     "@userappstore/stripe-subscriptions": "git+https://github.com/userappstore/stripe-subscriptions.git"
   },
   "dashboard": {
-    "title": "UserAppStore",
     "modules": [
       "@userappstore/maxmind-geoip",
       "@userappstore/stripe-subscriptions",
@@ -47,9 +46,5 @@
       "/src/server/installid-in-url.js",
       "/src/server/connect-webhook-key.js"
     ]
-  },
-  "devDependencies": {
-    "puppeteer": "^1.15.0",
-    "puppeteer-core": "^1.15.0"
   }
 }
