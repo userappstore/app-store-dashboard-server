@@ -1,5 +1,5 @@
 {
-  "name": "userappstore.com",
+  "name": "userappstore-dashboard-server",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -16,7 +16,6 @@
     "@userappstore/dashboard": "git+https://github.com/userappstore/dashboard.git",
     "@userappstore/maxmind-geoip": "git+https://github.com/userappstore/maxmind-geoip.git",
     "@userappstore/organizations": "git+https://github.com/userappstore/organizations.git",
-    "@userappstore/storage-s3": "git+https://github.com/userappstore/storage-s3.git",
     "@userappstore/stripe-connect": "git+https://github.com/userappstore/stripe-connect.git",
     "@userappstore/stripe-subscriptions": "git+https://github.com/userappstore/stripe-subscriptions.git"
   },
