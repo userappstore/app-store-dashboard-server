@@ -1,5 +1,5 @@
 {
-  "name": "@userappstore/app-store-dashboard-server",
+  "name": "app-store-dashboard-server",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
