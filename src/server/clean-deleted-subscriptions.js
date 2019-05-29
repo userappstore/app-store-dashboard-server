@@ -4,7 +4,7 @@ const stripeCache = require('@userappstore/stripe-subscriptions/src/stripe-cache
 
 module.exports = {
   after: async (req) => {
-    if (req.applicationServer || !req.account || req.session.lock) {
+    if (req.applicationServer || !req.account || !req.stripeKey || req.session.lock) {
       return
     }
     const installs = await applicationServer.get(`/api/user/userappstore/installs?accountid=${req.account.accountid}`, req.account.accountid, req.session.sessionid)

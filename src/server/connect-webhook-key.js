@@ -6,7 +6,7 @@ module.exports = {
     if (req.urlPath !== '/webhooks/subscriptions/index-stripe-data') {
       return
     }
-    if (!req.bodyRaw) {
+    if (!req.bodyRaw || !req.stripeKey) {
       return
     }
     const json = JSON.parse(req.bodyRaw)
