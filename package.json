@@ -38,7 +38,7 @@
     "server": [
       "/node_modules/@userappstore/stripe-subscriptions/src/server/bind-stripekey.js",
       "/src/server/clean-deleted-subscriptions.js",
-      "/src/server/remove-template-after-authorization.js",
+      "/src/server/remove-template-for-ajax.js",
       "/src/server/connected-subscription-webhooks.js",
       "/src/server/skip-urls-from-within-templates.js",
       "/src/server/api-as-alternative-server.js",
