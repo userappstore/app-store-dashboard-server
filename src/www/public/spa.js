@@ -1,23 +1,24 @@
-var contentContainer, layoutContainer
+var contentContainer, layoutContainer, authorizationForm
 var installs
 var layout
 var iframe
 var appNumber = 0
 
 window.addEventListener('load', function (event) {
+  // adjust the formatting to work with golden layout
   document.body.style.overflow = 'auto'
   document.body.style.backgroundColor = '#036'
   document.getElementById('container').style.height = 'auto'
   document.title = 'UserAppStore'
   iframe = document.getElementById('application-iframe')
   iframe.parentNode.removeChild(iframe)
-  var appMenu, appLinks
-  // make installs open into Golden Layout
-  appMenu = document.getElementById('app-menu-container')
+  // scan installed app menu and set up golden layout
+  // and AJAX hooks
+  var appMenu = document.getElementById('app-menu-container')
   installs = {}
   if (appMenu.children.length) {
     appMenu.style.display = ''
-    appLinks = appMenu.getElementsByTagName('a')
+    var appLinks = appMenu.getElementsByTagName('a')
     for (var i = 0, len = appLinks.length; i < len; i++) {
       if (appLinks[i].href && appLinks[i].href.indexOf('/install/') > -1) {
         appLinks[i].onclick = openApplication
@@ -30,12 +31,12 @@ window.addEventListener('load', function (event) {
       }
     }
   }
-  // make website links open content into a shared container
+  // set up ajax intercepts on links
   var links = document.getElementsByTagName('a')
-  for (i = 0, len = links.length; i < len; i++) {
+  for (var i = 0, len = links.length; i < len; i++) {
     if (!links[i].href ||
-         links[i].href.indexOf('/account/signout') > -1 ||
-         links[i].href.indexOf('/install/') > -1) {
+      links[i].href.indexOf('/account/signout') > -1 ||
+      links[i].href.indexOf('/install/') > -1) {
       continue
     }
     links[i].onclick = openContent
@@ -61,47 +62,17 @@ window.addEventListener('load', function (event) {
   if (installIndex > -1) {
     return openApplication(null, true)
   } else {
-    return openContent(event, true)
+    return setTimeout(createContent, 1)
   }
 })
 
-function openContent (event, first) {
-  console.log('open content', event, first)
-  var newURL
-  if (!first) {
-    event.preventDefault()
-    newURL = event.target.href.split('://')
-  } else {
-    newURL = [ '/home' ]
-  }
+function openContent(event) {
+  event.preventDefault()
+  var newURL = (event.target.parentNode.href || event.target.href).split('://')
   if (newURL.length === 1) {
     newURL = newURL[0]
   } else {
     newURL = newURL[1].substring(newURL[1].indexOf('/'))
-  }
-  console.log('new url', newURL)
-  if (newURL === '/home' && !first) {
-    var navigation = document.getElementById('navigation')
-    navigation.innerHTML = document.getElementById('opened-install-navbar').innerHTML
-    var links = navigation.getElementsByTagName('a')
-    for (i = 0, len = links.length; i < len; i++) {
-      if (!links[i].href ||
-        links[i].href.indexOf('/account/signout') > -1 ||
-        links[i].href.indexOf('/install/') > -1) {
-        continue
-      }
-      links[i].onclick = openContent
-    }
-    if (contentContainer.parentNode) {
-      document.body.removeChild(contentContainer)
-    }
-    if (layoutContainer) {
-      layoutContainer.style.display = ''
-    }
-    return
-  }
-  if (first) {
-    return setTimeout(createContent, 1)
   }
   console.log('fetching')
   return Request.get(newURL, function (_, response) {
@@ -110,7 +81,7 @@ function openContent (event, first) {
   })
 }
 
-function createContent (html) {
+function createContent(html) {
   var srcdoc, newTitle, navigation, newNavigation
   var navigation = document.getElementById('navigation')
   if (html) {
@@ -126,56 +97,53 @@ function createContent (html) {
     srcdoc = iframe.srcdocWas
     newTitle = document.title
   }
+  // set up ajax intercepts on the navigation links
   var links = navigation.getElementsByTagName('a')
-  for (i = 0, len = links.length; i < len; i++) {
+  for (var i = 0, len = links.length; i < len; i++) {
     if (!links[i].href ||
       links[i].href.indexOf('/account/signout') > -1 ||
       links[i].href.indexOf('/install/') > -1) {
       continue
     }
-    links[i].onclick = openContent
+    links[i].onclick = links[i].onclick || openContent
   }
   var newFrame = document.createElement('iframe')
-  newFrame.id = 'application-iframe'
+  newFrame.name = 'application-iframe'
   newFrame.className = 'application'
   newFrame.style.width = '100%'
   newFrame.style.height = '100%'
   newFrame.srcdoc = srcdoc
   newFrame.onload = function (event) {
+    console.log('newFrame load event', event, newFrame)
+    // make forms submit with ajax
+    var forms = newFrame.contentWindow.document.getElementsByTagName('form')
+    if (forms && forms.length) {
+      for (i = 0, len = forms.length; i < len; i++) {
+        forms[i].onsubmit = submitContentForm
+      }
+    }
+    var container = document.getElementById('container')
+    container.style.display = ''
+    // setup ajax intercepts on page links
     var links = newFrame.contentWindow.document.getElementsByTagName('a')
-    for (var i = 0, len = links.length; i < len; i++) {
+    for (i = 0, len = links.length; i < len; i++) {
       if (!links[i].href ||
         links[i].href.indexOf('/account/signout') > -1 ||
         links[i].href.indexOf('/install/') > -1) {
         continue
       }
-      links[i].onclick = openContent
+      links[i].onclick = links[i].onclick || openContent
     }
-    var forms = newFrame.contentWindow.document.getElementsByTagName('form')
-    for (var i = 0, len = forms.length; i < len; i++) {
-      forms[i].target = '_self'
-      forms[i].action = forms[i].action || ''
-      forms[i].action += (forms[i].action.indexOf('?') > -1 ? '&' : '?') + 'removeTemplate=true'
-      newFrame.onload = function (event) {
-        var form = newFrame.contentWindow.document.getElementById('submit-form')
-        if (form) {
-          form.target = '_self'
+    // setup authorization form
+    if (forms && forms.length) {
+      for (i = 0, len = forms.length; i < len; i++) {
+        console.log('applying action', forms[i])
+        if (!forms[i].getAttribute('action')) {
+          forms[i].setAttribute('action', '/account/authorize')
         }
-        var container = document.getElementById('container')
-        container.style.display = ''
-        if (form && form.action && form.action.indexOf('/account/authorize')) {
-          container.style.display = 'none'
-        }        
-      }
-      newFrame.contentWindow.onhashchange = function (event) {
-        console.log('caught hash change', event)
-      }
-      newFrame.contentWindow.document.onhashchange = function (event) {
-        console.log('second hash change', event)
       }
     }
   }
-  console.log('resetting content container display')
   contentContainer.innerHTML = ''
   contentContainer.appendChild(newFrame)
   document.body.appendChild(contentContainer)
@@ -184,7 +152,84 @@ function createContent (html) {
   }
 }
 
-function openApplication (event, first) {
+function submitContentForm(event) {
+  console.log('submit form', event)
+  event.preventDefault()
+  var form = event.target
+  var inputs = form.getElementsByTagName('input')
+  var selects = form.getElementsByTagName('select')
+  var textareas = form.getElementsByTagName('textarea')
+  var postData = {}
+  if (inputs && inputs.length) {
+    for (var i = 0, len = inputs.length; i < len; i++) {
+      if (inputs[i].name) {
+        if (inputs[i].type === 'checkbox' || inputs[i].type === 'radio') {
+          if (inputs[i].checked) {
+            postData[inputs[i].name] = inputs[i].value
+          }
+        } else {
+          postData[inputs[i].name] = inputs[i].value
+        }
+      }
+    }
+  }
+  if (textareas && textareas.length) {
+    for (i = 0, len = textareas.length; i < len; i++) {
+      if (textareas[i].name) {
+        postData[textareas[i].name] = textareas[i].innerHTML
+      }
+    }
+  }
+  if (selects && selects.length) {
+    for (i = 0, len = selects.length; i < len; i++) {
+      if (selects[i].name && selects[i].selectedIndex > -1) {
+        postData[selects[i].name] = selects[i].options[selects[i].selectedIndex].value
+      }
+    }
+  }
+  console.log('submitting form', form.action, postData)
+  return Request.post(form.action, postData, function (error, response) {
+    if (error) {
+
+    }
+    if (!response) {
+
+    }
+    console.log('got form response', response)
+
+    // is the response a redirect ...
+    function handleResponse(response) {
+      if (response.indexOf('http-equiv="refresh"') === -1) {
+        return createContent(response)
+      }
+      var redirectURL = response.substring(response.indexOf(';url=') + ';url='.length)
+      redirectURL = redirectURL.substring(0, redirectURL.indexOf('"'))
+      console.log('redirecting', redirectURL)
+      if (redirectURL === '/account/authorize') {
+        // throw up authorization form
+        if (authorizationForm) {
+          iframe.srcdocWas = authorizationForm
+          return createContent()
+        }
+        return Request.get('/account/authorize', function (error, response) {
+          iframe.srcdocWas = authorizationForm = response
+          return createContent()
+        })
+      } else {
+        console.log('redirecting', redirectURL)
+        // get the redirected content
+        return Request.get(redirectURL, function (error, response) {
+          console.log('got redirected response', response)
+          // but now we can be on a redirect too
+          return handleResponse(response)
+        })
+      }
+    }
+    return handleResponse(response)
+  })
+}
+
+function openApplication(event, first) {
   var newURL
   if (!first) {
     event.preventDefault()
@@ -201,13 +246,13 @@ function openApplication (event, first) {
   console.log(newURL, installid)
   if (first) {
     return createApplicationContent(installid)
-  }  
+  }
   return Request.get(newURL, function (_, response) {
     return createApplicationContent(installid, response)
   })
 }
 
-function createApplicationContent (installid, html) {
+function createApplicationContent(installid, html) {
   var srcdoc, newTitle
   if (html) {
     srcdoc = html.substring(html.indexOf('srcdoc="') + 'srcdoc="'.length)
@@ -218,7 +263,7 @@ function createApplicationContent (installid, html) {
   } else {
     srcdoc = iframe.srcdocWas
     newTitle = document.title
-  }  
+  }
   var newFrame = document.createElement('iframe')
   newFrame.sandbox = iframe.sandbox
   newFrame.className = iframe.className
@@ -284,7 +329,7 @@ function createApplicationContent (installid, html) {
   })
   if (!layout.isInitialised) {
     layout.init()
-    layoutContainer = document.querySelector('.lm_goldenlayout')    
+    layoutContainer = document.querySelector('.lm_goldenlayout')
   } else {
     layout.root.contentItems[0].addChild({
       type: 'component',
@@ -294,7 +339,7 @@ function createApplicationContent (installid, html) {
   }
 }
 
-function closeApplication (event) {
+function closeApplication(event) {
   const link = event.target
   const container = link.container
   container.close()
