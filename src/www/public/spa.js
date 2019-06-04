@@ -74,9 +74,7 @@ function openContent(event) {
   } else {
     newURL = newURL[1].substring(newURL[1].indexOf('/'))
   }
-  console.log('fetching')
   return Request.get(newURL, function (_, response) {
-    console.log('creating content')
     return createContent(response)
   })
 }
@@ -114,12 +112,19 @@ function createContent(html) {
   newFrame.style.height = '100%'
   newFrame.srcdoc = srcdoc
   newFrame.onload = function (event) {
-    console.log('newFrame load event', event, newFrame)
     // make forms submit with ajax
     var forms = newFrame.contentWindow.document.getElementsByTagName('form')
     if (forms && forms.length) {
       for (i = 0, len = forms.length; i < len; i++) {
         forms[i].onsubmit = submitContentForm
+      }
+    }
+    var buttons = newFrame.contentWindow.document.getElementsByTagName('button')
+    if (buttons && buttons.length) {
+      for (i = 0, len = buttons.length; i < len; i++) {
+        if (buttons[i].name && buttons[i].value) {
+          buttons[i].onclick = submitContentForm
+        }
       }
     }
     var container = document.getElementById('container')
@@ -137,7 +142,6 @@ function createContent(html) {
     // setup authorization form
     if (forms && forms.length) {
       for (i = 0, len = forms.length; i < len; i++) {
-        console.log('applying action', forms[i])
         if (!forms[i].getAttribute('action')) {
           forms[i].setAttribute('action', '/account/authorize')
         }
@@ -153,13 +157,18 @@ function createContent(html) {
 }
 
 function submitContentForm(event) {
-  console.log('submit form', event)
   event.preventDefault()
   var form = event.target
+  while (form.tagName !== 'FORM') {
+    form = form.parentNode
+  }
   var inputs = form.getElementsByTagName('input')
   var selects = form.getElementsByTagName('select')
   var textareas = form.getElementsByTagName('textarea')
   var postData = {}
+  if (event.target.tagName === 'BUTTON' && event.target.name && event.target.value) {
+    postData[event.target.name] = event.target.value
+  }
   if (inputs && inputs.length) {
     for (var i = 0, len = inputs.length; i < len; i++) {
       if (inputs[i].name) {
@@ -187,7 +196,6 @@ function submitContentForm(event) {
       }
     }
   }
-  console.log('submitting form', form.action, postData)
   return Request.post(form.action, postData, function (error, response) {
     if (error) {
 
@@ -195,8 +203,6 @@ function submitContentForm(event) {
     if (!response) {
 
     }
-    console.log('got form response', response)
-
     // is the response a redirect ...
     function handleResponse(response) {
       if (response.indexOf('http-equiv="refresh"') === -1) {
@@ -204,7 +210,6 @@ function submitContentForm(event) {
       }
       var redirectURL = response.substring(response.indexOf(';url=') + ';url='.length)
       redirectURL = redirectURL.substring(0, redirectURL.indexOf('"'))
-      console.log('redirecting', redirectURL)
       if (redirectURL === '/account/authorize') {
         // throw up authorization form
         if (authorizationForm) {
@@ -216,10 +221,8 @@ function submitContentForm(event) {
           return createContent()
         })
       } else {
-        console.log('redirecting', redirectURL)
         // get the redirected content
         return Request.get(redirectURL, function (error, response) {
-          console.log('got redirected response', response)
           // but now we can be on a redirect too
           return handleResponse(response)
         })
@@ -243,7 +246,6 @@ function openApplication(event, first) {
     newURL = document.location.pathname
   }
   var installid = newURL.split('/')[2]
-  console.log(newURL, installid)
   if (first) {
     return createApplicationContent(installid)
   }
@@ -294,7 +296,6 @@ function createApplicationContent(installid, html) {
     newFrame.style.width = '100%'
     newFrame.style.height = '100%'
     container.on('tab', function (tab) {
-      console.log('tab created')
       var newMenu = document.createElement('div')
       var settingsSVG = document.getElementById('settings-svg').innerHTML
       var installMenu = document.getElementById('install-account-menu').innerHTML
