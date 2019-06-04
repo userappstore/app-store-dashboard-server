@@ -136,6 +136,7 @@ function createContent (html) {
     links[i].onclick = openContent
   }
   var newFrame = document.createElement('iframe')
+  newFrame.id = 'application-iframe'
   newFrame.className = 'application'
   newFrame.style.width = '100%'
   newFrame.style.height = '100%'
@@ -176,7 +177,6 @@ function createContent (html) {
   }
   console.log('resetting content container display')
   contentContainer.innerHTML = ''
-  contentContainer.id = 'modifiedfasf'
   contentContainer.appendChild(newFrame)
   document.body.appendChild(contentContainer)
   if (layoutContainer) {
