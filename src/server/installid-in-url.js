@@ -27,9 +27,7 @@ module.exports = {
     if (!install) {
       return
     }
-    console.log('install', install)
     if (install.url && !install.serverid) {
-      console.log('iframe install')
       req.query = { installid: install.installid }
       req.route = global.sitemap['/install/home']
       return
@@ -92,7 +90,6 @@ module.exports = {
     if (req.urlPath.startsWith('/account/')) {
       req.query = req.query || {}
       req.query.accountid = req.session.accountid
-      console.log('loading account2')
       req.account = await global.api.administrator.Account._get(req)
     } 
     req.query = queryWas
@@ -101,7 +98,6 @@ module.exports = {
     parts.splice(0, 3)
     const newPath = `/install/${parts.join('/')}`
     if (global.sitemap[newPath]) {
-      console.log('sitemapped asset')
       req.urlPath = newPath
       req.urlWas = req.url
       req.url = `${req.urlPath}?installid=${installid}`
@@ -146,7 +142,6 @@ module.exports = {
       return
     }
     // ok now we are proxying....
-    console.log('proxying', req.url)
     req.url = req.url.substring(`/install/${installid}`.length)
     let thing
     try {
@@ -158,7 +153,6 @@ module.exports = {
       }
     } catch (error) {
     }
-    console.log('got thing', thing)
     if (thing) {
       res.ended = true
       return res.end(thing)

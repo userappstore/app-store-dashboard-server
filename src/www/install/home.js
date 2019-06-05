@@ -54,7 +54,6 @@ async function beforeRequest (req) {
 }
 
 async function renderPage (req, res) {
-  console.log('rendering', req.method, req.url)
   let doc
   // rendering a project requires substituting root links
   // for their install-specific URLs
