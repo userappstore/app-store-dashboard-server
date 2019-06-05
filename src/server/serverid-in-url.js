@@ -95,15 +95,12 @@ module.exports = {
       await dashboard.StorageObject.removeProperties(`${req.appid}/${session.sessionid}`, [ 'lock', 'lockURL', 'lockData', 'unlocked' ])
       delete (req.session.unlocked)
     }
-    console.log('real account', req.account)
     req.query = req.query || {}
     req.query.accountid = req.session.accountid
-    console.log('loading account3')
     req.account = await global.api.administrator.Account._get(req)
     req.query = query
     req.administratorAccount = req.account
     req.administratorSession = req.session
-    console.log('reconfigured server', req.account)
     if (req.method === 'POST') {
       res.on('finish', async () => {
         // check for session locks that need to bubble up to
