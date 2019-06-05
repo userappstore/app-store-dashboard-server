@@ -162,41 +162,8 @@ function submitContentForm(event) {
   while (form.tagName !== 'FORM') {
     form = form.parentNode
   }
-  var inputs = form.getElementsByTagName('input')
-  var selects = form.getElementsByTagName('select')
-  var textareas = form.getElementsByTagName('textarea')
-  var postData = {}
-  if (event.target.tagName === 'BUTTON' && event.target.name && event.target.value) {
-    postData[event.target.name] = event.target.value
-  }
-  if (inputs && inputs.length) {
-    for (var i = 0, len = inputs.length; i < len; i++) {
-      if (inputs[i].name) {
-        if (inputs[i].type === 'checkbox' || inputs[i].type === 'radio') {
-          if (inputs[i].checked) {
-            postData[inputs[i].name] = inputs[i].value
-          }
-        } else {
-          postData[inputs[i].name] = inputs[i].value
-        }
-      }
-    }
-  }
-  if (textareas && textareas.length) {
-    for (i = 0, len = textareas.length; i < len; i++) {
-      if (textareas[i].name) {
-        postData[textareas[i].name] = textareas[i].innerHTML
-      }
-    }
-  }
-  if (selects && selects.length) {
-    for (i = 0, len = selects.length; i < len; i++) {
-      if (selects[i].name && selects[i].selectedIndex > -1) {
-        postData[selects[i].name] = selects[i].options[selects[i].selectedIndex].value
-      }
-    }
-  }
-  return Request.post(form.action, postData, function (error, response) {
+  var formData = new FormData(form)
+  return Request.post(form.action, formData, function (error, response) {
     if (error) {
 
     }
