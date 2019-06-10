@@ -2,7 +2,8 @@ const remap = [
   { tag: 'a', attribute: 'href' },
   { tag: 'link', attribute: 'href' },
   { tag: 'script', attribute: 'src' },
-  { tag: 'img', attribute: 'src' }
+  { tag: 'img', attribute: 'src' },
+  { tag: 'form', attribute: 'action' }
 ]
 
 module.exports = {
