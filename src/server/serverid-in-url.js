@@ -7,7 +7,7 @@ module.exports = {
       return
     }
     req.stripeKey = req.stripeKey || {
-      stripe_key: process.env.STRIPE_KEY
+      api_key: process.env.STRIPE_KEY
     }
     // This detects the application owner, or an owner-organization  
     // member, accessing the administration interface to manage their
