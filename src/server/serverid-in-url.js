@@ -6,6 +6,9 @@ module.exports = {
     if (!req.session) {
       return
     }
+    req.stripeKey = req.stripeKey || {
+      stripe_key: process.env.STRIPE_KEY
+    }
     // This detects the application owner, or an owner-organization  
     // member, accessing the administration interface to manage their
     // users, to do that they need a session created under the 
@@ -21,7 +24,7 @@ module.exports = {
       return
     }
     let username
-    if (req.server.ownerid === req.account.accountid || 
+    if (req.server.ownerid === req.account.accountid ||
       (req.server.project && req.server.project.accountid === req.account.accountid)) {
       username = `owner-${req.server.serverid}-${req.account.accountid}`
     } else {
@@ -29,7 +32,7 @@ module.exports = {
         throw new Error('invalid-account')
       }
       const query = req.query
-      req.query = { organizationid: req.server.organizationid } 
+      req.query = { organizationid: req.server.organizationid }
       const membership = await global.api.user.organizations.OrganizationMembership.get(req)
       if (!membership) {
         throw new Error('invalid-account')
@@ -66,7 +69,7 @@ module.exports = {
       }
       if (!session) {
         res.statusCode = 302
-        if (req.server.ownerid === req.account.accountid || 
+        if (req.server.ownerid === req.account.accountid ||
           (req.server.project && req.server.project.accountid === req.account.accountid)) {
           res.setHeader('location', `/application-server-owner-setup?serverid=${serverid}`)
         } else {
@@ -78,7 +81,7 @@ module.exports = {
       await dashboard.StorageObject.setProperty(`${req.appid}/${session.sessionid}`, 'expires', sessionWas.expires)
       await dashboard.Storage.write(`map/administrationSession/${sessionWas.sessionid}/${serverid}`, session.sessionid)
       sessionid = session.sessionid
-    }    
+    }
     const query = req.query
     if (session) {
       req.session = session
