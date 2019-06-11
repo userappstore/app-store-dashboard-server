@@ -95,7 +95,7 @@ function frameContent (url) {
 }
 
 function createContent(html, url) {
-  if (url.indexOf('/install-app?') === 0 || url.indexOf('/confirm-subscription?') === 0) {
+  if (url && url.indexOf('/install-app?') === 0 || url.indexOf('/confirm-subscription?') === 0) {
     return frameContent(url)
   }
   var srcdoc, newTitle, navigation, newNavigation
