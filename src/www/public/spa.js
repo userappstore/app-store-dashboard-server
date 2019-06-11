@@ -75,7 +75,7 @@ function openContent(event) {
     newURL = newURL[1].substring(newURL[1].indexOf('/'))
   }
   return Request.get(newURL, function (_, response) {
-    return createContent(response, url)
+    return createContent(response, newURL)
   })
 }
 
@@ -86,35 +86,6 @@ function frameContent (url) {
   newFrame.style.width = '100%'
   newFrame.style.height = '100%'
   newFrame.src = url
-  newFrame.onload = function () {
-    // make forms submit with ajax
-    var forms = newFrame.contentWindow.document.getElementsByTagName('form')
-    if (forms && forms.length) {
-      for (i = 0, len = forms.length; i < len; i++) {
-        forms[i].onsubmit = submitContentForm
-      }
-    }
-    var buttons = newFrame.contentWindow.document.getElementsByTagName('button')
-    if (buttons && buttons.length) {
-      for (i = 0, len = buttons.length; i < len; i++) {
-        if (buttons[i].name && buttons[i].value) {
-          buttons[i].onclick = submitContentForm
-        }
-      }
-    }
-    var container = document.getElementById('container')
-    container.style.display = ''
-    // setup ajax intercepts on page links
-    var links = newFrame.contentWindow.document.getElementsByTagName('a')
-    for (i = 0, len = links.length; i < len; i++) {
-      if (!links[i].href ||
-        links[i].href.indexOf('/account/signout') > -1 ||
-        links[i].href.indexOf('/install/') > -1) {
-        continue
-      }
-      links[i].onclick = links[i].onclick || openContent
-    }
-  }
   contentContainer.innerHTML = ''
   contentContainer.appendChild(newFrame)
   document.body.appendChild(contentContainer)
