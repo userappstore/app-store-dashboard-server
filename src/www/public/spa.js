@@ -83,14 +83,25 @@ function createContent(html) {
   var srcdoc, newTitle, navigation, newNavigation
   var navigation = document.getElementById('navigation')
   if (html) {
-    srcdoc = html.substring(html.indexOf('srcdoc="') + 'srcdoc="'.length)
-    srcdoc = srcdoc.substring(0, srcdoc.lastIndexOf('></iframe>'))
-    srcdoc = srcdoc.substring(0, srcdoc.lastIndexOf('"'))
-    newTitle = html.substring(html.indexOf('<title>') + '<title>'.length)
-    newTitle = newTitle.substring(0, newTitle.indexOf('</title>'))
-    newNavigation = html.substring(html.indexOf('<nav id="navigation">') + '<nav id="navigation">'.length)
-    newNavigation = newNavigation.substring(0, newNavigation.indexOf('</nav>'))
-    navigation.innerHTML = newNavigation
+    // framed content
+    var srcdocIndex = html.indexOf('srcdoc="')
+    if (srcdocIndex > -1) {
+      srcdoc = html.substring(srcdocIndex + 'srcdoc="'.length)
+      srcdoc = srcdoc.substring(0, srcdoc.lastIndexOf('></iframe>'))
+      srcdoc = srcdoc.substring(0, srcdoc.lastIndexOf('"'))
+      newTitle = html.substring(html.indexOf('<title>') + '<title>'.length)
+      newTitle = newTitle.substring(0, newTitle.indexOf('</title>'))
+      var navigationIndex = html.indexOf('<nav id="navigation">')
+      if (navigationIndex > -1) {
+        newNavigation = html.substring(navigationIndex + '<nav id="navigation">'.length)
+        newNavigation = newNavigation.substring(0, newNavigation.indexOf('</nav>'))
+        navigation.innerHTML = newNavigation
+      }
+    } else {
+      // unframed content
+      navigation.innerHTML = ''
+      srcdoc = html
+    }
   } else {
     srcdoc = iframe.srcdocWas
     newTitle = document.title
@@ -111,7 +122,7 @@ function createContent(html) {
   newFrame.style.width = '100%'
   newFrame.style.height = '100%'
   newFrame.srcdoc = srcdoc
-  newFrame.onload = function (event) {
+  newFrame.onload = function () {
     // make forms submit with ajax
     var forms = newFrame.contentWindow.document.getElementsByTagName('form')
     if (forms && forms.length) {
@@ -139,14 +150,6 @@ function createContent(html) {
       }
       links[i].onclick = links[i].onclick || openContent
     }
-    // setup authorization form
-    if (forms && forms.length) {
-      for (i = 0, len = forms.length; i < len; i++) {
-        if (!forms[i].getAttribute('action')) {
-          forms[i].setAttribute('action', '/account/authorize')
-        }
-      }
-    }
   }
   contentContainer.innerHTML = ''
   contentContainer.appendChild(newFrame)
@@ -170,7 +173,6 @@ function submitContentForm(event) {
     if (!response) {
 
     }
-    // is the response a redirect ...
     function handleResponse(response) {
       if (response.indexOf('http-equiv="refresh"') === -1) {
         return createContent(response)
@@ -178,7 +180,6 @@ function submitContentForm(event) {
       var redirectURL = response.substring(response.indexOf(';url=') + ';url='.length)
       redirectURL = redirectURL.substring(0, redirectURL.indexOf('"'))
       if (redirectURL === '/account/authorize') {
-        // throw up authorization form
         if (authorizationForm) {
           iframe.srcdocWas = authorizationForm
           return createContent()
@@ -188,9 +189,7 @@ function submitContentForm(event) {
           return createContent()
         })
       } else {
-        // get the redirected content
         return Request.get(redirectURL, function (error, response) {
-          // but now we can be on a redirect too
           return handleResponse(response)
         })
       }
