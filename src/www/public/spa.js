@@ -75,11 +75,58 @@ function openContent(event) {
     newURL = newURL[1].substring(newURL[1].indexOf('/'))
   }
   return Request.get(newURL, function (_, response) {
-    return createContent(response)
+    return createContent(response, url)
   })
 }
 
-function createContent(html) {
+function frameContent (url) {
+  var newFrame = document.createElement('iframe')
+  newFrame.name = 'application-iframe'
+  newFrame.className = 'application'
+  newFrame.style.width = '100%'
+  newFrame.style.height = '100%'
+  newFrame.src = url
+  newFrame.onload = function () {
+    // make forms submit with ajax
+    var forms = newFrame.contentWindow.document.getElementsByTagName('form')
+    if (forms && forms.length) {
+      for (i = 0, len = forms.length; i < len; i++) {
+        forms[i].onsubmit = submitContentForm
+      }
+    }
+    var buttons = newFrame.contentWindow.document.getElementsByTagName('button')
+    if (buttons && buttons.length) {
+      for (i = 0, len = buttons.length; i < len; i++) {
+        if (buttons[i].name && buttons[i].value) {
+          buttons[i].onclick = submitContentForm
+        }
+      }
+    }
+    var container = document.getElementById('container')
+    container.style.display = ''
+    // setup ajax intercepts on page links
+    var links = newFrame.contentWindow.document.getElementsByTagName('a')
+    for (i = 0, len = links.length; i < len; i++) {
+      if (!links[i].href ||
+        links[i].href.indexOf('/account/signout') > -1 ||
+        links[i].href.indexOf('/install/') > -1) {
+        continue
+      }
+      links[i].onclick = links[i].onclick || openContent
+    }
+  }
+  contentContainer.innerHTML = ''
+  contentContainer.appendChild(newFrame)
+  document.body.appendChild(contentContainer)
+  if (layoutContainer) {
+    layoutContainer.style.display = 'none'
+  }
+}
+
+function createContent(html, url) {
+  if (url.indexOf('/install-app?') === 0 || url.indexOf('/confirm-subscription?') === 0) {
+    return frameContent(url)
+  }
   var srcdoc, newTitle, navigation, newNavigation
   var navigation = document.getElementById('navigation')
   if (html) {
@@ -175,22 +222,22 @@ function submitContentForm(event) {
     }
     function handleResponse(response) {
       if (response.indexOf('http-equiv="refresh"') === -1) {
-        return createContent(response)
+        return createContent(response, form.action)
       }
       var redirectURL = response.substring(response.indexOf(';url=') + ';url='.length)
       redirectURL = redirectURL.substring(0, redirectURL.indexOf('"'))
       if (redirectURL === '/account/authorize') {
         if (authorizationForm) {
           iframe.srcdocWas = authorizationForm
-          return createContent()
+          return createContent(null, redirectURL)
         }
         return Request.get('/account/authorize', function (error, response) {
           iframe.srcdocWas = authorizationForm = response
-          return createContent()
+          return createContent(null, '/account/authorize')
         })
       } else {
         return Request.get(redirectURL, function (error, response) {
-          return handleResponse(response)
+          return handleResponse(response, redirectURL)
         })
       }
     }
