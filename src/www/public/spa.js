@@ -97,7 +97,7 @@ function frameContent (url) {
     var buttons = newFrame.contentWindow.document.getElementsByTagName('button')
     if (buttons && buttons.length) {
       for (i = 0, len = buttons.length; i < len; i++) {
-        if (buttons[i].name && buttons[i].value) {
+        if (buttons[i].type === 'submit') {
           buttons[i].onclick = submitContentForm
         }
       }
@@ -180,7 +180,7 @@ function createContent(html, url) {
     var buttons = newFrame.contentWindow.document.getElementsByTagName('button')
     if (buttons && buttons.length) {
       for (i = 0, len = buttons.length; i < len; i++) {
-        if (buttons[i].name && buttons[i].value) {
+        if (buttons[i].type === 'submit') {
           buttons[i].onclick = submitContentForm
         }
       }
@@ -213,6 +213,11 @@ function submitContentForm(event) {
     form = form.parentNode
   }
   var formData = new FormData(form)
+  if (event.target.tagName === 'BUTTON' &&
+      event.target.name &&
+      event.target.value) {
+        formData.append(event.target.name, event.target.value)
+  }
   var currentURL = form.action
   return Request.post(currentURL, formData, function (error, response) {
     if (error) {
