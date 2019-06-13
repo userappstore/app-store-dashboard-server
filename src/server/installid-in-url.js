@@ -12,15 +12,15 @@ module.exports = {
     if (!req.urlPath.startsWith('/install/') && !req.urlPath.startsWith('/account/')) {
       return
     }
-    if (!req.account) {
+    if (!req.account || req.route) {
       return
     }
+    const installid = req.urlPath.split('/')[2]
     const sessionWas = req.session
     const queryWas = req.query
     const bodyWas = req.body
-    const installid = req.urlPath.split('/')[2]
     let install
-    try{
+    try {
       install = await applicationServer.get(`/api/user/userappstore/install?installid=${installid}`, req.account.accountid, req.session.sessionid)
     } catch (error) {
     }
@@ -91,7 +91,7 @@ module.exports = {
       req.query = req.query || {}
       req.query.accountid = req.session.accountid
       req.account = await global.api.administrator.Account._get(req)
-    } 
+    }
     req.query = queryWas
     req.body = bodyWas
     const parts = req.urlPath.split('/')
