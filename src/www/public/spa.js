@@ -171,31 +171,33 @@ function createContent(html, url) {
   newFrame.srcdoc = srcdoc
   newFrame.onload = function () {
     // make forms submit with ajax
-    var forms = newFrame.contentWindow.document.getElementsByTagName('form')
-    if (forms && forms.length) {
-      for (i = 0, len = forms.length; i < len; i++) {
-        forms[i].onsubmit = submitContentForm
-      }
-    }
-    var buttons = newFrame.contentWindow.document.getElementsByTagName('button')
-    if (buttons && buttons.length) {
-      for (i = 0, len = buttons.length; i < len; i++) {
-        if (buttons[i].type === 'submit') {
-          buttons[i].onclick = submitContentForm
+    if (url && url.indexOf('/project-ide') === -1) {
+      var forms = newFrame.contentWindow.document.getElementsByTagName('form')
+      if (forms && forms.length) {
+        for (i = 0, len = forms.length; i < len; i++) {
+          forms[i].onsubmit = submitContentForm
         }
       }
-    }
-    var container = document.getElementById('container')
-    container.style.display = ''
-    // setup ajax intercepts on page links
-    var links = newFrame.contentWindow.document.getElementsByTagName('a')
-    for (i = 0, len = links.length; i < len; i++) {
-      if (!links[i].href ||
-        links[i].href.indexOf('/account/signout') > -1 ||
-        links[i].href.indexOf('/install/') > -1) {
-        continue
+      var buttons = newFrame.contentWindow.document.getElementsByTagName('button')
+      if (buttons && buttons.length) {
+        for (i = 0, len = buttons.length; i < len; i++) {
+          if (buttons[i].type === 'submit') {
+            buttons[i].onclick = submitContentForm
+          }
+        }
       }
-      links[i].onclick = links[i].onclick || openContent
+      var container = document.getElementById('container')
+      container.style.display = ''
+      // setup ajax intercepts on page links
+      var links = newFrame.contentWindow.document.getElementsByTagName('a')
+      for (i = 0, len = links.length; i < len; i++) {
+        if (!links[i].href ||
+          links[i].href.indexOf('/account/signout') > -1 ||
+          links[i].href.indexOf('/install/') > -1) {
+          continue
+        }
+        links[i].onclick = links[i].onclick || openContent
+      }
     }
   }
   contentContainer.innerHTML = ''
@@ -214,9 +216,9 @@ function submitContentForm(event) {
   }
   var formData = new FormData(form)
   if (event.target.tagName === 'BUTTON' &&
-      event.target.name &&
-      event.target.value) {
-        formData.append(event.target.name, event.target.value)
+    event.target.name &&
+    event.target.value) {
+    formData.append(event.target.name, event.target.value)
   }
   var currentURL = form.action
   return Request.post(currentURL, formData, function (error, response) {
@@ -238,7 +240,7 @@ function submitContentForm(event) {
         if (authorizationForm) {
           iframe.srcdocWas = authorizationForm
           return createContent(null, redirectURL)
-        }        
+        }
         return Request.get(currentURL, function (error, response) {
           iframe.srcdocWas = authorizationForm = response
           return createContent(null, currentURL)
