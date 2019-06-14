@@ -1,6 +1,6 @@
 module.exports = {
   template: async (req, _, templateDoc) => {
-    if (!req.urlPath.startsWith('/project/') && !req.urlPath.startsWith('/install/')) {
+    if (!req.urlPath.startsWith('/install/')) {
       return
     }
     const iframe = templateDoc.getElementById('application-iframe')
