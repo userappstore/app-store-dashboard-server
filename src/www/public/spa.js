@@ -143,11 +143,14 @@ function createContent(html, url) {
     collections = collections.substring(0, collections.indexOf('</div'))
     document.getElementById('collections-menu').innerHTML = collections
     // ungrouped apps menu
-    var ungroupedIndex = html.indexOf('id="ungrouped-menu"')
-    var ungrouped = html.substring(ungroupedIndex)
-    ungrouped = ungrouped.substring(ungrouped.indexOf('>') + 1)
-    ungrouped = ungrouped.substring(0, ungrouped.indexOf('</div'))
-    document.getElementById('ungrouped-menu').innerHTML = ungrouped
+    var ungroupedMenu = document.getElementById('ungrouped-menu')
+    if (ungroupedMenu) {
+      var ungroupedIndex = html.indexOf('id="ungrouped-menu"')
+      var ungrouped = html.substring(ungroupedIndex)
+      ungrouped = ungrouped.substring(ungrouped.indexOf('>') + 1)
+      ungrouped = ungrouped.substring(0, ungrouped.indexOf('</div'))
+      ungroupedMenu.innerHTML = ungrouped
+    }
     // framed content
     var srcdocIndex = html.indexOf('srcdoc="')
     if (srcdocIndex > -1) {
@@ -248,12 +251,28 @@ function submitContentForm(event) {
     }
     iframe.srcdocWas = null
     function handleResponse(response) {
+      var accountMenuContainer = document.getElementById('account-menu-container')
+      var administratorMenuContainer = document.getElementById('administrator-menu-container')
+      var administratorMenu = document.getElementById('administrator-menu')
+      var isAdministrator = administratorMenu && administratorMenu.child && administratorMenu.child.length > 0
+      var appMenuContainer = document.getElementById('app-menu-container')
       if (response.indexOf('http-equiv="refresh"') === -1) {
+        appMenuContainer.style.display = ''
+        accountMenuContainer.style.display = ''
+        if (isAdministrator && administratorMenuContainer) {
+          administratorMenuContainer.style.display = ''
+        }
         return createContent(response, currentURL)
       }
       var redirectURL = response.substring(response.indexOf(';url=') + ';url='.length)
       redirectURL = redirectURL.substring(0, redirectURL.indexOf('"'))
       currentURL = redirectURL
+      document.getElementById('navigation').innerHTML = ''
+      appMenuContainer.style.display = 'none'
+      accountMenuContainer.style.display = 'none'
+      if (isAdministrator && administratorMenuContainer) {
+        administratorMenuContainer.style.display = 'none'
+      }
       if (redirectURL === '/account/authorize') {
         if (authorizationForm) {
           iframe.srcdocWas = authorizationForm
@@ -264,7 +283,7 @@ function submitContentForm(event) {
           return createContent(null, currentURL)
         })
       } else {
-        return Request.get(currentURL, function (error, response) {
+  return Request.get(currentURL, function (error, response) {
           return handleResponse(response)
         })
       }
