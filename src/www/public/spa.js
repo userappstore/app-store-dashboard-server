@@ -1,4 +1,4 @@
-var contentContainer, layoutContainer, authorizationForm
+var contentContainer, layoutContainer, authorizationForm, signinForm
 var installs
 var layout
 var iframe
@@ -39,7 +39,11 @@ window.addEventListener('load', function (event) {
       links[i].href.indexOf('/install/') > -1) {
       continue
     }
-    links[i].onclick = openContent
+    if (links[i].parentNode.id === 'heading') {
+      links[i].onclick = closeContent
+    } else {
+      links[i].onclick = openContent
+    }
   }
   // create containers for content and installs
   var temp = new GoldenLayout({
@@ -66,6 +70,13 @@ window.addEventListener('load', function (event) {
   }
 })
 
+function closeContent(event) {
+  event.preventDefault()
+  contentContainer.style.display = 'none'
+  layoutContainer.style.display = ''
+  return false
+}
+
 function openContent(event) {
   event.preventDefault()
   var newURL = (event.target.parentNode.href || event.target.href).split('://')
@@ -74,7 +85,24 @@ function openContent(event) {
   } else {
     newURL = newURL[1].substring(newURL[1].indexOf('/'))
   }
+  if (newURL === '/home') {
+
+  }
+  console.log('opening content', newURL)
   return Request.get(newURL, function (_, response) {
+    var redirectURL = response.substring(response.indexOf(';url=') + ';url='.length)
+    redirectURL = redirectURL.substring(0, redirectURL.indexOf('"'))
+    console.log('got response', redirectURL, response)
+    if (redirectURL && redirectURL.indexOf('/account/signin') === 0) {
+      if (signinForm) {
+        iframe.srcdocWas = signinForm
+        return createContent(null, redirectURL)
+      }
+      return Request.get(redirectURL, function (_, response) {
+        iframe.srcdocWas = signinForm = response
+        return createContent(null, redirectURL)
+      })
+    }
     return createContent(response, newURL)
   })
 }
@@ -129,6 +157,17 @@ function createContent(html, url) {
   }
   var srcdoc, newTitle, navigation, newNavigation
   var navigation = document.getElementById('navigation')
+  // top menus
+  var accountMenuContainer = document.getElementById('account-menu-container')
+  accountMenuContainer.style.display = ''
+  var administratorMenuContainer = document.getElementById('administrator-menu-container')
+  var administratorMenu = document.getElementById('administrator-menu')
+  var isAdministrator = administratorMenu && administratorMenu.child && administratorMenu.child.length > 0
+  var appMenuContainer = document.getElementById('app-menu-container')
+  appMenuContainer.style.display = ''
+  if (isAdministrator && administratorMenuContainer) {
+    administratorMenuContainer.style.display = ''
+  }
   if (html) {
     // notifications
     var notificationIndex = html.indexOf('class="notifications"')
@@ -173,6 +212,15 @@ function createContent(html, url) {
   } else {
     srcdoc = iframe.srcdocWas
     newTitle = document.title
+    if (url &&
+      (url.indexOf('/account/signin') === 0 || url.indexOf('/account/authorize') === 0)) {
+      appMenuContainer.style.display = 'none'
+      accountMenuContainer.style.display = 'none'
+      navigation.innerHTML = ''
+      if (isAdministrator && administratorMenuContainer) {
+        administratorMenuContainer.style.display = 'none'
+      }
+    }
   }
   // set up ajax intercepts on the navigation links
   var links = navigation.getElementsByTagName('a')
@@ -251,39 +299,28 @@ function submitContentForm(event) {
     }
     iframe.srcdocWas = null
     function handleResponse(response) {
-      var accountMenuContainer = document.getElementById('account-menu-container')
-      var administratorMenuContainer = document.getElementById('administrator-menu-container')
-      var administratorMenu = document.getElementById('administrator-menu')
-      var isAdministrator = administratorMenu && administratorMenu.child && administratorMenu.child.length > 0
-      var appMenuContainer = document.getElementById('app-menu-container')
       if (response.indexOf('http-equiv="refresh"') === -1) {
-        appMenuContainer.style.display = ''
-        accountMenuContainer.style.display = ''
-        if (isAdministrator && administratorMenuContainer) {
-          administratorMenuContainer.style.display = ''
-        }
         return createContent(response, currentURL)
       }
       var redirectURL = response.substring(response.indexOf(';url=') + ';url='.length)
       redirectURL = redirectURL.substring(0, redirectURL.indexOf('"'))
       currentURL = redirectURL
-      document.getElementById('navigation').innerHTML = ''
-      appMenuContainer.style.display = 'none'
-      accountMenuContainer.style.display = 'none'
-      if (isAdministrator && administratorMenuContainer) {
-        administratorMenuContainer.style.display = 'none'
-      }
       if (redirectURL === '/account/authorize') {
         if (authorizationForm) {
           iframe.srcdocWas = authorizationForm
           return createContent(null, redirectURL)
         }
-        return Request.get(currentURL, function (error, response) {
+        return Request.get(currentURL, function (_, response) {
           iframe.srcdocWas = authorizationForm = response
           return createContent(null, currentURL)
         })
+      } else if (redirectURL.indexOf('/account/signin') === 0) {
+        return Request.get(currentURL, function (_, response) {
+          iframe.srcdocWas = response
+          return createContent(null, currentURL)
+        })
       } else {
-  return Request.get(currentURL, function (error, response) {
+        return Request.get(currentURL, function (_, response) {
           return handleResponse(response)
         })
       }
