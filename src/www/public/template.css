@@ -16,6 +16,8 @@ body { font-family: Roboto, Helvetica, Arial, sans-serif; border: 0.5rem solid #
 .header .menus .menu { min-height: 2rem }
 .header .menus menu { min-height: 2rem; top: 1.75rem; right: -0.75rem; background-color: #FFF }
 
+.notification { width: auto !important }
+
 nav,
 .navigation { height: 2rem; line-height: 2rem; background-color: inherit; color: inherit }
 .navigation svg { min-width: 1rem; min-height: 0.8rem; max-width: 1rem; max-height: 0.8rem; fill: inherit; display: inline-block; margin-top: 1rem }
