@@ -130,6 +130,12 @@ function createContent(html, url) {
   var srcdoc, newTitle, navigation, newNavigation
   var navigation = document.getElementById('navigation')
   if (html) {
+    // notifications
+    var notificationIndex = html.indexOf('class="notifications"')
+    var notifications = html.substring(notificationIndex)
+    notifications = notifications.substring(notifications.indexOf('>') + 1)
+    notifications = notifications.substring(0, notifications.indexOf('</section'))
+    document.getElementById('notifications-container').innerHTML = notifications
     // framed content
     var srcdocIndex = html.indexOf('srcdoc="')
     if (srcdocIndex > -1) {
