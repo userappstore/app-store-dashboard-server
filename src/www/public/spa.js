@@ -136,6 +136,18 @@ function createContent(html, url) {
     notifications = notifications.substring(notifications.indexOf('>') + 1)
     notifications = notifications.substring(0, notifications.indexOf('</section'))
     document.getElementById('notifications-container').innerHTML = notifications
+    // collections menu
+    var collectionsIndex = html.indexOf('id="collections-menu"')
+    var collections = html.substring(collectionsIndex)
+    collections = collections.substring(collections.indexOf('>') + 1)
+    collections = collections.substring(0, collections.indexOf('</div'))
+    document.getElementById('collections-menu').innerHTML = collections
+    // ungrouped apps menu
+    var ungroupedIndex = html.indexOf('id="ungrouped-menu"')
+    var ungrouped = html.substring(ungroupedIndex)
+    ungrouped = ungrouped.substring(ungrouped.indexOf('>') + 1)
+    ungrouped = ungrouped.substring(0, ungrouped.indexOf('</div'))
+    document.getElementById('ungrouped-menu').innerHTML = ungrouped
     // framed content
     var srcdocIndex = html.indexOf('srcdoc="')
     if (srcdocIndex > -1) {
