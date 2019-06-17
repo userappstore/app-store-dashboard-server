@@ -114,6 +114,7 @@
   <template id="install-link">
     <a href="/install/${install.installid}/home" 
       data-installid="${install.installid}"
+      data-configured="${install.profileCreated}"
       data-subscriptions="${install.subscriptionsEnabled}"
       data-organizations="${install.organizationsEnabled}">${install.text}</a>
   </template>

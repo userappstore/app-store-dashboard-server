@@ -5,47 +5,14 @@ var iframe
 var appNumber = 0
 
 window.addEventListener('load', function (event) {
-  // adjust the formatting to work with golden layout
   document.body.style.overflow = 'auto'
   document.body.style.backgroundColor = '#036'
   document.getElementById('container').style.height = 'auto'
   document.title = 'UserAppStore'
   iframe = document.getElementById('application-iframe')
   iframe.parentNode.removeChild(iframe)
-  // scan installed app menu and set up golden layout
-  // and AJAX hooks
-  var appMenu = document.getElementById('app-menu-container')
-  installs = {}
-  if (appMenu.children.length) {
-    appMenu.style.display = ''
-    var appLinks = appMenu.getElementsByTagName('a')
-    for (var i = 0, len = appLinks.length; i < len; i++) {
-      if (appLinks[i].href && appLinks[i].href.indexOf('/install/') > -1) {
-        appLinks[i].onclick = openApplication
-        appLinks[i].iframe = iframe
-        var installid = appLinks[i].getAttribute('data-installid')
-        installs[installid] = {
-          organizationsEnabled: appLinks[i].getAttribute('data-organizations') === 'true',
-          subscriptionsEnabled: appLinks[i].getAttribute('data-subscriptions') === 'true'
-        }
-      }
-    }
-  }
-  // set up ajax intercepts on links
-  var links = document.getElementsByTagName('a')
-  for (var i = 0, len = links.length; i < len; i++) {
-    if (!links[i].href ||
-      links[i].href.indexOf('/account/signout') > -1 ||
-      links[i].href.indexOf('/install/') > -1) {
-      continue
-    }
-    if (links[i].parentNode.id === 'heading') {
-      links[i].onclick = closeContent
-    } else {
-      links[i].onclick = openContent
-    }
-  }
-  // create containers for content and installs
+  parseInstallData()
+  bindLinks()
   var temp = new GoldenLayout({
     content: [{
       type: 'row',
@@ -70,10 +37,53 @@ window.addEventListener('load', function (event) {
   }
 })
 
+function parseInstallData() {
+  var appMenu = document.getElementById('app-menu-container')
+  installs = {}
+  if (appMenu.children.length) {
+    appMenu.style.display = ''
+    var appLinks = appMenu.getElementsByTagName('a')
+    for (var i = 0, len = appLinks.length; i < len; i++) {
+      if (appLinks[i].href && appLinks[i].href.indexOf('/install/') > -1) {
+        var installid = appLinks[i].getAttribute('data-installid')
+        installs[installid] = {
+          organizationsEnabled: appLinks[i].getAttribute('data-organizations') === 'true',
+          subscriptionsEnabled: appLinks[i].getAttribute('data-subscriptions') === 'true',
+          configured: appLinks[i].getAttribute('data-configured') === 'true',
+          text: appLinks[i].innerHTML
+        }
+      }
+    }
+  }
+}
+
+function bindLinks() {
+  var links = document.getElementsByTagName('a')
+  for (var i = 0, len = links.length; i < len; i++) {
+    if (!links[i].href ||
+      links[i].href.indexOf('/account/signout') > -1) {
+      continue
+    }
+    if (links[i].parentNode.id === 'heading') {
+      links[i].onclick = closeContent
+    } else {
+      if (links[i].href.indexOf('/install/') > -1) {
+        links[i].onclick = openApplication
+      } else {
+        links[i].onclick = openContent
+      }
+    }
+  }
+}
+
 function closeContent(event) {
-  event.preventDefault()
+  if (event) {
+    event.preventDefault()
+  }
   contentContainer.style.display = 'none'
-  layoutContainer.style.display = ''
+  if (layoutContainer) {
+    layoutContainer.style.display = ''
+  }
   return false
 }
 
@@ -88,11 +98,9 @@ function openContent(event) {
   if (newURL === '/home') {
 
   }
-  console.log('opening content', newURL)
   return Request.get(newURL, function (_, response) {
     var redirectURL = response.substring(response.indexOf(';url=') + ';url='.length)
     redirectURL = redirectURL.substring(0, redirectURL.indexOf('"'))
-    console.log('got response', redirectURL, response)
     if (redirectURL && redirectURL.indexOf('/account/signin') === 0) {
       if (signinForm) {
         iframe.srcdocWas = signinForm
@@ -165,6 +173,8 @@ function createContent(html, url) {
   var isAdministrator = administratorMenu && administratorMenu.child && administratorMenu.child.length > 0
   var appMenuContainer = document.getElementById('app-menu-container')
   appMenuContainer.style.display = ''
+  var collectionsMenu = document.getElementById('collections-menu')
+  var ungroupedMenu = document.getElementById('ungrouped-menu')
   if (isAdministrator && administratorMenuContainer) {
     administratorMenuContainer.style.display = ''
   }
@@ -189,14 +199,13 @@ function createContent(html, url) {
     var collections = html.substring(collectionsIndex)
     collections = collections.substring(collections.indexOf('>') + 1)
     collections = collections.substring(0, collections.indexOf('</div'))
-    document.getElementById('collections-menu').innerHTML = collections
+    collectionsMenu.innerHTML = collections
     // ungrouped apps menu
-    var ungroupedMenu = document.getElementById('ungrouped-menu')
     if (ungroupedMenu) {
       var ungroupedIndex = html.indexOf('id="ungrouped-menu"')
       var ungrouped = html.substring(ungroupedIndex)
       ungrouped = ungrouped.substring(ungrouped.indexOf('>') + 1)
-      ungrouped = ungrouped.substring(0, ungrouped.indexOf('</div'))
+      ungrouped = ungrouped.substring(0, ungrouped.indexOf('</menu'))
       ungroupedMenu.innerHTML = ungrouped
     }
     // framed content
@@ -221,7 +230,7 @@ function createContent(html, url) {
   } else {
     srcdoc = iframe.srcdocWas
     newTitle = document.title
-    if (url && 
+    if (url &&
       (url.indexOf('/account/signin') === 0 || url.indexOf('/account/authorize') === 0)) {
       appMenuContainer.style.display = 'none'
       accountMenuContainer.style.display = 'none'
@@ -231,16 +240,12 @@ function createContent(html, url) {
       }
     }
   }
-  // set up ajax intercepts on the navigation links
-  var links = navigation.getElementsByTagName('a')
-  for (var i = 0, len = links.length; i < len; i++) {
-    if (!links[i].href ||
-      links[i].href.indexOf('/account/signout') > -1 ||
-      links[i].href.indexOf('/install/') > -1) {
-      continue
-    }
-    links[i].onclick = links[i].onclick || openContent
-  }
+  bindLinks()
+  parseInstallData()
+  collectionsMenu.style.display = collectionsMenu.children.length ? '' : 'none'
+  ungroupedMenu.style.display = ungroupedMenu.children.length ? '' : 'none'
+  var noInstalls = document.getElementById('no-installs')
+  noInstalls.style.display = collectionsMenu.children.length + ungroupedMenu.children.length > 0 ? 'none' : ''
   var newFrame = document.createElement('iframe')
   newFrame.name = 'application-iframe'
   newFrame.className = 'application'
@@ -306,6 +311,19 @@ function submitContentForm(event) {
     if (!response) {
 
     }
+    if (form.action.indexOf('/setup-install-profile') > -1) {
+      var installid = form.action.split('installid=')[1]
+      var nextVariable = installid.indexOf('&')
+      if (nextVariable > -1) {
+        installid = installid.substring(0, nextVariable)
+      }
+      event.target.href = '/install/' + installid + '/home'
+      return Request.get('/home', function (error, response) {
+        createContent(response)
+        closeContent()
+        return openApplication(event, false)
+      })
+    }
     iframe.srcdocWas = null
     function handleResponse(response) {
       if (response.indexOf('http-equiv="refresh"') === -1) {
@@ -352,6 +370,12 @@ function openApplication(event, first) {
     newURL = document.location.pathname
   }
   var installid = newURL.split('/')[2]
+  var install = installs[installid]
+  if (!install.configured) {
+    return Request.get(newURL, function (error, response) {
+      return createContent(response, newURL)
+    })
+  }
   if (first) {
     return createApplicationContent(installid)
   }
@@ -366,12 +390,10 @@ function createApplicationContent(installid, html) {
     srcdoc = html.substring(html.indexOf('srcdoc="') + 'srcdoc="'.length)
     srcdoc = srcdoc.substring(0, srcdoc.lastIndexOf('></iframe>'))
     srcdoc = srcdoc.substring(0, srcdoc.lastIndexOf('"'))
-    newTitle = html.substring(html.indexOf('<title>') + '<title>'.length)
-    newTitle = newTitle.substring(0, newTitle.indexOf('</title>'))
   } else {
     srcdoc = iframe.srcdocWas
-    newTitle = document.title
   }
+  var newTitle = installs[installid].text
   var newFrame = document.createElement('iframe')
   newFrame.sandbox = iframe.sandbox
   newFrame.className = iframe.className
