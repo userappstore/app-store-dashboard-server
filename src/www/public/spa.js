@@ -260,7 +260,7 @@ function createContent(html, url) {
   newFrame.srcdoc = srcdoc
   newFrame.onload = function () {
     // make forms submit with ajax
-    if (url && url.indexOf('/project-ide') === -1) {
+    if (!url || url.indexOf('/project-ide') === -1) {
       var forms = newFrame.contentWindow.document.getElementsByTagName('form')
       if (forms && forms.length) {
         for (i = 0, len = forms.length; i < len; i++) {
