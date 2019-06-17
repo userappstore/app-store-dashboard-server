@@ -6,18 +6,19 @@ module.exports = {
     if (!req.account) {
       return
     }
+    const ungroupedMenu = templateDoc.getElementById('ungrouped-menu')
     const installs = await applicationServer.get(`/api/user/userappstore/installs?accountid=${req.account.accountid}&all=true`, req.account.accountid, req.session.sessionid)
-      if (!installs || !installs.length) {
-      const ungroupedMenu = templateDoc.getElementById('ungrouped-menu')
-      ungroupedMenu.parentNode.removeChild(ungroupedMenu)
+    if (!installs || !installs.length) {
+      ungroupedMenu.setAttribute('style', 'display: none')
       return
     }
     for (const install of installs) {
       install.subscriptionsEnabled = install.stripeid !== undefined
       install.organizationsEnabled = install.serverid !== undefined
+      install.profileCreated = install.accountidSignedIn !== undefined
     }
     const noInstalls = templateDoc.getElementById('no-installs')
-    noInstalls.parentNode.removeChild(noInstalls)
+    noInstalls.setAttribute('style', 'display: none')
     const collections = await applicationServer.get(`/api/user/userappstore/collections?accountid=${req.account.accountid}&all=true`, req.account.accountid, req.session.sessionid)
     if (!collections || !collections.length) {
       dashboard.HTML.renderList(templateDoc, installs, 'install-link', 'ungrouped-menu')
@@ -56,8 +57,7 @@ module.exports = {
     if (unused.length) {
       dashboard.HTML.renderList(templateDoc, unused, 'install-link', `ungrouped-menu`)
     } else {
-      const ungroupedMenu = templateDoc.getElementById('ungrouped-menu')
-      ungroupedMenu.parentNode.removeChild(ungroupedMenu)
+      ungroupedMenu.setAttribute('style', 'display: none')
     }
   }
 }
