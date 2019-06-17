@@ -411,14 +411,22 @@ function createApplicationContent(installid, html) {
       }
       return setTimeout(function () {
         var install = installs[installid]
+        var organizationsLink = document.getElementById('organizations-link-' + installid)
         if (!install.organizationsEnabled) {
-          var organizationsLink = document.getElementById('organizations-link-' + installid)
           organizationsLink.parentNode.removeChild(organizationsLink)
+        } else {
+          organizationsLink.firstChild.onclick = openContent
         }
+        var subscriptionsLink = document.getElementById('subscriptions-link-' + installid)
         if (!install.subscriptionsEnabled) {
-          var subscriptionsLink = document.getElementById('subscriptions-link-' + installid)
           subscriptionsLink.parentNode.removeChild(subscriptionsLink)
+        } else {
+          subscriptionsLink.firstChild.onclick = openContent
         }
+        var settingsLink = document.getElementById('settings-link-' + installid)
+        settingsLink.onclick = openContent
+        var uninstallLink = document.getElementById('uninstall-link-' + installid)
+        uninstallLink.onclick = openContent
         var closeLink = document.getElementById('close-link-' + installid)
         closeLink.container = container
         closeLink.onclick = closeApplication
