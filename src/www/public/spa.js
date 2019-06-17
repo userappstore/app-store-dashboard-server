@@ -174,7 +174,16 @@ function createContent(html, url) {
     var notifications = html.substring(notificationIndex)
     notifications = notifications.substring(notifications.indexOf('>') + 1)
     notifications = notifications.substring(0, notifications.indexOf('</section'))
-    document.getElementById('notifications-container').innerHTML = notifications
+    var notificationsContainer = document.getElementById('notifications-container')
+    notificationsContainer.innerHTML = notifications
+    if (notifications.length) {
+      var links = notificationsContainer.getElementsByTagName('a')
+      if (links && links.length) {
+        for (var i = 0, len = links.length; i < len; i++) {
+          links[i].onclick = openContent
+        }
+      }
+    }
     // collections menu
     var collectionsIndex = html.indexOf('id="collections-menu"')
     var collections = html.substring(collectionsIndex)
@@ -212,7 +221,7 @@ function createContent(html, url) {
   } else {
     srcdoc = iframe.srcdocWas
     newTitle = document.title
-    if (url &&
+    if (url && 
       (url.indexOf('/account/signin') === 0 || url.indexOf('/account/authorize') === 0)) {
       appMenuContainer.style.display = 'none'
       accountMenuContainer.style.display = 'none'
