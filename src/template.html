@@ -129,13 +129,13 @@
     </li>
   </template>
   <template id="install-account-menu">
-    <section id="account-${install.installid}">
+    <section id="install-${install.installid}-${install.appNumber}">
       <li><span class="app-account-title">${install.installid}</span></li>
-      <li><a id="close-link-${install.installid}">Close app</a></li>
-      <li id="organizations-link-${install.installid}"><a href="/account/${install.installid}/organizations">Manage organizations</a></li>
-      <li id="subscriptions-link-${install.installid}"><a href="/account/${install.installid}/subscriptions">Subscriptions &amp; billing</a></li>
-      <li><a id="settings-link-${install.installid}" href="/edit-install?installid=${install.installid}">Settings</a></li>
-      <li><a id="uninstall-link-${install.installid}" href="/delete-install?installid=${install.installid}">Uninstall</a></li>
+      <li><a id="close-link-${install.installid}-${install.appNumber}">Close app</a></li>
+      <li id="organizations-link-${install.installid}-${install.appNumber}"><a href="/account/${install.installid}/organizations">Manage organizations</a></li>
+      <li id="subscriptions-link-${install.installid}-${install.appNumber}"><a href="/account/${install.installid}/subscriptions">Subscriptions &amp; billing</a></li>
+      <li><a id="settings-link-${install.installid}-${install.appNumber}" href="/edit-install?installid=${install.installid}">Settings</a></li>
+      <li><a id="uninstall-link-${install.installid}-${install.appNumber}" href="/delete-install?installid=${install.installid}">Uninstall</a></li>
     </section>
   </template>
   <template id="session-impersonate">

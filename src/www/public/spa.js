@@ -5,6 +5,7 @@ var iframe
 var appNumber = 0
 
 window.addEventListener('load', function (event) {
+  // adjust the formatting to work with golden layout
   document.body.style.overflow = 'auto'
   document.body.style.backgroundColor = '#036'
   document.getElementById('container').style.height = 'auto'
@@ -13,6 +14,7 @@ window.addEventListener('load', function (event) {
   iframe.parentNode.removeChild(iframe)
   parseInstallData()
   bindLinks()
+  // create containers for content and installs
   var temp = new GoldenLayout({
     content: [{
       type: 'row',
@@ -89,6 +91,10 @@ function closeContent(event) {
 
 function openContent(event) {
   event.preventDefault()
+  contentContainer.style.display = ''
+  if (layoutContainer) {
+    layoutContainer.style.display = 'none'
+  }
   var newURL = (event.target.parentNode.href || event.target.href).split('://')
   if (newURL.length === 1) {
     newURL = newURL[0]
@@ -115,7 +121,7 @@ function openContent(event) {
   })
 }
 
-function frameContent (url) {
+function frameContent(url) {
   var newFrame = document.createElement('iframe')
   newFrame.name = 'application-iframe'
   newFrame.className = 'application'
@@ -427,7 +433,7 @@ function createApplicationContent(installid, html) {
       var newMenu = document.createElement('div')
       var settingsSVG = document.getElementById('settings-svg').innerHTML
       var installMenu = document.getElementById('install-account-menu').innerHTML
-      installMenu = installMenu.split('${install.installid}').join(installid)
+      installMenu = installMenu.split('${install.installid}').join(installid).split('${install.appNumber}').join(appNumber)
       newMenu.innerHTML = settingsSVG
       var newMenuContainer = document.createElement('menu')
       newMenuContainer.innerHTML = installMenu
@@ -442,23 +448,23 @@ function createApplicationContent(installid, html) {
       }
       return setTimeout(function () {
         var install = installs[installid]
-        var organizationsLink = document.getElementById('organizations-link-' + installid)
+        var organizationsLink = document.getElementById('organizations-link-' + installid + '-' + appNumber)
         if (!install.organizationsEnabled) {
           organizationsLink.parentNode.removeChild(organizationsLink)
         } else {
           organizationsLink.firstChild.onclick = openContent
         }
-        var subscriptionsLink = document.getElementById('subscriptions-link-' + installid)
+        var subscriptionsLink = document.getElementById('subscriptions-link-' + installid + '-' + appNumber)
         if (!install.subscriptionsEnabled) {
           subscriptionsLink.parentNode.removeChild(subscriptionsLink)
         } else {
           subscriptionsLink.firstChild.onclick = openContent
         }
-        var settingsLink = document.getElementById('settings-link-' + installid)
+        var settingsLink = document.getElementById('settings-link-' + installid + '-' + appNumber)
         settingsLink.onclick = openContent
-        var uninstallLink = document.getElementById('uninstall-link-' + installid)
+        var uninstallLink = document.getElementById('uninstall-link-' + installid + '-' + appNumber)
         uninstallLink.onclick = openContent
-        var closeLink = document.getElementById('close-link-' + installid)
+        var closeLink = document.getElementById('close-link-' + installid + '-' + appNumber)
         closeLink.container = container
         closeLink.onclick = closeApplication
       }, 10)
