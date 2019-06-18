@@ -51,7 +51,8 @@ module.exports = {
     const updateInfo = {
       metadata: {
         installid: install.installid
-      }
+      },
+      application_fee: app.applicationFee
     }
     if (install.organizationid) {
       updateInfo.metadata.organizationid = install.organizationid
