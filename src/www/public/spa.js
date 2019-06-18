@@ -5,7 +5,6 @@ var iframe
 var appNumber = 0
 
 window.addEventListener('load', function (event) {
-  // adjust the formatting to work with golden layout
   document.body.style.overflow = 'auto'
   document.body.style.backgroundColor = '#036'
   document.getElementById('container').style.height = 'auto'
@@ -14,7 +13,23 @@ window.addEventListener('load', function (event) {
   iframe.parentNode.removeChild(iframe)
   parseInstallData()
   bindLinks()
-  // create containers for content and installs
+  var size = measureWindow()
+  contentContainer = document.createElement('div')
+  contentContainer.id = 'content-container'
+  contentContainer.style.width = size.width
+  contentContainer.style.height = size.height
+  contentContainer.style.backgroundColor = '#FFF'
+  document.body.style.overflow = ''
+  window.addEventListener('resize', measureWindow)
+  var installIndex = window.location.pathname.indexOf('/install/')
+  if (installIndex > -1) {
+    return openApplication(null, true)
+  } else {
+    return setTimeout(createContent, 1)
+  }
+})
+
+function measureWindow () {
   var temp = new GoldenLayout({
     content: [{
       type: 'row',
@@ -23,21 +38,14 @@ window.addEventListener('load', function (event) {
   })
   temp.init()
   var tempContainer = document.body.lastChild
-  contentContainer = document.createElement('div')
-  contentContainer.id = 'content-container'
-  contentContainer.style.width = tempContainer.style.width
-  contentContainer.style.height = tempContainer.style.height
-  contentContainer.style.backgroundColor = '#FFF'
+  var result = {
+    width: tempContainer.width,
+    height: tempContainer.height
+  }
   tempContainer.parentNode.removeChild(tempContainer)
   temp.destroy()
-  document.body.style.overflow = ''
-  var installIndex = window.location.pathname.indexOf('/install/')
-  if (installIndex > -1) {
-    return openApplication(null, true)
-  } else {
-    return setTimeout(createContent, 1)
-  }
-})
+  return result
+}
 
 function parseInstallData() {
   var appMenu = document.getElementById('app-menu-container')
@@ -166,6 +174,7 @@ function frameContent(url) {
 }
 
 function createContent(html, url) {
+  console.log('creating content', html, url)
   if (url && (url.indexOf('/install-app?') > -1 || url.indexOf('/confirm-subscription?') > -1 || url.indexOf('/account/subscriptions/create-billing-profile?') > -1)) {
     return frameContent(url)
   }
@@ -259,6 +268,7 @@ function createContent(html, url) {
   newFrame.style.height = '100%'
   newFrame.srcdoc = srcdoc
   newFrame.onload = function () {
+    console.log('checking frame content')
     // make forms submit with ajax
     if (!url || url.indexOf('/project-ide') === -1) {
       var forms = newFrame.contentWindow.document.getElementsByTagName('form')
@@ -280,6 +290,7 @@ function createContent(html, url) {
       // setup ajax intercepts on page links
       var links = newFrame.contentWindow.document.getElementsByTagName('a')
       for (i = 0, len = links.length; i < len; i++) {
+        console.log('found link', links[i])
         if (!links[i].href ||
           links[i].href.indexOf('/account/signout') > -1 ||
           links[i].href.indexOf('/install/') > -1) {
