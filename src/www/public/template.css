@@ -55,7 +55,7 @@ nav,
 
 .app-settings-menu { display: inline-block; position: relative; }
 .app-settings-menu svg { width: 0.7rem; fill: #FFF; opacity: 0.6; margin: 0; margin-bottom: 1.2rem }
-.app-settings-menu menu { display: none; position: absolute; width: 12rem; top: -1rem; left: -1rem; background-color: #000; border-radius: 0.5rem; padding: 0 1rem; line-height: 3rem }
+.app-settings-menu menu { display: none; position: absolute; z-index: 9999; width: 12rem; top: -1rem; left: -1rem; background-color: #000; border-radius: 0.5rem; padding: 0 1rem; line-height: 3rem }
 .app-settings-menu a, 
 .app-settings-menu span { display: inline-block !important; color: #CCC !important; font-size: 0.9rem }
 .app-settings-menu a:hover { color: #FFF !important }
