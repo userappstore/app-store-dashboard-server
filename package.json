@@ -46,5 +46,8 @@
       "/src/server/installid-in-url.js",
       "/src/server/connect-webhook-key.js"
     ]
+  },
+  "devDependencies": {
+    "puppeteer": "^1.17.0"
   }
 }
