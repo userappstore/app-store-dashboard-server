@@ -2,6 +2,7 @@ var contentContainer, layoutContainer, authorizationForm, signinForm
 var installs
 var layout
 var iframe
+var frames = []
 var appNumber = 0
 
 window.addEventListener('load', function (event) {
@@ -401,6 +402,17 @@ function openApplication(event, first) {
   })
 }
 
+function repositionOpenFrames(event) {
+  for (var i = frames.length - 1; i > -1; i--) {
+    var container = $('#' + frames[i].placeholder)
+    var offset = container.offset()
+    frames[i].style.width = container.width() + 'px'
+    frames[i].style.height = container.height() + 'px'
+    frames[i].style.top = offset.top + 'px'
+    frames[i].style.left = offset.left + 'px'
+  }
+}
+
 function createApplicationContent(installid, html) {
   var srcdoc, newTitle
   if (html) {
@@ -412,6 +424,8 @@ function createApplicationContent(installid, html) {
   }
   var newTitle = installs[installid].text
   var newFrame = document.createElement('iframe')
+  newFrame.style.position = 'absolute'
+  newFrame.style.zIndex = 1
   newFrame.sandbox = iframe.sandbox
   newFrame.className = iframe.className
   newFrame.srcdoc = srcdoc
@@ -434,12 +448,17 @@ function createApplicationContent(installid, html) {
         }]
       }]
     })
+    layout.on('stateChanged', repositionOpenFrames)
   }
   layout.registerComponent('app-' + appNumber, function (container) {
-    var containerElement = container.getElement()
-    containerElement.append(newFrame)
-    newFrame.style.width = '100%'
-    newFrame.style.height = '100%'
+    var placeholder = document.createElement('div')
+    placeholder.id = 'app-container-' + appNumber
+    placeholder.style.width = '100%'
+    placeholder.style.height = '100%'
+    container.getElement().append(placeholder)
+    newFrame.placeholder = placeholder.id
+    frames.push(newFrame)
+    document.body.appendChild(newFrame)
     container.on('tab', function (tab) {
       var newMenu = document.createElement('div')
       var settingsSVG = document.getElementById('settings-svg').innerHTML
