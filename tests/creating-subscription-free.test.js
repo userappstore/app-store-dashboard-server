@@ -10,7 +10,7 @@ const testUserData = require('@userappstore/dashboard/test-data.json')
 // 2) a developer account registers and publishes a project to
 //    the app store and configures a free subscription plan
 // 3) a user registers and installs the project from the app
-//    store and begins the subscription without billing information
+//    store and begins the subscription 
 
 describe(`tests/creating-subscription-free`, () => {
   it('should create a free subscription', async () => {
@@ -171,18 +171,18 @@ describe(`tests/creating-subscription-free`, () => {
     await TestHelper.clickFrameLink(customer1Tab, 'Install')
     await TestHelper.completeForm(customer1Tab, {})
     await TestHelper.completeForm(customer1Tab, {})
-    // await TestHelper.clickFrameLink(customer1Tab, 'Add new profile')
-    // await TestHelper.completeForm(customer1Tab, {
-    //   description: 'boe',
-    //   email: testUserData[2].email,
-    //   number: '4111111111111111',
-    //   cvc: '111',
-    //   exp_month: '1',
-    //   exp_year: (new Date().getFullYear() + 1).toString().substring(2),
-    //   name: `${testUserData[2].firstName} ${testUserData[2].lastName}`
-    // })
-    // const billingProfileFrame = await TestHelper.getApplicationFrame(customer1Tab)
-    // await billingProfileFrame.evaluate(el => el.selectedIndex = 1, await billingProfileFrame.$('#customerid'))
+    await TestHelper.clickFrameLink(customer1Tab, 'Add new profile')
+    await TestHelper.completeForm(customer1Tab, {
+      description: 'boe',
+      email: testUserData[2].email,
+      number: '4111111111111111',
+      cvc: '111',
+      exp_month: '1',
+      exp_year: (new Date().getFullYear() + 1).toString().substring(2),
+      name: `${testUserData[2].firstName} ${testUserData[2].lastName}`
+    })
+    const billingProfileFrame = await TestHelper.getApplicationFrame(customer1Tab)
+    await billingProfileFrame.evaluate(el => el.selectedIndex = 1, await billingProfileFrame.$('#customerid'))
     await TestHelper.completeForm(customer1Tab, {})
     // customer has a subscription
     await TestHelper.clickPageLink(customer1Tab, 'Home')

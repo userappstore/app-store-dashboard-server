@@ -57,7 +57,7 @@ describe(`tests/cancelling-subscription-paid-pending`, () => {
     await createRegistrationFrame.evaluate(el => el.checked = true, await createRegistrationFrame.$('#individual'))
     await TestHelper.completeForm(developerTab, {
       country: 'United Kingdom'
-    })
+    })   
     // registration information
     await TestHelper.clickFrameLink(developerTab, 'Start registration')
     const registrationInformationFrame = await TestHelper.getApplicationFrame(developerTab)
@@ -205,6 +205,7 @@ describe(`tests/cancelling-subscription-paid-pending`, () => {
       code: 'the-invitation-code'
     })
     // customer 1 installs the app for the organization
+    await TestHelper.clickPageLink(customer1Tab, 'Home')
     await TestHelper.clickFrameLink(customer1Tab, 'JSON formatter')
     await TestHelper.clickFrameLink(customer1Tab, 'Install')
     const installFrame = await TestHelper.getApplicationFrame(customer1Tab)
@@ -245,7 +246,7 @@ describe(`tests/cancelling-subscription-paid-pending`, () => {
     // customer 1 cancels subscription
     await TestHelper.clickFrameLink(customer1Tab, 'Cancel')
     const cancelFrame = await TestHelper.getApplicationFrame(customer1Tab)
-    await cancelFrame.evaluate(el => el.checked = true, await cancelFrame.$('#refund'))
+    await cancelFrame.evaluate(el => el.checked = true, await cancelFrame.$('#delay'))
     await TestHelper.completeForm(customer1Tab, {})
     // customer 1 retains access until the end of billing period
     await TestHelper.clickPageLink(customer1Tab, 'Home')
