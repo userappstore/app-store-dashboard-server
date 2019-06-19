@@ -21,7 +21,7 @@ module.exports = {
     const bodyWas = req.body
     let install
     try {
-      install = await applicationServer.get(`/api/user/userappstore/install?installid=${installid}`, req.account.accountid, req.session.sessionid)
+      install = await applicationServer.get(`/api/dashboard-server/install?installid=${installid}`, req.account.accountid, req.session.sessionid)
     } catch (error) {
     }
     if (!install) {
