@@ -73,10 +73,15 @@ module.exports = {
     if (req.urlPath.startsWith('/account/')) {
       req.urlPath = req.urlPath.split(`/${installid}`).join(``)
       req.route = {}
-      for (const field in global.sitemap[req.urlPath]) {
-        req.route[field] = global.sitemap[req.urlPath][field]
+      const newRoute = global.sitemap[req.urlPath]
+      if (newRoute) {
+        for (const field in newRoute) {
+          req.route[field] = newRoute[field]
+        }
+        if (req.route.html) {
+          req.route.html = req.route.html.split('navbar="/account/').join('navbar="/server-account/')
+        }
       }
-      req.route.html = req.route.html.split('navbar="/account/').join('navbar="/server-account/')
     }
     // if the userappstore session is unlocked so is the application server session
     if (sessionWas.unlocked) {
