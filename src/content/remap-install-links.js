@@ -42,5 +42,19 @@ module.exports = {
         child.attr.href = child.attr.href.replace(`${global.dashboardServer}/`, `${global.dashboardServer}/install/${req.install.installid}`)
       }
     }
+    const metaTags = doc.getElementsByTagName('meta')
+    if (metaTags && metaTags.length) {
+      for (const metaTag of metaTags) {
+        if (!metaTag.attr || metaTag.attr['http-equiv'] !== 'refresh') {
+          continue
+        }
+        const parts = metaTag.attr.content.split(';url=')
+        const duration = parts[0]
+        const url = parts[1]
+        if (url.startsWith('/')) {
+          metaTag.attr.content = `${duration};url=/install/${req.install.installid}${url}`
+        }
+      }
+    }
   }
 }
