@@ -1,4 +1,5 @@
-var contentContainer, layoutContainer, authorizationForm, signinForm
+var contentContainer, layoutContainer, iframeContainer
+var authorizationForm, signinForm
 var installs
 var layout
 var iframe
@@ -14,14 +15,18 @@ window.addEventListener('load', function (event) {
   iframe.parentNode.removeChild(iframe)
   parseInstallData()
   bindLinks()
-  var size = measureWindow()
+  var size = {
+    width: $(document.body).width(),
+    height: $(document.body).height()
+  }
+  iframeContainer = document.getElementById('iframe-container')
   contentContainer = document.createElement('div')
   contentContainer.id = 'content-container'
-  contentContainer.style.width = size.width
-  contentContainer.style.height = size.height
+  contentContainer.style.width = size.width + 'px'
+  contentContainer.style.height = size.height + 'px'
   contentContainer.style.backgroundColor = '#FFF'
   document.body.style.overflow = ''
-  window.addEventListener('resize', measureWindow)
+  window.addEventListener('resize', repositionOpenFrames)
   var installIndex = window.location.pathname.indexOf('/install/')
   if (installIndex > -1) {
     return openApplication(null, true)
@@ -29,24 +34,6 @@ window.addEventListener('load', function (event) {
     return setTimeout(createContent, 1)
   }
 })
-
-function measureWindow () {
-  var temp = new GoldenLayout({
-    content: [{
-      type: 'row',
-      content: []
-    }]
-  })
-  temp.init()
-  var tempContainer = document.body.lastChild
-  var result = {
-    width: tempContainer.width,
-    height: tempContainer.height
-  }
-  tempContainer.parentNode.removeChild(tempContainer)
-  temp.destroy()
-  return result
-}
 
 function parseInstallData() {
   var appMenu = document.getElementById('app-menu-container')
@@ -402,14 +389,18 @@ function openApplication(event, first) {
   })
 }
 
-function repositionOpenFrames(event) {
+function repositionOpenFrames (event) {
+  console.log('reposition frames', frames, event)
   for (var i = frames.length - 1; i > -1; i--) {
-    var container = $('#' + frames[i].placeholder)
-    var offset = container.offset()
-    frames[i].style.width = container.width() + 'px'
-    frames[i].style.height = container.height() + 'px'
+    var offset = frames[i].placeholder.offset()
+    var container = frames[i].placeholder
+    var tab = frames[i].tab
+    console.log('got tab', $(tab.element).height())
+    frames[i].style.width = frames[i].placeholder.width() + 'px'
+    frames[i].style.height = (frames[i].placeholder.height()) + 'px'
     frames[i].style.top = offset.top + 'px'
     frames[i].style.left = offset.left + 'px'
+    console.log('transfer container properties', container)
   }
 }
 
@@ -456,9 +447,9 @@ function createApplicationContent(installid, html) {
     placeholder.style.width = '100%'
     placeholder.style.height = '100%'
     container.getElement().append(placeholder)
-    newFrame.placeholder = placeholder.id
+    newFrame.placeholder = $(placeholder.parentNode)
     frames.push(newFrame)
-    document.body.appendChild(newFrame)
+    iframeContainer.appendChild(newFrame)
     container.on('tab', function (tab) {
       var newMenu = document.createElement('div')
       var settingsSVG = document.getElementById('settings-svg').innerHTML
@@ -470,6 +461,7 @@ function createApplicationContent(installid, html) {
       newMenu.appendChild(newMenuContainer)
       newMenu.className = 'app-settings-menu'
       tab.element.append(newMenu)
+      newFrame.tab = tab
       if (layoutContainer) {
         layoutContainer.style.display = ''
       }
@@ -498,6 +490,11 @@ function createApplicationContent(installid, html) {
         closeLink.container = container
         closeLink.onclick = closeApplication
       }, 10)
+    })
+    container.on('close', function () {
+      frames.splice(frames.indexOf(newFrame), 1)
+      newFrame.parentNode.removeChild(newFrame)
+      repositionOpenFrames()
     })
   })
   if (!layout.isInitialised) {
