@@ -390,17 +390,17 @@ function openApplication(event, first) {
 }
 
 function repositionOpenFrames (event) {
-  console.log('reposition frames', frames, event)
   for (var i = frames.length - 1; i > -1; i--) {
     var offset = frames[i].placeholder.offset()
-    var container = frames[i].placeholder
-    var tab = frames[i].tab
-    console.log('got tab', $(tab.element).height())
+    if (offset.left === 0 && offset.top === 0) {
+      frames[i].style.display = 'none'
+      continue
+    }
+    frames[i].style.display = 'block'
     frames[i].style.width = frames[i].placeholder.width() + 'px'
     frames[i].style.height = (frames[i].placeholder.height()) + 'px'
     frames[i].style.top = offset.top + 'px'
     frames[i].style.left = offset.left + 'px'
-    console.log('transfer container properties', container)
   }
 }
 
@@ -461,7 +461,6 @@ function createApplicationContent(installid, html) {
       newMenu.appendChild(newMenuContainer)
       newMenu.className = 'app-settings-menu'
       tab.element.append(newMenu)
-      newFrame.tab = tab
       if (layoutContainer) {
         layoutContainer.style.display = ''
       }
