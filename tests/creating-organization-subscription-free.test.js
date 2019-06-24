@@ -42,8 +42,8 @@ const projectCSS = `textarea { display: block; padding: 1rem; background-color: 
 // 5) customer one subscribes to published app for organization 
 //    including second customer in their subscription
 
-describe(`tests/creating-subscription-for-organization-member`, () => {
-  it('should create subscription for and allow install by organization member', async () => {
+describe(`tests/creating-organization-subscription-free`, () => {
+  it.only('should create subscription for and allow install by organization member', async () => {
     global.pageSize = 40
     // owner
     const browser1 = await puppeteer.launch(TestHelper.browserConfiguration())
@@ -79,13 +79,19 @@ describe(`tests/creating-subscription-for-organization-member`, () => {
     await TestHelper.clickPageLink(developerTab, 'Share')
     await TestHelper.completeForm(developerTab, {})
     await TestHelper.clickPageLink(developerTab, 'Project IDE')
-    const projectIDEFrame = await TestHelper.getApplicationFrame(developerTab)
-    await projectIDEFrame.evaluate('switchEditor({ target: { id: "home.html-link" } })')
-    await projectIDEFrame.evaluate(`editors["home.html"].setValue(\`${projectHTML}\`)`)
-    await projectIDEFrame.evaluate('switchEditor({ target: { id: "app.js-link" } })')
-    await projectIDEFrame.evaluate(`editors["app.js"].setValue(\`${projectJS}\`)`)
-    await projectIDEFrame.evaluate('switchEditor({ target: { id: "app.css-link" } })')
-    await projectIDEFrame.evaluate(`editors["app.css"].setValue(\`${projectCSS}\`)`)
+    console.log('clicking home')
+    // await TestHelper.clickFrameLink(developerTab, '#home.html-link')
+    console.log('typing in ide')
+    const ideFrame1 = await TestHelper.getApplicationFrame(developerTab)
+    // await ideFrame1.click(`#editors`)
+    await ideFrame1.type(projectHTML)
+    // await projectIDEFrame.evaluate(`editors["home.html"].setValue(\`${projectHTML}\`)`)
+    await TestHelper.clickFrameLink(developerTab, '#app.js-link')
+    // await projectIDEFrame.evaluate(`editors["app.js"].setValue(\`${projectJS}\`)`)
+    await TestHelper.getApplicationFrame(developerTab).type(projectJS)
+    await TestHelper.clickFrameLink(developerTab, '#app.css-link')
+    // await projectIDEFrame.evaluate(`editors["app.css"].setValue(\`${projectCSS}\`)`)
+    await TestHelper.getApplicationFrame(developerTab).type(projectCSS)
     await projectIDEFrame.evaluate('saveChangedFiles()')
     // create connect registration
     await TestHelper.hoverItem(developerTab, 'account-menu-container')
@@ -160,7 +166,7 @@ describe(`tests/creating-subscription-for-organization-member`, () => {
     await TestHelper.completeForm(developerTab, {
       planid: 'gold',
       nickname: 'GOLD',
-      amount: '999',
+      amount: '0',
       interval: 'month',
       'currency-select': 'United States Dollar'
     })

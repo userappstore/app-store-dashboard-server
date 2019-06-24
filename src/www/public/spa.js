@@ -82,6 +82,9 @@ function closeContent(event) {
   if (layoutContainer) {
     layoutContainer.style.display = ''
   }
+  if (iframeContainer) {
+    iframeContainer.style.display = ''
+  }
   return false
 }
 
@@ -90,6 +93,9 @@ function openContent(event) {
   contentContainer.style.display = ''
   if (layoutContainer) {
     layoutContainer.style.display = 'none'
+  }
+  if (iframeContainer) {
+    iframeContainer.style.display = 'none'
   }
   var newURL = (event.target.parentNode.href || event.target.href).split('://')
   if (newURL.length === 1) {
@@ -162,7 +168,6 @@ function frameContent(url) {
 }
 
 function createContent(html, url) {
-  console.log('creating content', html, url)
   if (url && (url.indexOf('/install-app?') > -1 || url.indexOf('/confirm-subscription?') > -1 || url.indexOf('/account/subscriptions/create-billing-profile?') > -1)) {
     return frameContent(url)
   }
@@ -256,7 +261,6 @@ function createContent(html, url) {
   newFrame.style.height = '100%'
   newFrame.srcdoc = srcdoc
   newFrame.onload = function () {
-    console.log('checking frame content')
     // make forms submit with ajax
     if (!url || url.indexOf('/project-ide') === -1) {
       var forms = newFrame.contentWindow.document.getElementsByTagName('form')
@@ -278,7 +282,6 @@ function createContent(html, url) {
       // setup ajax intercepts on page links
       var links = newFrame.contentWindow.document.getElementsByTagName('a')
       for (i = 0, len = links.length; i < len; i++) {
-        console.log('found link', links[i])
         if (!links[i].href ||
           links[i].href.indexOf('/account/signout') > -1 ||
           links[i].href.indexOf('/install/') > -1) {
@@ -362,6 +365,13 @@ function submitContentForm(event) {
 }
 
 function openApplication(event, first) {
+  contentContainer.style.display = 'none'
+  if (layoutContainer) {
+    layoutContainer.style.display = ''
+  }
+  if (iframeContainer) {
+    iframeContainer.style.display = ''
+  }
   var newURL
   if (!first) {
     event.preventDefault()
@@ -448,6 +458,7 @@ function createApplicationContent(installid, html) {
     placeholder.style.height = '100%'
     container.getElement().append(placeholder)
     newFrame.placeholder = $(placeholder.parentNode)
+    container.frame = newFrame
     frames.push(newFrame)
     iframeContainer.appendChild(newFrame)
     container.on('tab', function (tab) {
@@ -491,8 +502,6 @@ function createApplicationContent(installid, html) {
       }, 10)
     })
     container.on('close', function () {
-      frames.splice(frames.indexOf(newFrame), 1)
-      newFrame.parentNode.removeChild(newFrame)
       repositionOpenFrames()
     })
   })
@@ -512,4 +521,6 @@ function closeApplication(event) {
   const link = event.target
   const container = link.container
   container.close()
+  frames.splice(frames.indexOf(container.frame), 1)
+  container.frame.parentNode.removeChild(container.frame)
 }
