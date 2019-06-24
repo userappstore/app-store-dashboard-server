@@ -10,7 +10,7 @@ module.exports = {
     if (req.install.organizationid) {
       user.organizationid = req.install.organizationid
     }
-    res.setHeader('content-type', 'application/javascript')
+    res.setHeader('content-type', 'text/javascript')
     return res.end('window.user = ' + JSON.stringify(user))
   }
 }
