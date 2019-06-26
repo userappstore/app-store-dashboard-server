@@ -4,7 +4,7 @@ const fs = require('fs')
 const cached = {}
 
 module.exports = {
-  page: async (_, __, doc) => {
+  page: async (req, _, doc) => {
     const scripts = doc.getElementsByTagName('script')
     if (scripts && scripts.length) {
       for (const script of scripts) {
