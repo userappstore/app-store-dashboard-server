@@ -5,6 +5,9 @@ const cached = {}
 
 module.exports = {
   page: async (req, _, doc) => {
+    if (req.install) {
+      return
+    }
     const scripts = doc.getElementsByTagName('script')
     if (scripts && scripts.length) {
       for (const script of scripts) {
