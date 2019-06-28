@@ -1,5 +1,4 @@
 const bcrypt = require('@userappstore/dashboard/src/bcrypt.js')
-const dashboardServer = process.env.DASHBOARD_SERVER.split('://')[1]
 const http = require('http')
 const https = require('https')
 const querystring = require('querystring')
@@ -52,7 +51,7 @@ const proxy = util.promisify((method, path, data, accountid, sessionid, alternat
     port,
     method,
     headers: {
-      'x-dashboard-server': dashboardServer,
+      'x-dashboard-server': process.env.DASHBOARD_SERVER,
       'x-dashboard-token': token
     }
   }
