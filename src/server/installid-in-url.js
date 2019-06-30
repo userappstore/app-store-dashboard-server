@@ -215,20 +215,28 @@ module.exports = {
     try {
       const method = req.method.toLowerCase()
       if (method === 'get') {
-        thing = await applicationServer.get(req.url, req.account.accountid, req.session.sessionid, req.server.applicationServer, req.server.applicationServerToken)
+        thing = await applicationServer.get(req.url, req.session.accountid, req.session.sessionid, req.server.applicationServer, req.server.applicationServerToken)
       } else {
-        thing = await applicationServer[method](req.url, req.body, req.account.accountid, req.session.sessionid, req.server.applicationServer, req.server.applicationServerToken)
+        thing = await applicationServer[method](req.url, req.body, req.session.accountid, req.session.sessionid, req.server.applicationServer, req.server.applicationServerToken)
       }
     } catch (error) {
     }
-    if (thing) {
-      res.ended = true
-      for (const header of ['content-type', 'content-encoding', 'content-length', 'date', 'etag', 'expires', 'vary' ]) {
-        if (thing.headers[header]) {
-          res.setHeader(header, thing.headers[header])
-        }
-      }
-      return res.end(thing.body)
+    if (!thing) {
+      return dashboard.Response.throw500(req, res)
     }
+    res.ended = true
+    if (Object.keys(thing).length && (!thing.body || !thing.headers)) {
+      res.setHeader('content-type', 'application/json')
+      return res.end(JSON.stringify(thing))
+    }
+    for (const header of ['content-type', 'content-encoding', 'content-length', 'date', 'etag', 'expires', 'vary']) {
+      if (thing.headers[header]) {
+        res.setHeader(header, thing.headers[header])
+      }
+    }
+    if (thing.headers['content-type'].startsWith('text/')) {
+      return res.end(thing.body.toString('utf-8'))
+    }
+    return res.end(thing.body)
   }
 }

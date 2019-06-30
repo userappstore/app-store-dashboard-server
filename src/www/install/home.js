@@ -91,12 +91,22 @@ async function renderPage (req, res) {
             res.setHeader(header, proxiedData.headers[header])
           }
         }
+        if (proxiedData.headers['content-type'].startsWith('text/')) {
+          return res.end(proxiedData.body.toString('utf-8'))
+        } 
         return res.end(proxiedData.body)
       }
       try {
-        if (proxiedData) {
-          doc = dashboard.HTML.parse(proxiedData.body.toString('utf-8'))
+        const html = proxiedData.body.toString('utf-8')
+        if (html.indexOf('<html') === -1) {
+          for (const header of ['content-type', 'content-encoding', 'content-length', 'date', 'etag', 'expires', 'vary']) {
+            if (proxiedData.headers[header]) {
+              res.setHeader(header, proxiedData.headers[header])
+            }
+          }
+          return res.end(html)
         }
+        doc = dashboard.HTML.parse(proxiedData.body.toString('utf-8'))
       } catch (error) {
       }
       if (!doc) {
