@@ -61,21 +61,31 @@ const proxy = util.promisify((method, path, data, accountid, sessionid, alternat
   }
   const protocol = baseURLParts[0] === 'https' ? https : http
   const proxyRequest = protocol.request(requestOptions, (proxyResponse) => {
-    let body = ''
+    let body
     proxyResponse.on('data', (chunk) => {
-      body += chunk
+      body = body ? Buffer.concat([body, chunk]) : new Buffer(chunk)
     })
     return proxyResponse.on('end', () => {
       if (!body) {
         return callback()
       }
-      if (proxyResponse.headers['content-type'] && proxyResponse.headers['content-type'].indexOf('application/json') === 0) {
-        body = JSON.parse(body)
+      if (proxyResponse.headers['content-type'] && proxyResponse.headers['content-type'].startsWith('application/json')) {
+        body = JSON.parse(body.toString('utf-8'))
         return callback(null, body)
       }
-      return callback({
-        body, 
-        headers: proxyResponse.headers 
+      if (proxyResponse.headers['content-type'] && proxyResponse.headers['content-type'].startsWith('text/html')) {
+        body = body.toString('utf-8')
+        // truncate any preamble
+        body = body.substring(body.indexOf('<'))
+        // truncate doctype
+        if (body.indexOf('<!') === 0) {
+          body = body.substring(body.indexOf('>') + 1)
+        }
+        body = new Buffer(body)
+      }
+      return callback(null, {
+        body,
+        headers: proxyResponse.headers
       })
     })
   })
