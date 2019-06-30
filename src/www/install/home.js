@@ -68,24 +68,38 @@ async function renderPage (req, res) {
   } else if (req.data.install.serverid) {
     // proxy the application server and substitute root links
     // for their install-specific URLs
-    let proxiedHTML
+    let proxiedData
     let proxyURL = req.urlPath.substring(`/install`.length)
     delete (req.query.installid)
     proxyURL += '?' + querystring.stringify(req.query)
     if (req.method === 'GET') {
-      proxiedHTML = await applicationServer.get(proxyURL, req.data.accountid, req.data.sessionid, req.data.server.applicationServer, req.data.server.applicationServerToken)
+      proxiedData = await applicationServer.get(proxyURL, req.data.accountid, req.data.sessionid, req.data.server.applicationServer, req.data.server.applicationServerToken)
     } else {
       const method = req.method.toLowerCase()
-      proxiedHTML = await applicationServer[method](proxyURL, req.body, req.data.accountid, req.data.sessionid, req.data.server.applicationServer, req.data.server.applicationServerToken)
+      proxiedData = await applicationServer[method](proxyURL, req.body, req.data.accountid, req.data.sessionid, req.data.server.applicationServer, req.data.server.applicationServerToken)
+    }
+    // json response
+    if (Object.keys(proxiedData.length) && (!proxiedData.body || !proxiedData.headers)) {
+      res.setHeader('content-type', 'application/json')
+      return res.end(JSON.stringify(proxiedData))
+    }
+    // non-html response
+    if (proxiedData.headers['content-type'] && proxiedData.headers['content-type'].indexOf('text/html') !== 0) {
+      for (const header of ['content-type', 'content-encoding', 'content-length', 'date', 'etag', 'expires', 'vary']) {
+        if (proxiedData.headers[header]) {
+          res.setHeader(header, thiproxiedDatang.headers[header])
+        }
+      }
+      return res.end(proxiedData.body)
     }
     try {
-      if (proxiedHTML) {
-        doc = dashboard.HTML.parse(proxiedHTML)
+      if (proxiedData) {
+        doc = dashboard.HTML.parse(proxiedData.body)
       }
     } catch (error) {
     }
     if (!doc) {
-      proxiedHTML = proxyErrorHTML = proxyErrorHTML || fs.readFileSync(path.join(__dirname, 'proxy-error.html')).toString('utf-8')
+      proxyErrorHTML = proxyErrorHTML || fs.readFileSync(path.join(__dirname, 'proxy-error.html')).toString('utf-8')
       doc = dashboard.HTML.parse(proxiedHTML)
     }
   }

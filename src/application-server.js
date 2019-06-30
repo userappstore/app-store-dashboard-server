@@ -71,11 +71,12 @@ const proxy = util.promisify((method, path, data, accountid, sessionid, alternat
       }
       if (proxyResponse.headers['content-type'] && proxyResponse.headers['content-type'].indexOf('application/json') === 0) {
         body = JSON.parse(body)
+        return callback(null, body)
       }
-      return { 
+      return callback({
         body, 
         headers: proxyResponse.headers 
-      }
+      })
     })
   })
   proxyRequest.on('error', (error) => {

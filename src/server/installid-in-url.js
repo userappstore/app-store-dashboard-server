@@ -223,7 +223,12 @@ module.exports = {
     }
     if (thing) {
       res.ended = true
-      return res.end(thing)
+      for (const header of ['content-type', 'content-encoding', 'content-length', 'date', 'etag', 'expires', 'vary' ]) {
+        if (thing.headers[header]) {
+          res.setHeader(header, thing.headers[header])
+        }
+      }
+      return res.end(thing.body)
     }
   }
 }
