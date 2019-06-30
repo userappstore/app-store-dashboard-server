@@ -69,16 +69,13 @@ const proxy = util.promisify((method, path, data, accountid, sessionid, alternat
       if (!body) {
         return callback()
       }
-      if (proxyResponse.statusCode === 200) {
-        if (proxyResponse.headers['content-type'] && proxyResponse.headers['content-type'].indexOf('application/json') === 0) {
-          body = JSON.parse(body)
-        }
-        return callback(null, body)
+      if (proxyResponse.headers['content-type'] && proxyResponse.headers['content-type'].indexOf('application/json') === 0) {
+        body = JSON.parse(body)
       }
-      if (process.env.DEBUG_ERRORS) {
-        console.log('application-server', proxyResponse.statusCode, body.toString())
+      return { 
+        body, 
+        headers: proxyResponse.headers 
       }
-      return callback(new Error('application-error'))
     })
   })
   proxyRequest.on('error', (error) => {
