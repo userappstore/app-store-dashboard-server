@@ -79,7 +79,7 @@ async function renderPage (req, res) {
       proxiedData = await applicationServer[method](proxyURL, req.body, req.data.accountid, req.data.sessionid, req.data.server.applicationServer, req.data.server.applicationServerToken)
     }
     // json response
-    if (Object.keys(proxiedData.length) && (!proxiedData.body || !proxiedData.headers)) {
+    if (Object.keys(proxiedData).length && (!proxiedData.body || !proxiedData.headers)) {
       res.setHeader('content-type', 'application/json')
       return res.end(JSON.stringify(proxiedData))
     }
