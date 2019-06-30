@@ -73,34 +73,36 @@ async function renderPage (req, res) {
     delete (req.query.installid)
     proxyURL += '?' + querystring.stringify(req.query)
     if (req.method === 'GET') {
-      proxiedData = await applicationServer.get(proxyURL, req.data.accountid, req.data.sessionid, req.data.server.applicationServer, req.data.server.applicationServerToken)
+      proxiedData = await applicationServer.get(proxyURL, req.session.accountid, req.session.sessionid, req.data.server.applicationServer, req.data.server.applicationServerToken)
     } else {
       const method = req.method.toLowerCase()
-      proxiedData = await applicationServer[method](proxyURL, req.body, req.data.accountid, req.data.sessionid, req.data.server.applicationServer, req.data.server.applicationServerToken)
+      proxiedData = await applicationServer[method](proxyURL, req.body, req.session.accountid, req.session.sessionid, req.data.server.applicationServer, req.data.server.applicationServerToken)
     }
     // json response
-    if (Object.keys(proxiedData).length && (!proxiedData.body || !proxiedData.headers)) {
-      res.setHeader('content-type', 'application/json')
-      return res.end(JSON.stringify(proxiedData))
-    }
-    // non-html response
-    if (proxiedData.headers['content-type'] && proxiedData.headers['content-type'].indexOf('text/html') !== 0) {
-      for (const header of ['content-type', 'content-encoding', 'content-length', 'date', 'etag', 'expires', 'vary']) {
-        if (proxiedData.headers[header]) {
-          res.setHeader(header, thiproxiedDatang.headers[header])
+    if (proxiedData) {
+      if (Object.keys(proxiedData).length && (!proxiedData.body || !proxiedData.headers)) {
+        res.setHeader('content-type', 'application/json')
+        return res.end(JSON.stringify(proxiedData))
+      }
+      // non-html response
+      if (proxiedData.headers['content-type'] && !proxiedData.headers['content-type'].startsWith('text/html')) {
+        for (const header of ['content-type', 'content-encoding', 'content-length', 'date', 'etag', 'expires', 'vary']) {
+          if (proxiedData.headers[header]) {
+            res.setHeader(header, proxiedData.headers[header])
+          }
         }
+        return res.end(proxiedData.body)
       }
-      return res.end(proxiedData.body)
-    }
-    try {
-      if (proxiedData) {
-        doc = dashboard.HTML.parse(proxiedData.body)
+      try {
+        if (proxiedData) {
+          doc = dashboard.HTML.parse(proxiedData.body.toString('utf-8'))
+        }
+      } catch (error) {
       }
-    } catch (error) {
-    }
-    if (!doc) {
-      proxyErrorHTML = proxyErrorHTML || fs.readFileSync(path.join(__dirname, 'proxy-error.html')).toString('utf-8')
-      doc = dashboard.HTML.parse(proxiedHTML)
+      if (!doc) {
+        proxyErrorHTML = proxyErrorHTML || fs.readFileSync(path.join(__dirname, 'proxy-error.html')).toString('utf-8')
+        doc = dashboard.HTML.parse(proxyErrorHTML)
+      }
     }
   }
   if (!req.data.install.serverid && req.data.url) {
