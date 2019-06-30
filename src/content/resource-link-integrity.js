@@ -29,8 +29,8 @@ module.exports = {
           if (filePath && fs.existsSync(filePath)) {
             blob = cached[src] = fs.readFileSync(filePath)
           } else if (global.applicationServer) {
-            const str = await applicationServer.get(src, req.account ? req.account.accountid : null, req.session ? req.session.sessionid : null)
-            blob = cached[src] = new Buffer(str)
+            const resourceData = await applicationServer.get(src, req.account ? req.account.accountid : null, req.session ? req.session.sessionid : null)
+            blob = cached[src] = resourceData.body
           }
         }
         script.attr.integrity = dashboard.Response.sri(blob)
@@ -56,8 +56,8 @@ module.exports = {
         if (filePath && fs.existsSync(filePath)) {
           blob = cached[src] = fs.readFileSync(filePath)
         } else if (global.applicationServer) {
-          const str = await applicationServer.get(src, req.account ? req.account.accountid : null, req.session ? req.session.sessionid : null)
-          blob = cached[src] = new Buffer(str)
+          const resourceData = await applicationServer.get(src, req.account ? req.account.accountid : null, req.session ? req.session.sessionid : null)
+          blob = cached[src] = resourceData.body
         }
       }
       link.attr.integrity = dashboard.Response.sri(blob)
@@ -85,8 +85,8 @@ module.exports = {
           if (filePath && fs.existsSync(filePath)) {
             blob = cached[src] = fs.readFileSync(filePath)
           } else if (global.applicationServer) {
-            const str = await applicationServer.get(src, req.account ? req.account.accountid : null, req.session ? req.session.sessionid : null)
-            blob = cached[src] = new Buffer(str)
+            const resourceData = await applicationServer.get(src, req.account ? req.account.accountid : null, req.session ? req.session.sessionid : null)
+            blob = cached[src] = resourceDatabody
           }
         }
         script.attr.integrity = dashboard.Response.sri(blob)
@@ -112,8 +112,8 @@ module.exports = {
         if (filePath && fs.existsSync(filePath)) {
           blob = cached[src] = fs.readFileSync(filePath)
         } else if (global.applicationServer) {
-          const str = await applicationServer.get(src, req.account ? req.account.accountid : null, req.session ? req.session.sessionid : null)
-          blob = cached[src] = new Buffer(str)
+          const resourceData = await applicationServer.get(src, req.account ? req.account.accountid : null, req.session ? req.session.sessionid : null)
+          blob = cached[src] = resourceData.body
         }
       }
       link.attr.integrity = dashboard.Response.sri(blob)
