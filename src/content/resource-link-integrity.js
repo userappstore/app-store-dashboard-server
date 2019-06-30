@@ -86,7 +86,7 @@ module.exports = {
             blob = cached[src] = fs.readFileSync(filePath)
           } else if (global.applicationServer) {
             const resourceData = await applicationServer.get(src, req.account ? req.account.accountid : null, req.session ? req.session.sessionid : null)
-            blob = cached[src] = resourceDatabody
+            blob = cached[src] = resourceData.body
           }
         }
         script.attr.integrity = dashboard.Response.sri(blob)
