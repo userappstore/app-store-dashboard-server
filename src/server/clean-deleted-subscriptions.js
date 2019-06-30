@@ -7,6 +7,9 @@ module.exports = {
     if (req.applicationServer || !req.account || !req.stripeKey || req.session.lock) {
       return
     }
+    if (req.urlPath.startsWith('/api/') || req.urlPath.startsWith('/install/')) {
+      return
+    }
     const installs = await applicationServer.get(`/api/user/userappstore/installs?accountid=${req.account.accountid}`, req.account.accountid, req.session.sessionid)
     const realAccount = req.account
     const queryWas = req.query

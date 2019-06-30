@@ -6,6 +6,9 @@ module.exports = {
     if (!req.session) {
       return
     }
+    if (!req.url.startsWith('/api/') && !req.url.startsWith('/account/') && !req.url.startsWith('/administrator/')) {
+      return
+    }
     req.stripeKey = req.stripeKey || {
       api_key: process.env.STRIPE_KEY
     }
