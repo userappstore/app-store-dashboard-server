@@ -33,8 +33,7 @@
       "/src/content/remap-administrator-links.js",
       "/src/content/resource-link-integrity.js",
       "/src/content/install-account-menu.js",
-      "/src/content/server-administrator-menu.js",
-      "/src/content/reduced-iframe-sandbox.js"
+      "/src/content/server-administrator-menu.js"
     ],
     "server": [
       "/node_modules/@userappstore/stripe-subscriptions/src/server/bind-stripekey.js",
