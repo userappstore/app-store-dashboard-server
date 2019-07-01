@@ -28,7 +28,6 @@
     ],
     "content": [
       "/src/content/installs-and-collections-menu.js",
-      "/src/content/remap-install-links.js",
       "/src/content/remap-account-links.js",
       "/src/content/remap-administrator-links.js",
       "/src/content/resource-link-integrity.js",
