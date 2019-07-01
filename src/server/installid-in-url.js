@@ -14,7 +14,7 @@ module.exports = {
       return
     }
     const installid = urlParts[3]
-    if (installid === 'user' || installid === 'administrator') {
+    if (req.urlPath.startsWith('/api/') && (installid === 'user' || installid === 'administrator')) {
       return
     }
     let data = await dashboard.Storage.read(`map/applicationSessionTokens/${req.query.token}`)
@@ -44,25 +44,42 @@ module.exports = {
     if (req.route) {
       return
     }
-    if (!req.account) {
-      return
+    res.setHeader('Access-Control-Allow-Origin', '*')
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS')
+    res.setHeader('Access-Control-Allow-Headers', 'content-type')
+    res.setHeader('Access-Control-Request-Headers', 'x-requested-with, accept, content-type')
+    if (req.method === 'OPTIONS') {
+      res.setHeader('content-type', 'text/plain')
+      res.statusCode = 200
+      res.ended = true
+      return res.end()
     }
     const urlParts = req.urlPath.split('/')
     if (urlParts.length < 4) {
       return
     }
     let installid = req.urlPath.startsWith('/api/') ? urlParts[3] : urlParts[2]
-    if (installid === 'user' || installid === 'administrator') {
+    if (req.urlPath.startsWith('/api/') && (installid === 'user' || installid === 'administrator')) {
       return
     }
-    let sessionid, install
+    const install = await applicationServer.get(`/api/dashboard-server/install?installid=${installid}`, null, null)
+    if (!req.account || req.url.startsWith(`/install/${installid}/public/`)) {
+      req.query = req.query || {}
+      req.query.installid = installid
+      req.route = global.sitemap['/install/home']
+      return
+    }
+    if (!req.account) {
+      return
+    }
+    let sessionid
     const queryWas = req.query
     const bodyWas = req.body
     const sessionWas = req.session
     if (req.query && req.query.accountid && req.query.sessionid && req.query.token) {
       req.account = { accountid: req.data.accountid }
       req.session = { sessionid: req.data.sessionid }
-      req.install = await applicationServer.get(`/api/dashboard-server/install?installid=${installid}`, req.account.accountid, req.session.sessionid)
+      req.install = install
       req.server = await applicationServer.get(`/api/user/userappstore/application-server?serverid=${req.install.serverid}`, req.account.accountid, req.session.sessionid)
       req.account = { accountid: req.query.accountid }
       req.session = { sessionid: req.query.sessionid }
@@ -70,25 +87,19 @@ module.exports = {
       const newURL = req.url = req.url.replace(`/${req.install.installid}/`, '/')
       req.urlPath = req.url.split('?')[0]
       req.route = global.sitemap[newURL]
-      res.setHeader('Access-Control-Allow-Origin', '*')
-      res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
-      res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
-      res.setHeader('Access-Control-Request-Headers', 'X-Requested-With, accept, content-type')
       req.url = req.url.replace(`/${installid}/`, `/`)
       req.urlPath = req.url.split('?')[0]
       req.route = global.sitemap[req.urlPath]
       req.query = queryWas
       return
     } else {
-      try {
-        install = await applicationServer.get(`/api/dashboard-server/install?installid=${installid}`, req.account.accountid, req.session.sessionid)
-      } catch (error) {
-      }
       if (!install) {
         return
       }
       if (install.url && !install.serverid) {
-        req.query = { installid: install.installid }
+        req.query = queryWas
+        req.query = req.query || {}
+        req.query.installid = installid
         req.route = global.sitemap['/install/home']
         return
       }
@@ -171,7 +182,7 @@ module.exports = {
       req.url = `${req.urlPath}?installid=${installid}`
       req.query = req.query || {}
       req.query.installid = installid
-      req.route = global.sitemap[req.urlPath]
+      req.route = global.sitemap['/install/home']
       if (req.method === 'POST') {
         res.on('finish', async () => {
           // check for session locks that need to bubble up to
@@ -207,36 +218,6 @@ module.exports = {
           return res.endWas(blob)
         }
       }
-      return
     }
-    // ok now we are proxying....
-    req.url = req.url.substring(`/install/${installid}`.length)
-    let thing
-    try {
-      const method = req.method.toLowerCase()
-      if (method === 'get') {
-        thing = await applicationServer.get(req.url, req.session.accountid, req.session.sessionid, req.server.applicationServer, req.server.applicationServerToken)
-      } else {
-        thing = await applicationServer[method](req.url, req.body, req.session.accountid, req.session.sessionid, req.server.applicationServer, req.server.applicationServerToken)
-      }
-    } catch (error) {
-    }
-    if (!thing) {
-      return dashboard.Response.throw500(req, res)
-    }
-    res.ended = true
-    if (Object.keys(thing).length && (!thing.body || !thing.headers)) {
-      res.setHeader('content-type', 'application/json')
-      return res.end(JSON.stringify(thing))
-    }
-    for (const header of ['content-type', 'content-encoding', 'content-length', 'date', 'etag', 'expires', 'vary']) {
-      if (thing.headers[header]) {
-        res.setHeader(header, thing.headers[header])
-      }
-    }
-    if (thing.headers['content-type'].startsWith('text/')) {
-      return res.end(thing.body.toString('utf-8'))
-    }
-    return res.end(thing.body)
   }
 }

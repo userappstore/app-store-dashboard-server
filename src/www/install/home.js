@@ -69,7 +69,11 @@ async function renderPage (req, res) {
     // proxy the application server and substitute root links
     // for their install-specific URLs
     let proxiedData
+    let installid = req.query.installid
     let proxyURL = req.urlPath.substring(`/install`.length)
+    if (proxyURL.startsWith(`/${installid}/`)) {
+      proxyURL = proxyURL.substring(`/${installid}`.length)
+    }
     delete (req.query.installid)
     proxyURL += '?' + querystring.stringify(req.query)
     if (req.method === 'GET') {
@@ -85,19 +89,30 @@ async function renderPage (req, res) {
         return res.end(JSON.stringify(proxiedData))
       }
       // non-html response
-      if (proxiedData.headers['content-type'] && !proxiedData.headers['content-type'].startsWith('text/html')) {
+      if (!proxiedData.headers['content-type'] || !proxiedData.headers['content-type'].startsWith('text/html')) {
         for (const header of ['content-type', 'content-encoding', 'content-length', 'date', 'etag', 'expires', 'vary']) {
           if (proxiedData.headers[header]) {
             res.setHeader(header, proxiedData.headers[header])
           }
         }
         if (proxiedData.headers['content-type'].startsWith('text/')) {
-          return res.end(proxiedData.body.toString('utf-8'))
-        } 
+          let body = proxiedData.body.toString('utf-8')
+          if (proxiedData.headers['content-type'].startsWith('text/css')) {
+            body = body.split('(/').join(`(/install/${installid}/`)
+            res.setHeader('content-length', body.length)
+            res.setHeader('etag', dashboard.Response.eTag(new Buffer(body)))
+          }
+          return res.end(body)
+        }
         return res.end(proxiedData.body)
       }
+      let html = proxiedData.body.toString('utf-8')
+      html = html.split('href="/').join(`href="/install/${installid}/`)
+      html = html.split("href='/").join(`href='/install/${installid}/`)
+      html = html.split('src="/').join(`src="/install/${installid}/`)
+      html = html.split("src='/").join(`src='/install/${installid}/`)
       try {
-        const html = proxiedData.body.toString('utf-8')
+        // avoid parsing non-document HTML like templates
         if (html.indexOf('<html') === -1) {
           for (const header of ['content-type', 'content-encoding', 'content-length', 'date', 'etag', 'expires', 'vary']) {
             if (proxiedData.headers[header]) {
@@ -106,7 +121,7 @@ async function renderPage (req, res) {
           }
           return res.end(html)
         }
-        doc = dashboard.HTML.parse(proxiedData.body.toString('utf-8'))
+        doc = dashboard.HTML.parse(html)
       } catch (error) {
       }
       if (!doc) {
