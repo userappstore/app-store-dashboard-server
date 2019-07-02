@@ -179,7 +179,7 @@ module.exports = {
       req.url = `${req.urlPath}?installid=${installid}`
       req.query = req.query || {}
       req.query.installid = installid
-      req.route = global.sitemap['/install/home']
+      req.route = global.sitemap[newPath]
       if (req.method === 'POST') {
         res.on('finish', async () => {
           // check for session locks that need to bubble up to
