@@ -84,7 +84,7 @@ async function renderPage (req, res) {
     }
     // json response
     if (proxiedData) {
-      if (Object.keys(proxiedData).length && (!proxiedData.body || !proxiedData.headers)) {
+      if (!proxiedData.body && !proxiedData.headers) {
         res.setHeader('content-type', 'application/json')
         return res.end(JSON.stringify(proxiedData))
       }
