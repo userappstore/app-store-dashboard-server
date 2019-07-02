@@ -84,10 +84,7 @@ module.exports = {
       req.account = { accountid: req.query.accountid }
       req.session = { sessionid: req.query.sessionid }
       req.appid = req.install.serverid
-      const newURL = req.url = req.url.replace(`/${req.install.installid}/`, '/')
-      req.urlPath = req.url.split('?')[0]
-      req.route = global.sitemap[newURL]
-      req.url = req.url.replace(`/${installid}/`, `/`)
+      req.url = req.url.replace(`/${req.install.installid}/`, '/')
       req.urlPath = req.url.split('?')[0]
       req.route = global.sitemap[req.urlPath]
       req.query = queryWas
