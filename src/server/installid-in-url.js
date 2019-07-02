@@ -173,48 +173,47 @@ module.exports = {
     const parts = req.urlPath.split('/')
     parts.splice(0, 3)
     const newPath = `/install/${parts.join('/')}`
-    if (global.sitemap[newPath]) {
-      req.urlPath = newPath
-      req.urlWas = req.url
-      req.url = `${req.urlPath}?installid=${installid}`
-      req.query = req.query || {}
-      req.query.installid = installid
-      req.route = global.sitemap[newPath]
-      if (req.method === 'POST') {
-        res.on('finish', async () => {
-          // check for session locks that need to bubble up to
-          // the UserAppStore session
-          if (!req.session.lock) {
-            return
-          }
-          await dashboard.StorageObject.setProperties(`${req.appid}/session/${req.session.sessionid}`, 'unlocked', 1)
-          await dashboard.StorageObject.setProperties(`${global.appid}/session/${sessionWas.sessionid}`, {
-            lock: req.session.lock,
-            lockURL: req.session.lockURL,
-            lockData: req.session.lockData
-          })
+    req.urlPath = newPath
+    req.urlWas = req.url
+    req.url = `${req.urlPath}?installid=${installid}`
+    req.query = req.query || {}
+    req.query.installid = installid
+    req.route = global.sitemap[newPath] || global.sitemap['/install/home']
+    if (req.method === 'POST') {
+      res.on('finish', async () => {
+        // check for session locks that need to bubble up to
+        // the UserAppStore session
+        if (!req.session.lock) {
+          return
+        }
+        await dashboard.StorageObject.setProperties(`${req.appid}/session/${req.session.sessionid}`, 'unlocked', 1)
+        await dashboard.StorageObject.setProperties(`${global.appid}/session/${sessionWas.sessionid}`, {
+          lock: req.session.lock,
+          lockURL: req.session.lockURL,
+          lockData: req.session.lockData
         })
-      }
-      if (req.method === 'GET' || req.method === 'POST') {
-        res.endWas = res.end
-        res.end = (blob) => {
-          // check for redirects that need to be tagged with serverids
-          if (blob && blob.toString) {
-            let str = blob.toString('utf-8')
-            if (str.indexOf('<meta http-equiv="refresh" content="1;url=') > -1) {
-              let url = str.split('<meta http-equiv="refresh" content="1;url=')[1]
-              url = url.substring(0, url.indexOf('"'))
-              if (url && url.startsWith('/install/')) {
-                const newURL = url.replace('/install/', `/install/${install.installid}/`)
-                str = str.split(url).join(newURL)
-                const buffer = Buffer.from(str)
-                return res.endWas(buffer)
-              }
+      })
+    }
+    if (req.method === 'GET' || req.method === 'POST') {
+      res.endWas = res.end
+      res.end = (blob) => {
+        // check for redirects that need to be tagged with serverids
+        if (blob && blob.toString) {
+          let str = blob.toString('utf-8')
+          if (str.indexOf('<meta http-equiv="refresh" content="1;url=') > -1) {
+            let url = str.split('<meta http-equiv="refresh" content="1;url=')[1]
+            url = url.substring(0, url.indexOf('"'))
+            if (url && url.startsWith('/install/')) {
+              const newURL = url.replace('/install/', `/install/${install.installid}/`)
+              str = str.split(url).join(newURL)
+              const buffer = Buffer.from(str)
+              return res.endWas(buffer)
             }
           }
-          return res.endWas(blob)
         }
+        return res.endWas(blob)
       }
     }
   }
 }
+
