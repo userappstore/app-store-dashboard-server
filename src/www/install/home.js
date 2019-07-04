@@ -76,11 +76,16 @@ async function renderPage (req, res) {
     }
     delete (req.query.installid)
     proxyURL += '?' + querystring.stringify(req.query)
+    const additionalHeaders = {}
+    if (req.data.install.subscriptionid) {
+      additionalHeaders['x-subscriptionid'] = req.data.install.subscriptionid
+      additionalHeaders['x-planid'] = req.data.install.planid
+    }
     if (req.method === 'GET') {
-      proxiedData = await applicationServer.get(proxyURL, req.session.accountid, req.session.sessionid, req.data.server.applicationServer, req.data.server.applicationServerToken)
+      proxiedData = await applicationServer.get(proxyURL, req.session.accountid, req.session.sessionid, req.data.server.applicationServer, req.data.server.applicationServerToken, additionalHeaders)
     } else {
       const method = req.method.toLowerCase()
-      proxiedData = await applicationServer[method](proxyURL, req.body, req.session.accountid, req.session.sessionid, req.data.server.applicationServer, req.data.server.applicationServerToken)
+      proxiedData = await applicationServer[method](proxyURL, req.body, req.session.accountid, req.session.sessionid, req.data.server.applicationServer, req.data.server.applicationServerToken, additionalHeaders)
     }
     // json response
     if (proxiedData) {

@@ -5,24 +5,24 @@ const querystring = require('querystring')
 const util = require('util')
 
 module.exports = {
-  get: async (path, accountid, sessionid, alternativeServer, alternativeToken) => {
-    return proxy('GET', path, null, accountid, sessionid, alternativeServer, alternativeToken)
+  get: async (path, accountid, sessionid, alternativeServer, alternativeToken, additionalHeaders) => {
+    return proxy('GET', path, null, accountid, sessionid, alternativeServer, alternativeToken, additionalHeaders)
   },
-  post: async (path, data, accountid, sessionid, alternativeServer, alternativeToken) => {
-    return proxy('POST', path, data, accountid, sessionid, alternativeServer, alternativeToken)
+  post: async (path, data, accountid, sessionid, alternativeServer, alternativeToken, additionalHeaders) => {
+    return proxy('POST', path, data, accountid, sessionid, alternativeServer, alternativeToken, additionalHeaders)
   },
-  put: async (path, data, accountid, sessionid, alternativeServer, alternativeToken) => {
-    return proxy('PUT', path, data, accountid, sessionid, alternativeServer, alternativeToken)
+  put: async (path, data, accountid, sessionid, alternativeServer, alternativeToken, additionalHeaders) => {
+    return proxy('PUT', path, data, accountid, sessionid, alternativeServer, alternativeToken, additionalHeaders)
   },
-  patch: async (path, data, accountid, sessionid, alternativeServer, alternativeToken) => {
-    return proxy('PATCH', path, data, accountid, sessionid, alternativeServer, alternativeToken)
+  patch: async (path, data, accountid, sessionid, alternativeServer, alternativeToken, additionalHeaders) => {
+    return proxy('PATCH', path, data, accountid, sessionid, alternativeServer, alternativeToken, additionalHeaders)
   },
-  delete: async (path, data, accountid, sessionid, alternativeServer, alternativeToken) => {
-    return proxy('DELETE', path, data, accountid, sessionid, alternativeServer, alternativeToken)
+  delete: async (path, data, accountid, sessionid, alternativeServer, alternativeToken, additionalHeaders) => {
+    return proxy('DELETE', path, data, accountid, sessionid, alternativeServer, alternativeToken, additionalHeaders)
   }
 }
 
-const proxy = util.promisify((method, path, data, accountid, sessionid, alternativeServer, alternativeToken, callback) => {
+const proxy = util.promisify((method, path, data, accountid, sessionid, alternativeServer, alternativeToken, additionalHeaders, callback) => {
   const applicationServer = alternativeServer || process.env.APPLICATION_SERVER
   const applicationServerToken = alternativeToken || process.env.APPLICATION_SERVER_TOKEN
   const baseURLParts = applicationServer.split('://')
@@ -50,11 +50,11 @@ const proxy = util.promisify((method, path, data, accountid, sessionid, alternat
     path,
     port,
     method,
-    headers: {
-      'x-dashboard-server': process.env.DASHBOARD_SERVER,
-      'x-dashboard-token': token
-    }
+    headers: additionalHeaders || {}
   }
+
+  requestOptions.headers['x-dashboard-server'] = process.env.DASHBOARD_SERVER
+  requestOptions.headers['x-dashboard-token'] = token
   if (accountid) {
     requestOptions.headers['x-accountid'] = accountid
     requestOptions.headers['x-sessionid'] = sessionid
