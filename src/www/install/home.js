@@ -14,7 +14,7 @@ module.exports = {
   put: renderPage
 }
 
-async function beforeRequest (req) {
+async function beforeRequest(req) {
   if (!req.query || !req.query.installid) {
     throw new Error('invalid-installid')
   }
@@ -53,7 +53,7 @@ async function beforeRequest (req) {
   }
 }
 
-async function renderPage (req, res) {
+async function renderPage(req, res) {
   let doc
   // rendering a project requires substituting root links
   // for their install-specific URLs
@@ -84,9 +84,12 @@ async function renderPage (req, res) {
     if (req.method === 'GET') {
       proxiedData = await applicationServer.get(proxyURL, req.session.accountid, req.session.sessionid, req.data.server.applicationServer, req.data.server.applicationServerToken, additionalHeaders)
     } else {
+      additionalHeaders['content-type'] = req.headers['content-type']
+      additionalHeaders['content-length'] = req.headers['content-length']
       const method = req.method.toLowerCase()
-      proxiedData = await applicationServer[method](proxyURL, req.body, req.session.accountid, req.session.sessionid, req.data.server.applicationServer, req.data.server.applicationServerToken, additionalHeaders)
+      proxiedData = await applicationServer[method](proxyURL, req.bodyRaw || req.body, req.session.accountid, req.session.sessionid, req.data.server.applicationServer, req.data.server.applicationServerToken, additionalHeaders)
     }
+    res.statusCode = proxiedData.statusCode
     // json response
     if (proxiedData) {
       if (!proxiedData.body && !proxiedData.headers) {

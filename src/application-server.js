@@ -69,7 +69,7 @@ const proxy = util.promisify((method, path, data, accountid, sessionid, alternat
       if (!body) {
         return callback()
       }
-      if (proxyResponse.headers['content-type'] && proxyResponse.headers['content-type'].startsWith('application/json')) {
+      if (!alternativeServer && proxyResponse.headers['content-type'] && proxyResponse.headers['content-type'].startsWith('application/json')) {
         body = JSON.parse(body.toString('utf-8'))
         return callback(null, body)
       }
@@ -84,6 +84,7 @@ const proxy = util.promisify((method, path, data, accountid, sessionid, alternat
         body = new Buffer(body)
       }
       return callback(null, {
+        statusCode: proxyResponse.statusCode,
         body,
         headers: proxyResponse.headers
       })
@@ -92,8 +93,24 @@ const proxy = util.promisify((method, path, data, accountid, sessionid, alternat
   proxyRequest.on('error', (error) => {
     return callback(error)
   })
-  if (data) {
-    proxyRequest.write(querystring.stringify(data))
+  if (!data) {
+    return proxyRequest.end()
   }
+  if (!requestOptions.headers['content-type'].startsWith('multipart/form-data;')) {
+    proxyRequest.write(querystring.stringify(data))
+    return proxyRequest.end()
+  }
+  const boundary = requestOptions.headers['content-type'].split('boundary=')[1]
+  const body = []
+  for (const field in data) {
+    let nextPostData = `--${boundary}\r\n`
+    nextPostData += `Content-Disposition: form-data; name="${field}"\r\n\r\n`
+    nextPostData += `${data[field]}\r\n`
+    body.push(nextPostData)
+  }
+  body.push(`--${boundary}--`)
+  const buffer = Buffer.from(body.join(''), 'binary')
+  requestOptions.headers['content-length'] = Buffer.byteLength(buffer)
+  proxyRequest.write(buffer)
   return proxyRequest.end()
 })
