@@ -6,6 +6,7 @@ module.exports = {
     user.sessionid = req.session.sessionid
     user.accountid = req.session.accountid
     user.installid = req.install.installid
+    user.dashboard = global.dashboard
     user.token = req.session.token
     if (req.install.organizationid) {
       user.organizationid = req.install.organizationid
