@@ -1,7 +1,7 @@
 const dashboard = require('@userappstore/dashboard')
 const remap = [
-  { tag: 'a', attribute: 'href' }, 
-  { tag: 'link', attribute: 'href' }, 
+  { tag: 'a', attribute: 'href' },
+  { tag: 'link', attribute: 'href' },
   { tag: 'script', attribute: 'src'},
   { tag: 'img', attribute: 'src' },
   { tag: 'form', attribute: 'action' }
@@ -40,7 +40,7 @@ module.exports = {
         const duration = parts[0]
         const url = parts[1]
         if (url.indexOf('/account/') === 0) {
-          metaTag.attr.content = `${duration};url=/account/${req.install.installid}/${url.substring('/account/'.length)}`
+          metaTag.attr.content = `${duration};url=/account/${req.server.serverid}/${url.substring('/account/'.length)}`
         }
       }
     }
