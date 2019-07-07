@@ -2,7 +2,6 @@ const applicationServer = require('../../../application-server.js')
 
 module.exports = {
   get: async (req) => {
-    console.log('loading subscription')
     if (!req.applicationServer) {
       throw new Error('invalid-access')
     }
