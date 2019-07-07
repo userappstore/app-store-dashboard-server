@@ -107,21 +107,6 @@ module.exports = {
     req.query = query
     req.administratorAccount = req.account
     req.administratorSession = req.session
-    if (req.method === 'POST') {
-      res.on('finish', async () => {
-        // check for session locks that need to bubble up to
-        // the UserAppStore session
-        if (!req.session.lock) {
-          return
-        }
-        await dashboard.StorageObject.setProperties(`${req.appid}/${req.session.sessionid}`, 'unlocked', 1)
-        await dashboard.StorageObject.setProperties(`${global.appid}/${sessionWas.sessionid}`, {
-          lock: req.session.lock,
-          lockURL: req.session.lockURL,
-          lockData: req.session.lockData
-        })
-      })
-    }
     if (req.method === 'GET' || req.method === 'POST') {
       res.endWas = res.end
       res.end = (blob) => {

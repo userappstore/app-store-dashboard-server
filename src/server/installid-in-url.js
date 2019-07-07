@@ -179,21 +179,6 @@ module.exports = {
     req.query = req.query || {}
     req.query.installid = installid
     req.route = global.sitemap[newPath] || global.sitemap['/install/home']
-    if (req.method === 'POST') {
-      res.on('finish', async () => {
-        // check for session locks that need to bubble up to
-        // the UserAppStore session
-        if (!req.session.lock) {
-          return
-        }
-        await dashboard.StorageObject.setProperties(`${req.appid}/session/${req.session.sessionid}`, 'unlocked', 1)
-        await dashboard.StorageObject.setProperties(`${global.appid}/session/${sessionWas.sessionid}`, {
-          lock: req.session.lock,
-          lockURL: req.session.lockURL,
-          lockData: req.session.lockData
-        })
-      })
-    }
     if (req.method === 'GET' || req.method === 'POST') {
       res.endWas = res.end
       res.end = (blob) => {

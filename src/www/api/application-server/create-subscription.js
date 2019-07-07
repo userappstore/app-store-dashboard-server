@@ -3,8 +3,6 @@ const dashboard = require('@userappstore/dashboard')
 const stripe = require('stripe')()
 const stripeCache = require('@userappstore/stripe-subscriptions/src/stripe-cache.js')
 const createSubscription = require('@userappstore/stripe-subscriptions/src/www/api/user/subscriptions/create-subscription.js')
-createSubscription.lock = false
-
 
 module.exports = {
   post: async (req) => {
