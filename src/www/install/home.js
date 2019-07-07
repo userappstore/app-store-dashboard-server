@@ -81,6 +81,9 @@ async function renderPage(req, res) {
       additionalHeaders['x-subscriptionid'] = req.data.install.subscriptionid
       additionalHeaders['x-planid'] = req.data.install.planid
     }
+    if (req.data.install.organizationid) {
+      additionalHeaders['x-organizationid'] = req.data.install.organizationid
+    }
     if (req.method === 'GET') {
       proxiedData = await applicationServer.get(proxyURL, req.session.accountid, req.session.sessionid, req.data.server.applicationServer, req.data.server.applicationServerToken, additionalHeaders)
     } else {
