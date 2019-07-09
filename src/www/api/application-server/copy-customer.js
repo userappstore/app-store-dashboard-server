@@ -2,7 +2,7 @@
 // lock the session to authorize creating for
 // the application server to create cards
 const applicationServer = require('../../../application-server.js')
-const dashboard = require('@userappstore/dashboard')
+const dashboard = require('@userdashboard/dashboard')
 const stripeWithKey = require('stripe')(process.env.STRIPE_KEY)
 const stripe = require('stripe')()
 

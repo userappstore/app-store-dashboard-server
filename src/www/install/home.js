@@ -1,5 +1,5 @@
 const applicationServer = require('../../application-server.js')
-const dashboard = require('@userappstore/dashboard')
+const dashboard = require('@userdashboard/dashboard')
 const fs = require('fs')
 const path = require('path')
 const querystring = require('querystring')

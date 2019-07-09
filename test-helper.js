@@ -5,7 +5,7 @@ const stripeKey = {
   api_key: process.env.STRIPE_KEY
 }
 
-const TestHelper = module.exports = require('@userappstore/dashboard/test-helper.js')
+const TestHelper = module.exports = require('@userdashboard/dashboard/test-helper.js')
 module.exports.createProject = createProject
 module.exports.shareProject = shareProject
 module.exports.installProject = installProject

@@ -1,4 +1,4 @@
-const dashboard = require('@userappstore/dashboard')
+const dashboard = require('@userdashboard/dashboard')
 const applicationServer = require('../application-server.js')
 const fs = require('fs')
 const cached = {}
@@ -128,7 +128,7 @@ function mapFile(stem) {
     return filePath
   }
   // dashboard /public folder
-  filePath = `${global.applicationPath}/node_modules/@userappstore/dashboard/src/www${stem}`
+  filePath = `${global.applicationPath}/node_modules/@userdashboard/dashboard/src/www${stem}`
   if (fs.existsSync(filePath)) {
     return filePath
   }

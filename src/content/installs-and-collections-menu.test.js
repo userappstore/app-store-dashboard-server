@@ -2,7 +2,7 @@
 const assert = require('assert')
 const Handler = require('./installs-and-collections-menu.js')
 const TestHelper = require('../../test-helper.js')
-const dashboard = require('@userappstore/dashboard')
+const dashboard = require('@userdashboard/dashboard')
 
 describe('content/installs-and-collections-menu', () => {
   describe('InstallsAndCollectionsMenu#template', () => {

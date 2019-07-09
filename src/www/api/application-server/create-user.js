@@ -1,5 +1,5 @@
 const applicationServer = require('../../../application-server.js')
-const dashboard = require('@userappstore/dashboard')
+const dashboard = require('@userdashboard/dashboard')
 
 // When Dashboard creates accounts the first is the 
 // owner.  This shortcut for the application server makes

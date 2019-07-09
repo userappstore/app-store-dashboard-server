@@ -3,7 +3,7 @@
 // ownership.  This shortcut for the application server tags
 // any account as the owner.
 const applicationServer = require('../../../application-server.js')
-const dashboard = require('@userappstore/dashboard')
+const dashboard = require('@userdashboard/dashboard')
 
 module.exports = {
   post: async (req) => {

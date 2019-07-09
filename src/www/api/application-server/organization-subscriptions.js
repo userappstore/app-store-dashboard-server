@@ -1,6 +1,6 @@
 
 const applicationServer = require('../../../application-server.js')
-const dashboard = require('@userappstore/dashboard')
+const dashboard = require('@userdashboard/dashboard')
 
 module.exports = {
   get: async (req) => {

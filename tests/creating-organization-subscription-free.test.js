@@ -2,7 +2,7 @@
 const assert = require('assert')
 const puppeteer = require('puppeteer')
 const TestHelper = require('../test-helper-chrome.js')
-const testUserData = require('@userappstore/dashboard/test-data.json')
+const testUserData = require('@userdashboard/dashboard/test-data.json')
 
 const projectHTML = `<html>
   <head>

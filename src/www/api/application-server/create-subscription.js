@@ -1,5 +1,5 @@
 const applicationServer = require('../../../application-server.js')
-const dashboard = require('@userappstore/dashboard')
+const dashboard = require('@userdashboard/dashboard')
 const stripe = require('stripe')()
 const stripeCache = require('@userappstore/stripe-subscriptions/src/stripe-cache.js')
 const createSubscription = require('@userappstore/stripe-subscriptions/src/www/api/user/subscriptions/create-subscription.js')

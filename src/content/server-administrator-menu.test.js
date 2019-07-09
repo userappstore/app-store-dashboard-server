@@ -2,7 +2,7 @@
 const assert = require('assert')
 const Handler = require('./server-administrator-menu.js')
 const TestHelper = require('../../test-helper.js')
-const dashboard = require('@userappstore/dashboard')
+const dashboard = require('@userdashboard/dashboard')
 
 describe('content/server-administrator-menu', () => {
   describe('ReducedIframeSandbox#template', () => {

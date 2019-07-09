@@ -2,7 +2,7 @@
 const assert = require('assert')
 const Handler = require('./remap-administrator-links.js')
 const TestHelper = require('../../test-helper.js')
-const dashboard = require('@userappstore/dashboard')
+const dashboard = require('@userdashboard/dashboard')
 
 describe('content/remap-administrator-links', () => {
   describe('RemapAdministratorLinks#page', () => {

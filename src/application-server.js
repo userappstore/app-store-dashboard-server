@@ -1,4 +1,4 @@
-const bcrypt = require('@userappstore/dashboard/src/bcrypt.js')
+const bcrypt = require('@userdashboard/dashboard/src/bcrypt.js')
 const http = require('http')
 const https = require('https')
 const querystring = require('querystring')

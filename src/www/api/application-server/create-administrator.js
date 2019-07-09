@@ -3,7 +3,7 @@
 // the power.  This shortcut for the application server tags
 // owner-organization members as an administrator of a server.
 const applicationServer = require('../../../application-server.js')
-const dashboard = require('@userappstore/dashboard')
+const dashboard = require('@userdashboard/dashboard')
 
 module.exports = {
   post: async (req) => {
