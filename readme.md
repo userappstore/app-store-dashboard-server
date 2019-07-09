@@ -1,55 +1,68 @@
 # App Store Dashboard Server
-The app store software is divided into two separate projects that must both be setup and configured, the application server and this dashboard server.
 
-The corresponding application server builds on top of this to provide a project editor, subscription and free app store, and panelled interface for using installed projects, app and imported URLs.
+This application server is one half of the software, it is accompanied by an [Application server](https://github.com/userappstore/app-store-application-server).  This readme assumes you have configured the application server already.
 
-This server integrates Dashboard to provide user account management, with its modules for Stripe subscriptions, Stripe Connect for publishing to the app store, and organizations for sharing access to apps and administrative tools.
+# About
 
-The server is NodeJS and storage may be local file system, Redis, PostgreSQL or Amazon S3.  Redis may be used as a cache where that makes sense.
+The app store software provides a website where users may code and share single-page applications or import hosted web applications by their server URL.  Users who complete a Stripe Connect registration may publish their apps with paid subscriptions.
+
+- [App store Wiki](https://github.com/userappstore/app-store-application-server/wiki)
+- [Compatibility guidelines](https://github.com/userappstore/app-store-application-server/wiki/Compatibility-guidelines)
+- [Creating single-page apps](https://github.com/userappstore/app-store-application-server/wiki/Creating-single-page-apps)
+- [Creating application servers](https://github.com/userappstore/app-store-application-server/wiki/Creating-application-servers)
+- [Integrating existing web applications](https://github.com/userdashboard/dashboard/wiki/Integrating-existing-web-applications)
+
+### Case studies 
+
+`Hastebin` is an open source pastebin web application.  It started as a website for anonymous guests only, and was transformed into an application server with support for sharing posts with organizations and paid subscriptions.
+
+- [Hastebin - free to import](https://github.com/userappstore/integration-examples/blob/master/hastebin/hastebin-app-store-free.md)
+- [Hastebin - app store subscriptions](https://github.com/userappstore/integration-examples/blob/master/hastebin/hastebin-app-store-subscription.md)
+
+## Prerequisites
+- [Stripe account](https://stripe.com)
+- [Registered Connect platform](https://stripe.com/connect)
+- flat file database, or [Amazon S3](https://github.com/userdashboard/storage-s3) [Redis](https://github.com/userdashboard/storage-redis) [PostgreSQL](https://github.com/userdashboard/storage-postgresql) 
 
 ## Installation part 1: Dashboard Server
 
-You must install [NodeJS](https://nodejs.org) 8.1.4+ prior to these steps.
+You must install [NodeJS](https://nodejs.org) 8.12.0+ prior to these steps.
 
-    $ git clone https://github.com/userappstore/app-store-application-server
-    $ cd app-store-application-server
-    $ npm install --only=production
+    $ mkdir my-app-store
+    $ cd my-app-store
+    $ npm int
+    $ npm install @userappstore/app-store-dashboard-server
     $ STRIPE_KEY=abc \
       STRIPE_JS=2|3|false \
       SUBSCRIPTIONS_ENDPOINT_SECRET=xyz \
       APPLICATION_SERVER=http://localhost:3000 \
       APPLICATION_SERVER_TOKEN="a shared secret" \
-      node main.js # check start-dev.sh for more startup parameters    
+      node main.js
 
-    # npm install git+https://github.com/userappstore/storage-redis
-    # STORAGE_ENGINE="@userappstore/storage-redis"
+    # additional parameters using Redis
+    # STORAGE_ENGINE="@userdashboard/storage-redis"
     # REDIS_URL="..."
-
-    # npm install git+https://github.com/userappstore/storage-s3
-    # STORAGE_ENGINE="@userappstore/storage-s3"
+    $ npm install @userdashboard/storage-redis
+    
+    # additional parameters using Amazon S3 or compatible
+    # STORAGE_ENGINE="@userdashboard/storage-s3"
     # S3_BUCKET_NAME=the_name
     # ACCESS_KEY_ID=secret from amazon
     # SECRET_ACCESS_KEY=secret from amazon
+    $ npm install @userdashboard/storage-s3
 
-    # npm install git+https://github.com/userappstore/storage-postgresql
-    # STORAGE_ENGINE="@userappstore/storage-redis"
+    # additional parameters using PostgreSQL
+    # STORAGE_ENGINE="@userdashboard/storage-postgresql"
     # DATABASE_URL="..."
+    $ npm install @userdashboard/storage-postgresql
 
 ## Installation part 2: Application server
 
-Visit the [App Store Application Server](https://github.com/userappstore/app-store-application-server) for setup information.
-      
-### BYO storage engine
-The storage interface is a basic read, write, list and delete API.  Check `storage-fs.js` and `storage-s3.js` for examples you can copy.
+Visit the [App Store Application Server](https://github.com/userappstore/app-store-application-server) if you have not completed that part.
 
-Pull requests are welcome with additional storage engines.  Do not include their modules in the `package.json` just have their driver etc install separately.
+#### Development
 
-#### Dashboard documentation
-- [Introduction](https://github.com/userappstore/dashboard/wiki)
-- [Configuring Dashboard](https://github.com/userappstore/dashboard/wiki/Configuring-Dashboard)
-- [Contributing to Dashboard](https://github.com/userappstore/dashboard/wiki/Contributing-to-Dashboard)
-- [Dashboard code structure](https://github.com/userappstore/dashboard/wiki/Dashboard-code-structure)
-- [Server request lifecycle](https://github.com/userappstore/dashboard/wiki/Server-Request-Lifecycle)
+Development takes place on [Github](https://github.com/userappstore/app-store-dashboard-server) with releases on [NPM](https://www.npmjs.com/package/@userappstore/app-store-dashboard-server).
 
 #### License
 
