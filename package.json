@@ -13,18 +13,18 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@userappstore/dashboard": "git+https://github.com/userappstore/dashboard.git",
-    "@userappstore/maxmind-geoip": "git+https://github.com/userappstore/maxmind-geoip.git",
-    "@userappstore/organizations": "git+https://github.com/userappstore/organizations.git",
-    "@userappstore/stripe-connect": "git+https://github.com/userappstore/stripe-connect.git",
-    "@userappstore/stripe-subscriptions": "git+https://github.com/userappstore/stripe-subscriptions.git"
+    "@userdashboard/dashboard": "^1.0.0",
+    "@userdashboard/maxmind-geoip": "^1.0.0",
+    "@userdashboard/organizations": "^1.0.0",
+    "@userdashboard/stripe-connect": "^1.0.0",
+    "@userdashboard/stripe-subscriptions": "^1.0.1"
   },
   "dashboard": {
     "modules": [
-      "@userappstore/maxmind-geoip",
-      "@userappstore/stripe-subscriptions",
-      "@userappstore/stripe-connect",
-      "@userappstore/organizations"
+      "@userdashboard/maxmind-geoip",
+      "@userdashboard/stripe-subscriptions",
+      "@userdashboard/stripe-connect",
+      "@userdashboard/organizations"
     ],
     "content": [
       "/src/content/installs-and-collections-menu.js",
@@ -35,7 +35,7 @@
       "/src/content/server-administrator-menu.js"
     ],
     "server": [
-      "/node_modules/@userappstore/stripe-subscriptions/src/server/bind-stripekey.js",
+      "/node_modules/@userdashboard/stripe-subscriptions/src/server/bind-stripekey.js",
       "/src/server/clean-deleted-subscriptions.js",
       "/src/server/remove-template-for-ajax.js",
       "/src/server/connected-subscription-webhooks.js",
