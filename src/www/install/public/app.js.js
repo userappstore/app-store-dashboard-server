@@ -1,4 +1,3 @@
-const dashboard = require('@userappstore/dashboard')
 const applicationServer = require('../../../application-server.js')
 
 module.exports = {
