@@ -47,7 +47,7 @@ module.exports = {
         }
       }
     }
-    const organizationInstalls = await applicationServer.get(`/api/user/userappstore/organization-installs?accountid=${realAccount.accountid}`, realAccount.accountid, req.session.sessionid)
+    const organizationInstalls = await applicationServer.get(`/api/user/userappstore/orFganizations-installs?accountid=${realAccount.accountid}`, realAccount.accountid, req.session.sessionid)
     if (organizationInstalls && organizationInstalls.length) {
       for (const install of organizationInstalls) {
         if (!install.subscriptionid) {
