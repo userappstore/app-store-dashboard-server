@@ -7,7 +7,7 @@
 //
 // const assert = require('assert')
 // const TestHelper = require('../../../../test-helper.js')
-// const SubscriptionsTestHelper = require('@userappstore/stripe-subscriptions/test-helper.js')
+// const SubscriptionsTestHelper = require('@userdashboard/stripe-subscriptions/test-helper.js')
 
 // describe(`/api/application-server/create-subscription`, () => {
 //   describe('CreateSubscription#POST', () => {

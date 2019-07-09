@@ -1,7 +1,7 @@
 /* eslint-env mocha */
 const assert = require('assert')
 const TestHelper = require('../../../../test-helper.js')
-const ConnectTestHelper = require('@userappstore/stripe-connect/test-helper.js')
+const ConnectTestHelper = require('@userdashboard/stripe-connect/test-helper.js')
 
 describe('/api/application-server/stripe-account', () => {
   describe('StripeAccount#GET', () => {

@@ -1,7 +1,7 @@
 /* eslint-env mocha */
 const assert = require('assert')
 const TestHelper = require('../../../../test-helper.js')
-const OrganizationsTestHelper = require('@userappstore/organizations/test-helper.js')
+const OrganizationsTestHelper = require('@userdashboard/organizations/test-helper.js')
 
 describe('/api/application-server/create-administrator', () => {
   describe('CreateAdministrator#POST', () => {

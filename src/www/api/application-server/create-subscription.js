@@ -1,8 +1,8 @@
 const applicationServer = require('../../../application-server.js')
 const dashboard = require('@userdashboard/dashboard')
 const stripe = require('stripe')()
-const stripeCache = require('@userappstore/stripe-subscriptions/src/stripe-cache.js')
-const createSubscription = require('@userappstore/stripe-subscriptions/src/www/api/user/subscriptions/create-subscription.js')
+const stripeCache = require('@userdashboard/stripe-subscriptions/src/stripe-cache.js')
+const createSubscription = require('@userdashboard/stripe-subscriptions/src/www/api/user/subscriptions/create-subscription.js')
 
 module.exports = {
   post: async (req) => {
