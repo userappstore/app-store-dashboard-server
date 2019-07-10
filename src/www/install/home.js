@@ -87,8 +87,12 @@ async function renderPage(req, res) {
     if (req.method === 'GET') {
       proxiedData = await applicationServer.get(proxyURL, req.session.accountid, req.session.sessionid, req.data.server.applicationServer, req.data.server.applicationServerToken, additionalHeaders)
     } else {
-      additionalHeaders['content-type'] = req.headers['content-type']
-      additionalHeaders['content-length'] = req.headers['content-length']
+      if (req.headers['content-type']) {
+        additionalHeaders['content-type'] = req.headers['content-type']
+      }
+      if (req.headers['content-length']) {
+        additionalHeaders['content-length'] = req.headers['content-length']
+      }
       const method = req.method.toLowerCase()
       proxiedData = await applicationServer[method](proxyURL, req.bodyRaw || req.body, req.session.accountid, req.session.sessionid, req.data.server.applicationServer, req.data.server.applicationServerToken, additionalHeaders)
     }
