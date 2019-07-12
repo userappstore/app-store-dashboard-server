@@ -12,31 +12,47 @@ The app store software provides a website where users may code and share single-
 - [Creating application servers](https://github.com/userappstore/app-store-application-server/wiki/Creating-application-servers)
 - [Integrating existing web applications](https://github.com/userappstore/dashboard/wiki/Integrating-existing-web-applications)
 
-### Case studies 
+## Screenshots of the app store software (both servers)
 
-`Hastebin` is an open source pastebin web application.  It started as a website for anonymous guests only, and was transformed into an application server with support for sharing posts with organizations and paid subscriptions.
+| ![Guest landing page](./src/www/public/1-app-store-landing-page.png?raw=true) | 
+|:---------------------------------------------------------------------------------------------------------------:|
+| Guest landing page that you replace with your own `/` route on your application server |
 
-- [Hastebin - free to import](https://github.com/userappstore/integration-examples/blob/master/hastebin/hastebin-app-store-free.md)
-- [Hastebin - app store subscriptions](https://github.com/userappstore/integration-examples/blob/master/hastebin/hastebin-app-store-subscription.md)
+| ![Signed in home page](./src/www/public/2-app-store-signed-in.png?raw=true) |
+|:---------------------------------------------------------------------------------------------------------------:|
+| Signed in home page with an empty app store |
 
-## Prerequisites
-- [Stripe account](https://stripe.com)
-- [Registered Connect platform](https://stripe.com/connect)
-- flat file database, or [Amazon S3](https://github.com/userdashboard/storage-s3) [Redis](https://github.com/userdashboard/storage-redis) [PostgreSQL](https://github.com/userdashboard/storage-postgresql) 
+## Setting up your Stripe credentials
+
+You will need to retrieve various keys from [Stripe](https://stripe.com).
+
+- create your Stripe account 
+- register your Connect platform
+- find your API credentials
+- create a Connect webhook for all events to https://your_domain/webhooks/connect/index-payout-data (CONNECT_ENDPOINT_SECRET)
+- create a Connect webhook for all events to https://your_domain/webhooks/subscriptions/index-stripe-data (SUBSCRIPTIONS_ENDPOINT_SECRET1)
+- create a regular webhook for all events to https://your_domain/webhooks/subscriptions/index-stripe-data (SUBSCRIPTIONS_ENDPOINT_SECRET2)
+- find your webhook signing secret
 
 ## Installation part 1: Dashboard Server
 
-You must install [NodeJS](https://nodejs.org) 8.12.0+ prior to these steps.
+You must install [NodeJS](https://nodejs.org) 8.12.0+ prior to these steps.  Check `start-dev.sh` to see the rest of the `env` variables that configure the app store dashboard server.
 
     $ mkdir my-app-store
     $ cd my-app-store
     $ npm int
     $ npm install @userappstore/app-store-dashboard-server
-    $ STRIPE_KEY=abc \
-      STRIPE_JS=2|3|false \
-      SUBSCRIPTIONS_ENDPOINT_SECRET=xyz \
-      APPLICATION_SERVER=http://localhost:3000 \
-      APPLICATION_SERVER_TOKEN="a shared secret" \
+    $ APPID=website.com \
+      APPLICATION_SERVER="http://localhost:3000" \
+      APPLICATION_SERVER_TOKEN="this is a shared secret" \
+      DASHBOARD_SERVER="https://website.com" \
+      DASHBOARD_SESSION_KEY="this is a secret" \
+      STRIPE_JS="3" \
+      STRIPE_KEY="sk_test_xxxx" \
+      STRIPE_PUBLISHABLE_KEY="pk_test_xxxxx" \
+      CONNECT_ENDPOINT_SECRET="whsec_xxxx" \
+      SUBSCRIPTIONS_ENDPOINT_SECRET1="whsec_xxxx" \
+      SUBSCRIPTIONS_ENDPOINT_SECRET2="whsec_xxxx" \
       node main.js
 
     # additional parameters using Redis
