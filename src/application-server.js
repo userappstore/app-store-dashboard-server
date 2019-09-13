@@ -52,7 +52,6 @@ const proxy = util.promisify((method, path, data, accountid, sessionid, alternat
     method,
     headers: additionalHeaders || {}
   }
-
   requestOptions.headers['x-dashboard-server'] = process.env.DASHBOARD_SERVER
   requestOptions.headers['x-dashboard-token'] = token
   if (accountid) {
@@ -60,6 +59,7 @@ const proxy = util.promisify((method, path, data, accountid, sessionid, alternat
     requestOptions.headers['x-sessionid'] = sessionid
   }
   const protocol = baseURLParts[0] === 'https' ? https : http
+  console.log('fetching', requestOptions)
   const proxyRequest = protocol.request(requestOptions, (proxyResponse) => {
     let body
     proxyResponse.on('data', (chunk) => {

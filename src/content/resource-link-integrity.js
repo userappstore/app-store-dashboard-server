@@ -57,10 +57,14 @@ module.exports = {
           blob = cached[src] = fs.readFileSync(filePath)
         } else if (global.applicationServer) {
           const resourceData = await applicationServer.get(src, req.account ? req.account.accountid : null, req.session ? req.session.sessionid : null)
-          blob = cached[src] = resourceData.body
+          if (resourceData) {
+            blob = cached[src] = resourceData.body
+          }
         }
       }
-      link.attr.integrity = dashboard.Response.sri(blob)
+      if (blob) {
+        link.attr.integrity = dashboard.Response.sri(blob)
+      }
     }
   },
   template: async (req, _, templateDoc) => {
@@ -86,10 +90,14 @@ module.exports = {
             blob = cached[src] = fs.readFileSync(filePath)
           } else if (global.applicationServer) {
             const resourceData = await applicationServer.get(src, req.account ? req.account.accountid : null, req.session ? req.session.sessionid : null)
-            blob = cached[src] = resourceData.body
+            if (resourceData) {
+              blob = cached[src] = resourceData.body
+            }
           }
         }
-        script.attr.integrity = dashboard.Response.sri(blob)
+        if (blob) {
+          script.attr.integrity = dashboard.Response.sri(blob)
+        }
       }
     }
     const links = templateDoc.getElementsByTagName('link')
@@ -113,10 +121,14 @@ module.exports = {
           blob = cached[src] = fs.readFileSync(filePath)
         } else if (global.applicationServer) {
           const resourceData = await applicationServer.get(src, req.account ? req.account.accountid : null, req.session ? req.session.sessionid : null)
-          blob = cached[src] = resourceData.body
+          if (resourceData) {
+            blob = cached[src] = resourceData.body
+          }
         }
       }
-      link.attr.integrity = dashboard.Response.sri(blob)
+      if (blob) {
+        link.attr.integrity = dashboard.Response.sri(blob)
+      }
     }
   }
 }

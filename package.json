@@ -46,7 +46,5 @@
       "/src/server/connect-webhook-key.js"
     ]
   },
-  "devDependencies": {
-    "puppeteer": "^1.18.1"
-  }
+  "devDependencies": {}
 }
